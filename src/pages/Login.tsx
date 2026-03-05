@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function Login() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen grid md:grid-cols-[65%_35%] bg-white">
       <div className="flex items-center justify-center p-10">
@@ -64,7 +66,10 @@ export default function Login() {
 
             <p className="text-sm text-gray-500 text-center">
               Don't have an account?
-              <span className="text-orange-500 ml-1 cursor-pointer hover:underline">
+              <span
+                onClick={() => navigate("/registration")}
+                className="text-orange-500 ml-1 cursor-pointer hover:underline"
+              >
                 Sign up
               </span>
             </p>
