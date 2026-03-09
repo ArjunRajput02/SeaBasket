@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Header() {
+  const navigate = useNavigate();
   return (
     <header className="w-full bg-white shadow-2xl sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 md:px-10">
@@ -31,7 +34,10 @@ export default function Header() {
           <div className="relative">
             <img src="/cart.png" alt="Cart" className="h-8 w-8" />
           </div>
-          <button className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium">
+          <button
+            onClick={() => navigate("./login")}
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium"
+          >
             Login
           </button>
         </div>
