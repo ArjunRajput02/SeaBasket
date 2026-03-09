@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -43,7 +44,7 @@ export default function Login() {
                     <Label htmlFor="password">Password</Label>
 
                     <span className="ml-auto text-sm text-gray-400 cursor-pointer hover:underline">
-                      Forgot password?
+                      Forgot password
                     </span>
                   </div>
 
@@ -61,7 +62,7 @@ export default function Login() {
 
           <CardFooter className="flex flex-col gap-3">
             <Button className="w-full bg-orange-500 hover:bg-orange-600">
-              SIGN IN →
+              SIGN IN
             </Button>
 
             <p className="text-sm text-gray-500 text-center">
@@ -78,10 +79,20 @@ export default function Login() {
       </div>
 
       <div className="hidden md:flex items-center justify-start pl-10 bg-rose-100 overflow-hidden">
-        <img
+        <motion.img
           src="/shopping.png"
           alt="shopping"
-          className="w-80 animate-[float_6s_ease-in-out_infinite]"
+          className="w-80"
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 2, -2, 0],
+            scale: [1, 1.05, 1],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         />
       </div>
     </div>
