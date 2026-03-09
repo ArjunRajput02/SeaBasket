@@ -104,7 +104,7 @@ export default function Registration() {
       const fieldErrors: registrationForm = {};
       const newTouched: TouchedFields = {};
 
-      //show errors 
+      //show errors
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof FormData;
         fieldErrors[field] = issue.message;
@@ -117,7 +117,7 @@ export default function Registration() {
       return;
     }
 
-    navigate("./verification");
+    navigate("/verification");
   };
 
   return (
