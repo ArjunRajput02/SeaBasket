@@ -33,17 +33,25 @@ export default function OtpVerification() {
     }
   };
 
-  //function for focus on next value while user enters otp
-  const handleChange = (value: string, index: number) => {
-    if (!/^[0-9]?$/.test(value)) return;
 
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
+const handleChange = (value: string, index: number) => {
+  if (!/^[0-9]?$/.test(value)) return;
 
+  const newCode = [...code];
+  newCode[index] = value;
+  setCode(newCode);
+
+  if (value) {
+    // If user type a number, focus next input
     const next = document.getElementById(`otp-${index + 1}`);
-    if (value && next) next.focus();
-  };
+    if (next) next.focus();
+  }
+  //if user backwards or delete 
+  else {
+    const prev = document.getElementById(`otp-${index - 1}`);
+    if (prev) prev.focus();
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
