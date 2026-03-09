@@ -2,7 +2,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { users } from "@/data/users";
-import { useState } from "react";
+import { toast } from "sonner";
+import { useState, type FormEvent } from "react";
 import {
   Card,
   CardContent,
@@ -16,25 +17,42 @@ import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const handleLogin = (e: React.FormEvent) => {
+
+  const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
     const user = users.find(
-      (u) => u.email === email && u.password === password,
+      (u) =>
+        (u.email === username || u.phone.toString() === username) &&
+        u.password === password,
     );
-
     if (user) {
-      navigate("/verifictaion");
+      toast.success("Verified Succesfully,Please enter an OTP");
+      navigate("/verification");
     } else {
-      alert("Invalid email or password");
+      toast.error("Invalid email or password");
     }
   };
+
+  
   return (
-    <div className="min-h-screen grid md:grid-cols-[65%_35%] bg-white">
+    <div className="min-h-screen grid md:grid-cols-[65%_35%] bg-gray-50 relative">
+      <div
+        className="absolute top-4 left-4 flex items-center cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        <img
+          src="/seaBasket.png"
+          alt="SeaBasket Logo"
+          className="w-10 h-10 mr-2"
+        />
+        <span className="text-2xl font-bold text-gray-800">SeaBasket</span>
+      </div>
+
       <div className="flex items-center justify-center p-10">
-        <Card className="w-full max-w-md shadow-none border-none">
+        <Card className="w-full max-w-md bg-white shadow-2xl border border-gray-100 rounded-2xl">
           <CardHeader>
             <CardTitle className="text-3xl font-bold">Sign in</CardTitle>
             <CardDescription>
@@ -49,10 +67,9 @@ export default function Login() {
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
-                    type="email"
-                    placeholder="test@gmail.com"
+                    placeholder="Enter an email or phone"
                     className="bg-orange-50"
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
                   />
                 </div>
@@ -79,7 +96,7 @@ export default function Login() {
                   type="submit"
                   className="w-full bg-orange-500 hover:bg-orange-600"
                 >
-                  SIGN IN
+                  LOG IN
                 </Button>
               </div>
             </form>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import {
   Card,
   CardHeader,
@@ -7,11 +8,29 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+const OTP = [1, 2, 3, 4, 5, 6];
+
 export default function OtpVerification() {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleVerify = () => {
+    const enteredOtp = code.join("");
+    const actualOtp = OTP.join("");
+
+    if (enteredOtp === actualOtp) {
+      toast.success("OTP Verified Succesfully");
+      navigate("/");
+      setError("");
+    } else {
+      toast.error("Invalid OTP. Try again.");
+    }
+  };
 
   //function for focus on next value while user enters otp
   const handleChange = (value: string, index: number) => {
@@ -50,6 +69,8 @@ export default function OtpVerification() {
             ))}
           </div>
 
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
+
           <p className="text-center text-sm text-muted-foreground ">
             Didn't receive the code?{" "}
             <button className=" font-medium hover:underline text-orange-500">
@@ -59,7 +80,10 @@ export default function OtpVerification() {
         </CardContent>
 
         <CardFooter>
-          <Button className="w-full  bg-orange-500 hover:bg-orange-600">
+          <Button
+            onClick={handleVerify}
+            className="w-full  bg-orange-500 hover:bg-orange-600"
+          >
             Verify
           </Button>
         </CardFooter>
