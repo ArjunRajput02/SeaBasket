@@ -19,6 +19,7 @@ export default function OtpVerification() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  //funcction to check entered otp and actual otp
   const handleVerify = () => {
     const enteredOtp = code.join("");
     const actualOtp = OTP.join("");

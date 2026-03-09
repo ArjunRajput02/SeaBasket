@@ -20,9 +20,11 @@ export default function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  //validate user 
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
+    //checks for both email and password
     const user = users.find(
       (u) =>
         (u.email === username || u.phone.toString() === username) &&
@@ -116,6 +118,7 @@ export default function Login() {
         </Card>
       </div>
 
+     {/* Animating shopping logo here with framer motion*/}
       <div className="hidden md:flex items-center justify-start pl-10 bg-rose-100 overflow-hidden">
         <motion.img
           src="/shopping.png"

@@ -61,6 +61,7 @@ export default function Registration() {
 
     if (!fieldSchema) return;
 
+    //safeParser is method in zod whicch return boolean value success or error
     const result = fieldSchema.safeParse(value);
 
     setErrors((prev) => ({
@@ -103,9 +104,11 @@ export default function Registration() {
       const fieldErrors: registrationForm = {};
       const newTouched: TouchedFields = {};
 
+      //show errors 
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof FormData;
         fieldErrors[field] = issue.message;
+        //if user submit and not touched
         newTouched[field] = true;
       });
 
@@ -134,7 +137,6 @@ export default function Registration() {
                 value={formData.firstName}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                required
               />
               {touched.firstName && <FormError message={errors.firstName} />}
             </div>
@@ -146,7 +148,6 @@ export default function Registration() {
                 value={formData.lastName}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                required
               />
               {touched.lastName && <FormError message={errors.lastName} />}
             </div>
