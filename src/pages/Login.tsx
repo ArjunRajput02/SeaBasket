@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
+import { users } from "@/data/users";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -14,6 +16,21 @@ import { Label } from "@/components/ui/label";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const user = users.find(
+      (u) => u.email === email && u.password === password,
+    );
+
+    if (user) {
+      navigate("/verifictaion");
+    } else {
+      alert("Invalid email or password");
+    }
+  };
   return (
     <div className="min-h-screen grid md:grid-cols-[65%_35%] bg-white">
       <div className="flex items-center justify-center p-10">
@@ -26,7 +43,7 @@ export default function Login() {
           </CardHeader>
 
           <CardContent>
-            <form>
+            <form onSubmit={handleLogin}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="email">Email</Label>
@@ -35,6 +52,7 @@ export default function Login() {
                     type="email"
                     placeholder="test@gmail.com"
                     className="bg-orange-50"
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
@@ -53,18 +71,21 @@ export default function Login() {
                     type="password"
                     placeholder="********"
                     className="bg-orange-50"
+                    onChange={(e) => setPassword(e.target.value)}
                     required
                   />
                 </div>
+                <Button
+                  type="submit"
+                  className="w-full bg-orange-500 hover:bg-orange-600"
+                >
+                  SIGN IN
+                </Button>
               </div>
             </form>
           </CardContent>
 
           <CardFooter className="flex flex-col gap-3">
-            <Button className="w-full bg-orange-500 hover:bg-orange-600">
-              SIGN IN
-            </Button>
-
             <p className="text-sm text-gray-500 text-center">
               Don't have an account?
               <span

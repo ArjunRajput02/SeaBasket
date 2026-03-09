@@ -7,6 +7,7 @@ import ProfilePage from "../pages/ProfilePage";
 import OrderDetails from "../pages/OrderDetails";
 import Cart from "../pages/Cart";
 import Registration from "@/pages/Registration";
+import OtpVerification from "@/pages/OtpVerification";
 
 const AppRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AppRoutes = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/registration" element={<Registration />} />
+      <Route path="/verifictaion" element={<OtpVerification />} />
     </Routes>
   );
 };
