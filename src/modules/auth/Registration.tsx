@@ -1,0 +1,268 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import FormError from "@/components/layout/FormError";
+import type { registrationForm, TouchedFields } from "./authType";
+
+//zod object for verify email
+const registrationSchema = z
+  .object({
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    email: z.string().email("Invalid email"),
+    mobile: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string(),
+    address: z.string().min(5, "Address is required"),
+    city: z.string().min(2, "City is required"),
+    state: z.string().min(2, "State is required"),
+    pincode: z.string().regex(/^[0-9]{6}$/, "Pincode must be 6 digits"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+//infer schema for type check
+type FormData = z.infer<typeof registrationSchema>;
+
+export default function Registration() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    password: "",
+    confirmPassword: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
+
+  const [errors, setErrors] = useState<registrationForm>({});
+  const [touched, setTouched] = useState<TouchedFields>({});
+
+  //for validating each field with zod schema
+  const validateField = (name: keyof FormData, value: string) => {
+    const fieldSchema = registrationSchema.shape[name];
+
+    if (!fieldSchema) return;
+
+    //safeParser is method in zod whicch return boolean value success or error
+    const result = fieldSchema.safeParse(value);
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: result.success ? undefined : result.error.issues[0].message,
+    }));
+  };
+
+  //for validating when input change happens
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    const fieldName = name as keyof FormData;
+
+    setFormData((prev) => ({
+      ...prev,
+      [fieldName]: value,
+    }));
+
+    validateField(fieldName, value);
+  };
+
+  //only showing error once input is clicked
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const fieldName = e.target.name as keyof FormData;
+
+    setTouched((prev) => ({
+      ...prev,
+      [fieldName]: true,
+    }));
+  };
+
+  //submitting data
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const result = registrationSchema.safeParse(formData);
+
+    if (!result.success) {
+      const fieldErrors: registrationForm = {};
+      const newTouched: TouchedFields = {};
+
+      //show errors
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof FormData;
+        fieldErrors[field] = issue.message;
+        //if user submit and not touched
+        newTouched[field] = true;
+      });
+
+      setErrors(fieldErrors);
+      setTouched((prev) => ({ ...prev, ...newTouched }));
+      return;
+    }
+
+    navigate("/verification");
+  };
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+      <Card className="w-full max-w-3xl">
+        <CardHeader className="text-center">
+          <CardTitle>Create Account</CardTitle>
+          <CardDescription>Sign up to start shopping</CardDescription>
+        </CardHeader>
+
+        <form onSubmit={handleSubmit}>
+          <CardContent className="grid md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-1">
+              <Label>First Name</Label>
+              <Input
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.firstName && <FormError message={errors.firstName} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Last Name</Label>
+              <Input
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.lastName && <FormError message={errors.lastName} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Email</Label>
+              <Input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.email && <FormError message={errors.email} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Mobile</Label>
+              <Input
+                name="mobile"
+                value={formData.mobile}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.mobile && <FormError message={errors.mobile} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Password</Label>
+              <Input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.password && <FormError message={errors.password} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Confirm Password</Label>
+              <Input
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.confirmPassword && (
+                <FormError message={errors.confirmPassword} />
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1 md:col-span-2">
+              <Label>Address</Label>
+              <Input
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.address && <FormError message={errors.address} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>City</Label>
+              <Input
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.city && <FormError message={errors.city} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>State</Label>
+              <Input
+                name="state"
+                value={formData.state}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.state && <FormError message={errors.state} />}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label>Pincode</Label>
+              <Input
+                name="pincode"
+                value={formData.pincode}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              {touched.pincode && <FormError message={errors.pincode} />}
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex flex-col gap-3">
+            <Button
+              type="submit"
+              className="w-full mt-1 bg-orange-500 hover:bg-orange-600"
+            >
+              Create Account
+            </Button>
+
+            <p className="text-sm text-center">
+              Already have an account?
+              <Link to="/login" className="text-orange-500 ml-1">
+                Login
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Card>
+    </div>
+  );
+}
