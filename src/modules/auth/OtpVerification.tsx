@@ -15,23 +15,33 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-
-const OTP = "123456";
+import { useVerifyOtpMutation } from "./authMutation";
 
 export default function OtpVerification() {
   const [code, setCode] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { mutate: verify, isPending, isError, error } = useVerifyOtpMutation();
 
   //function to check entered otp and actual otp
   const handleVerify = () => {
-    if (code === OTP) {
-      toast.success("OTP Verified Succesfully");
-      navigate("/");
-      setError("");
-    } else {
-      toast.error("Invalid OTP. Try again.");
+    if (code.length !== 6) {
+      toast.error("Please enter a valid 6 digit OTP");
+      return;
     }
+
+    verify(
+      { otp: code },
+      {
+        onSuccess: () => {
+          toast.success("OTP Verified Successfully");
+          navigate("/");
+        },
+
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Invalid OTP");
+        },
+      },
+    );
   };
 
   return (
@@ -81,7 +91,9 @@ export default function OtpVerification() {
             </InputOTP>
           </div>
 
-          {error && <p className="text-center text-sm text-red-500">{error}</p>}
+          {isError && (
+            <p className="text-center text-sm text-red-500">{error?.message}</p>
+          )}
 
           <p className="text-center text-sm text-muted-foreground ">
             Didn't receive the code?{" "}
@@ -94,9 +106,10 @@ export default function OtpVerification() {
         <CardFooter>
           <Button
             onClick={handleVerify}
-            className="w-full  bg-orange-500 hover:bg-orange-600"
+            disabled={isPending}
+            className="w-full bg-orange-500 hover:bg-orange-600"
           >
-            Verify
+            {isPending ? "Verifying..." : "Verify"}
           </Button>
         </CardFooter>
       </Card>

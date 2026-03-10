@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { z } from "zod";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,15 +15,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import type { registrationForm, TouchedFields } from "./authType";
-
+import { useRegisterMutation } from "./authMutation";
 //zod object for verify email
 const registrationSchema = z
   .object({
-    firstName: z.string().min(2, "First name must be at least 2 characters"),
-    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    first_name: z.string().min(2, "First name must be at least 2 characters"),
+    last_name: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Invalid email"),
-    mobile: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
+    password: z.string().min(8, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
     address: z.string().min(5, "Address is required"),
     city: z.string().min(2, "City is required"),
@@ -39,11 +40,12 @@ type FormData = z.infer<typeof registrationSchema>;
 
 export default function Registration() {
   const navigate = useNavigate();
+  const { mutate: register, isPending } = useRegisterMutation();
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    mobile: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     address: "",
@@ -104,11 +106,9 @@ export default function Registration() {
       const fieldErrors: registrationForm = {};
       const newTouched: TouchedFields = {};
 
-      //show errors
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof FormData;
         fieldErrors[field] = issue.message;
-        //if user submit and not touched
         newTouched[field] = true;
       });
 
@@ -117,7 +117,21 @@ export default function Registration() {
       return;
     }
 
-    navigate("/verification");
+    const { confirmPassword, ...payload } = formData;
+
+    register(payload, {
+      onSuccess: () => {
+        toast.success("User Registered");
+        navigate("/");
+      },
+      onError: (error: any) => {
+        if (error.response) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error("Something went wrong");
+        }
+      },
+    });
   };
 
   return (
@@ -133,23 +147,23 @@ export default function Registration() {
             <div className="flex flex-col gap-1">
               <Label>First Name</Label>
               <Input
-                name="firstName"
-                value={formData.firstName}
+                name="first_name"
+                value={formData.first_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {touched.firstName && <FormError message={errors.firstName} />}
+              {touched.first_name && <FormError message={errors.first_name} />}
             </div>
 
             <div className="flex flex-col gap-1">
               <Label>Last Name</Label>
               <Input
-                name="lastName"
-                value={formData.lastName}
+                name="last_name"
+                value={formData.last_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {touched.lastName && <FormError message={errors.lastName} />}
+              {touched.last_name && <FormError message={errors.last_name} />}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -165,14 +179,14 @@ export default function Registration() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <Label>Mobile</Label>
+              <Label>phone</Label>
               <Input
-                name="mobile"
-                value={formData.mobile}
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              {touched.mobile && <FormError message={errors.mobile} />}
+              {touched.phone && <FormError message={errors.phone} />}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -250,8 +264,9 @@ export default function Registration() {
             <Button
               type="submit"
               className="w-full mt-1 bg-orange-500 hover:bg-orange-600"
+              disabled={isPending}
             >
-              Create Account
+              {isPending ? "Registering" : "Create Account "}
             </Button>
 
             <p className="text-sm text-center">

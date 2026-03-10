@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import { users } from "@/data/users";
 import { toast } from "sonner";
 import { useState, type FormEvent } from "react";
 import {
@@ -14,28 +13,36 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLoginMutation } from "./authMutation";
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const { mutate: login, isPending } = useLoginMutation();
 
   //validate user
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
-    //checks for both email and password
-    const user = users.find(
-      (u) =>
-        (u.email === username || u.phone.toString() === username) &&
-        u.password === password,
+    login(
+      {
+        login: username,
+        password,
+      },
+      {
+        onSuccess: (data) => {
+          const login_token = data.data.token;
+          localStorage.setItem("token", login_token);
+          toast.success("Login successful");
+          navigate("/verification");
+        },
+
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Invalid credentials");
+        },
+      },
     );
-    if (user) {
-      toast.success("Verified Succesfully,Please enter an OTP");
-      navigate("/verification");
-    } else {
-      toast.error("Invalid email or password");
-    }
   };
 
   return (
@@ -93,9 +100,10 @@ export default function Login() {
                 </div>
                 <Button
                   type="submit"
+                  disabled={isPending}
                   className="w-full bg-orange-500 hover:bg-orange-600"
                 >
-                  LOG IN
+                  {isPending ? "Logging in..." : "LOG IN"}
                 </Button>
               </div>
             </form>
