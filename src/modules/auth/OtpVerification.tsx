@@ -17,24 +17,28 @@ import {
 } from "@/components/ui/input-otp";
 import { useVerifyOtpMutation } from "./authMutation";
 
+import { useDispatch } from "react-redux";
+import { setSessionToken } from "@/store/slice/authSlice";
+
 export default function OtpVerification() {
   const [code, setCode] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const { mutate: verify, isPending, isError, error } = useVerifyOtpMutation();
 
-  //function to check entered otp and actual otp
+  // function to check entered otp and store session token
   const handleVerify = () => {
-    if (code.length !== 6) {
-      toast.error("Please enter a valid 6 digit OTP");
-      return;
-    }
-
     verify(
       { otp: code },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {      
+          const session_token = data.data.token;
+          console.log(data);
+          dispatch(setSessionToken(session_token));
+
           toast.success("OTP Verified Successfully");
-          navigate("/");
+          navigate("/"); 
         },
 
         onError: (error: any) => {
@@ -49,7 +53,6 @@ export default function OtpVerification() {
       <Card className="w-full max-w-md shadow-xl rounded-2xl">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl font-bold">Confirm it's you</CardTitle>
-
           <CardDescription>
             Enter the 6-digit code we sent to your email
           </CardDescription>
@@ -95,9 +98,9 @@ export default function OtpVerification() {
             <p className="text-center text-sm text-red-500">{error?.message}</p>
           )}
 
-          <p className="text-center text-sm text-muted-foreground ">
+          <p className="text-center text-sm text-muted-foreground">
             Didn't receive the code?{" "}
-            <button className=" font-medium hover:underline text-orange-500">
+            <button className="font-medium hover:underline text-orange-500">
               Resend
             </button>
           </p>

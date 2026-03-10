@@ -14,35 +14,35 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "./authMutation";
+import { useDispatch } from "react-redux";
+import { setToken } from "@/store/slice/authSlice";
 
 export default function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const { mutate: login, isPending } = useLoginMutation();
+  const dispatch = useDispatch();
 
   //validate user
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
-    login(
-      {
-        login: username,
-        password,
-      },
-      {
-        onSuccess: (data) => {
-          const login_token = data.data.token;
-          localStorage.setItem("token", login_token);
-          toast.success("Login successful");
-          navigate("/verification");
-        },
+login(
+  { login: username, password },
+  {
+    onSuccess: (data) => {
+      const login_token = data.data.token;
+      dispatch(setToken(login_token));
 
-        onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Invalid credentials");
-        },
-      },
-    );
+      toast.success("Login successful");
+      navigate("/verification");
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Invalid credentials");
+    },
+  }
+);
   };
 
   return (
