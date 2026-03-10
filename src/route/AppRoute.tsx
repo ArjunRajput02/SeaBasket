@@ -1,11 +1,13 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "../pages/HomePage";
-import ProductList from "../pages/ProductList";
-import Login from "../pages/Login";
-import ProductDetails from "../pages/ProductDetails";
-import ProfilePage from "../pages/ProfilePage";
-import OrderDetails from "../pages/OrderDetails";
-import Cart from "../pages/Cart";
+import HomePage from "../modules/home/HomePage";
+import ProductList from "../modules/product/ProductList";
+import Login from "../modules/auth/Login";
+import ProductDetails from "../modules/product/ProductDetails";
+import ProfilePage from "../modules/home/ProfilePage";
+import OrderDetails from "../modules/order/OrderDetails";
+import Cart from "../modules/order/Cart";
+import Registration from "@/modules/auth/Registration";
+import OtpVerification from "@/modules/auth/OtpVerification";
 
 const AppRoutes = () => {
   return (
@@ -17,6 +19,8 @@ const AppRoutes = () => {
       <Route path="/order" element={<OrderDetails />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/cart" element={<Cart />} />
+      <Route path="/registration" element={<Registration />} />
+      <Route path="/verification" element={<OtpVerification />} />
     </Routes>
   );
 };
