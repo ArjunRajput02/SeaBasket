@@ -10,21 +10,22 @@ import {
 } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
-const OTP = [1, 2, 3, 4, 5, 6];
+const OTP = "123456";
 
 export default function OtpVerification() {
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  //funcction to check entered otp and actual otp
+  //function to check entered otp and actual otp
   const handleVerify = () => {
-    const enteredOtp = code.join("");
-    const actualOtp = OTP.join("");
-
-    if (enteredOtp === actualOtp) {
+    if (code === OTP) {
       toast.success("OTP Verified Succesfully");
       navigate("/");
       setError("");
@@ -32,26 +33,6 @@ export default function OtpVerification() {
       toast.error("Invalid OTP. Try again.");
     }
   };
-
-
-const handleChange = (value: string, index: number) => {
-  if (!/^[0-9]?$/.test(value)) return;
-
-  const newCode = [...code];
-  newCode[index] = value;
-  setCode(newCode);
-
-  if (value) {
-    // If user type a number, focus next input
-    const next = document.getElementById(`otp-${index + 1}`);
-    if (next) next.focus();
-  }
-  //if user backwards or delete 
-  else {
-    const prev = document.getElementById(`otp-${index - 1}`);
-    if (prev) prev.focus();
-  }
-};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
@@ -65,17 +46,39 @@ const handleChange = (value: string, index: number) => {
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <div className="flex justify-center gap-3">
-            {code.map((digit, index) => (
-              <Input
-                key={index}
-                id={`otp-${index}`}
-                value={digit}
-                maxLength={1}
-                onChange={(e) => handleChange(e.target.value, index)}
-                className="h-12 w-12 text-center text-lg font-semibold"
-              />
-            ))}
+          <div className="flex justify-center">
+            <InputOTP
+              maxLength={6}
+              value={code}
+              onChange={(value) => setCode(value)}
+            >
+              <InputOTPGroup className="gap-3">
+                <InputOTPSlot
+                  index={0}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={1}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={2}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={3}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={4}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={5}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+              </InputOTPGroup>
+            </InputOTP>
           </div>
 
           {error && <p className="text-center text-sm text-red-500">{error}</p>}

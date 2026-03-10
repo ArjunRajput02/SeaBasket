@@ -20,7 +20,7 @@ export default function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  //validate user 
+  //validate user
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
@@ -38,7 +38,6 @@ export default function Login() {
     }
   };
 
-  
   return (
     <div className="min-h-screen grid md:grid-cols-[65%_35%] bg-gray-50 relative">
       <div
@@ -77,13 +76,7 @@ export default function Login() {
                 </div>
 
                 <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-
-                    <span className="ml-auto text-sm text-gray-400 cursor-pointer hover:underline">
-                      Forgot password
-                    </span>
-                  </div>
+                  <Label htmlFor="password">Password</Label>
 
                   <Input
                     id="password"
@@ -93,6 +86,10 @@ export default function Login() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                   />
+
+                  <span className="text-sm text-orange-400 cursor-pointer hover:underline w-fit ml-auto">
+                    Forgot password?
+                  </span>
                 </div>
                 <Button
                   type="submit"
@@ -118,7 +115,7 @@ export default function Login() {
         </Card>
       </div>
 
-     {/* Animating shopping logo here with framer motion*/}
+      {/* Animating shopping logo here with framer motion*/}
       <div className="hidden md:flex items-center justify-start pl-10 bg-rose-100 overflow-hidden">
         <motion.img
           src="/shopping.png"

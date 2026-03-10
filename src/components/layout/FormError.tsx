@@ -1,6 +1,4 @@
-type FormErrorProps = {
-  message?: string;
-};
+import type{ FormErrorProps } from "@/utils/types";
 
 export default function FormError({ message }: FormErrorProps) {
   if (!message) return null;
