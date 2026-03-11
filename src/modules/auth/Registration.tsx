@@ -16,8 +16,6 @@ import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import type { registrationForm, TouchedFields } from "./authType";
 import { useRegisterMutation } from "./authMutation";
-import { useDispatch } from "react-redux";
-import { setToken } from "@/store/slice/authSlice";
 
 //zod object for verify email
 const registrationSchema = z
@@ -65,7 +63,6 @@ export default function Registration() {
 
   const [errors, setErrors] = useState<registrationForm>({});
   const [touched, setTouched] = useState<TouchedFields>({});
-  const dispatch = useDispatch();
 
   //for validating each field with zod schema
   const validateField = (name: keyof FormData, value: string) => {
@@ -130,11 +127,9 @@ export default function Registration() {
     const { confirmPassword, ...payload } = formData;
 
     register(payload, {
-      onSuccess: (data) => {
-        const token = data.data.token;
-        dispatch(setToken(token));
+      onSuccess: () => {
         toast.success("User Registered");
-        navigate("/");
+        navigate("/verification");
       },
       onError: (error: any) => {
         toast.error(error.response?.data?.message || "Something went wrong");
