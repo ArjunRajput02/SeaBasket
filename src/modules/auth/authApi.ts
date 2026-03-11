@@ -20,9 +20,22 @@ export const verifyOtp = (data: OtpPayload) => {
       Authorization: `Bearer ${token}`,
     },
   });
-
 };
 
 export const loginUser = (data: LoginPayload) => {
   return API.post("/sign-in", data);
+};
+
+export const resendOtp = () => {
+  const token = store.getState().auth.token;
+  console.log(token);
+  return API.post(
+    "/resend-otp",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
 };

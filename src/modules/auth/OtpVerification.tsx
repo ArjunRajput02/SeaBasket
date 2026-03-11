@@ -16,7 +16,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useVerifyOtpMutation } from "./authMutation";
-
+import { useResendOtpMutation } from "./authMutation";
 import { useDispatch } from "react-redux";
 import { setSessionToken } from "@/store/slice/authSlice";
 
@@ -26,6 +26,8 @@ export default function OtpVerification() {
   const dispatch = useDispatch();
 
   const { mutate: verify, isPending } = useVerifyOtpMutation();
+  const { mutate: resendOtp, isPending: resendPending } =
+    useResendOtpMutation();
 
   const handleVerify = () => {
     verify(
@@ -44,6 +46,16 @@ export default function OtpVerification() {
         },
       },
     );
+  };
+  const handleResend = () => {
+    resendOtp(undefined, {
+      onSuccess: () => {
+        toast.success("New OTP sent to your email");
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to resend OTP");
+      },
+    });
   };
 
   return (
@@ -94,8 +106,12 @@ export default function OtpVerification() {
 
           <p className="text-center text-sm text-muted-foreground">
             Didn't receive the code?{" "}
-            <button className="font-medium hover:underline text-orange-500">
-              Resend
+            <button
+              onClick={handleResend}
+              disabled={resendPending}
+              className="font-medium hover:underline text-orange-500"
+            >
+              {resendPending ? "Sending..." : "Resend"}
             </button>
           </p>
         </CardContent>
