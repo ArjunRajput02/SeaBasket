@@ -25,20 +25,18 @@ export default function OtpVerification() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { mutate: verify, isPending, isError, error } = useVerifyOtpMutation();
+  const { mutate: verify, isPending } = useVerifyOtpMutation();
 
-  // function to check entered otp and store session token
   const handleVerify = () => {
     verify(
       { otp: code },
       {
-        onSuccess: (data) => {      
-          const session_token = data.data.token;
-          console.log(data);
+        onSuccess: (data) => {
+          const session_token = data.data.data.token;
           dispatch(setSessionToken(session_token));
 
           toast.success("OTP Verified Successfully");
-          navigate("/"); 
+          navigate("/");
         },
 
         onError: (error: any) => {
@@ -93,10 +91,6 @@ export default function OtpVerification() {
               </InputOTPGroup>
             </InputOTP>
           </div>
-
-          {isError && (
-            <p className="text-center text-sm text-red-500">{error?.message}</p>
-          )}
 
           <p className="text-center text-sm text-muted-foreground">
             Didn't receive the code?{" "}

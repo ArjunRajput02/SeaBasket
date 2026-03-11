@@ -1,4 +1,5 @@
 import axios from "axios";
+import { store } from "@/store/store";
 import type { RegisterPayload, LoginPayload, OtpPayload } from "./authType";
 
 const API = axios.create({
@@ -13,12 +14,13 @@ export const registerUser = (data: RegisterPayload) => {
 };
 
 export const verifyOtp = (data: OtpPayload) => {
-  const token = localStorage.getItem("token");
+  const token = store.getState().auth.token;
   return API.post("/verify-login-otp", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
 };
 
 export const loginUser = (data: LoginPayload) => {

@@ -61,7 +61,8 @@ export default function Registration() {
   const validateField = (name: keyof FormData, value: string) => {
     const fieldSchema = registrationSchema.shape[name];
 
-    if (!fieldSchema) return;
+    if (!fieldSchema) 
+      return;
 
     //safeParser is method in zod whicch return boolean value success or error
     const result = fieldSchema.safeParse(value);
