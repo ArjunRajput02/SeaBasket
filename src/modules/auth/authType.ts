@@ -23,6 +23,11 @@ export type TouchedFields = {
   pincode?: boolean;
 };
 
+export type LoginFormErrors = {
+  login?: string;
+  password?: string;
+};
+
 export interface RegisterPayload {
   first_name: string;
   last_name: string;

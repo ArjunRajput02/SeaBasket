@@ -11,7 +11,6 @@ export default function Header() {
   );
 
   const dispatch = useDispatch();
-
   const handleLogout = () => {
     dispatch(clearToken());
     navigate("/login");

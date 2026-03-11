@@ -19,9 +19,17 @@ import { useVerifyOtpMutation } from "./authMutation";
 import { useResendOtpMutation } from "./authMutation";
 import { useDispatch } from "react-redux";
 import { setSessionToken } from "@/store/slice/authSlice";
+import { z } from "zod";
+import { useEffect } from "react";
+
+const otpSchema = z
+  .string()
+  .regex(/^\d*$/, "Only numbers allowed")
+  .max(6, "OTP must be 6 digits");
 
 export default function OtpVerification() {
   const [code, setCode] = useState("");
+  const [timer, setTimer] = useState(60);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -29,6 +37,15 @@ export default function OtpVerification() {
   const { mutate: resendOtp, isPending: resendPending } =
     useResendOtpMutation();
 
+  useEffect(() => {
+    if (timer === 0) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
   const handleVerify = () => {
     verify(
       { otp: code },
@@ -51,13 +68,13 @@ export default function OtpVerification() {
     resendOtp(undefined, {
       onSuccess: () => {
         toast.success("New OTP sent to your email");
+        setTimer(60);
       },
       onError: (error: any) => {
         toast.error(error.response?.data?.message || "Failed to resend OTP");
       },
     });
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-xl rounded-2xl">
@@ -73,7 +90,12 @@ export default function OtpVerification() {
             <InputOTP
               maxLength={6}
               value={code}
-              onChange={(value) => setCode(value)}
+              onChange={(value) => {
+                const result = otpSchema.safeParse(value);
+                if (result.success) {
+                  setCode(value);
+                }
+              }}
             >
               <InputOTPGroup className="gap-3">
                 <InputOTPSlot
@@ -108,10 +130,14 @@ export default function OtpVerification() {
             Didn't receive the code?{" "}
             <button
               onClick={handleResend}
-              disabled={resendPending}
-              className="font-medium hover:underline text-orange-500"
+              disabled={resendPending || timer > 0}
+              className="font-medium hover:underline text-orange-500 disabled:text-gray-400"
             >
-              {resendPending ? "Sending..." : "Resend"}
+              {resendPending
+                ? "Sending..."
+                : timer > 0
+                  ? `Resend in ${timer}s`
+                  : "Resend"}
             </button>
           </p>
         </CardContent>

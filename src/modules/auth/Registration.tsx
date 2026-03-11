@@ -16,6 +16,9 @@ import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import type { registrationForm, TouchedFields } from "./authType";
 import { useRegisterMutation } from "./authMutation";
+import { useDispatch } from "react-redux";
+import { setToken } from "@/store/slice/authSlice";
+
 //zod object for verify email
 const registrationSchema = z
   .object({
@@ -23,7 +26,13 @@ const registrationSchema = z
     last_name: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Invalid email"),
     phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
-    password: z.string().min(8, "Password must be at least 6 characters"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])/,
+        "Password must include a letter, number, and special character",
+      ),
     confirmPassword: z.string(),
     address: z.string().min(5, "Address is required"),
     city: z.string().min(2, "City is required"),
@@ -56,13 +65,13 @@ export default function Registration() {
 
   const [errors, setErrors] = useState<registrationForm>({});
   const [touched, setTouched] = useState<TouchedFields>({});
+  const dispatch = useDispatch();
 
   //for validating each field with zod schema
   const validateField = (name: keyof FormData, value: string) => {
     const fieldSchema = registrationSchema.shape[name];
 
-    if (!fieldSchema) 
-      return;
+    if (!fieldSchema) return;
 
     //safeParser is method in zod whicch return boolean value success or error
     const result = fieldSchema.safeParse(value);
@@ -121,16 +130,14 @@ export default function Registration() {
     const { confirmPassword, ...payload } = formData;
 
     register(payload, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        const token = data.data.token;
+        dispatch(setToken(token));
         toast.success("User Registered");
         navigate("/");
       },
       onError: (error: any) => {
-        if (error.response) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error("Something went wrong");
-        }
+        toast.error(error.response?.data?.message || "Something went wrong");
       },
     });
   };
@@ -152,6 +159,7 @@ export default function Registration() {
                 value={formData.first_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="First Name"
               />
               {touched.first_name && <FormError message={errors.first_name} />}
             </div>
@@ -163,6 +171,7 @@ export default function Registration() {
                 value={formData.last_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Last Name"
               />
               {touched.last_name && <FormError message={errors.last_name} />}
             </div>
@@ -175,6 +184,7 @@ export default function Registration() {
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Email"
               />
               {touched.email && <FormError message={errors.email} />}
             </div>
@@ -186,6 +196,7 @@ export default function Registration() {
                 value={formData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Phone"
               />
               {touched.phone && <FormError message={errors.phone} />}
             </div>
@@ -198,6 +209,7 @@ export default function Registration() {
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Password"
               />
               {touched.password && <FormError message={errors.password} />}
             </div>
@@ -210,6 +222,7 @@ export default function Registration() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Confirm Password"
               />
               {touched.confirmPassword && (
                 <FormError message={errors.confirmPassword} />
@@ -223,6 +236,7 @@ export default function Registration() {
                 value={formData.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Address"
               />
               {touched.address && <FormError message={errors.address} />}
             </div>
@@ -234,6 +248,7 @@ export default function Registration() {
                 value={formData.city}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="City"
               />
               {touched.city && <FormError message={errors.city} />}
             </div>
@@ -245,6 +260,7 @@ export default function Registration() {
                 value={formData.state}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="State"
               />
               {touched.state && <FormError message={errors.state} />}
             </div>
@@ -256,6 +272,7 @@ export default function Registration() {
                 value={formData.pincode}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Pincode"
               />
               {touched.pincode && <FormError message={errors.pincode} />}
             </div>

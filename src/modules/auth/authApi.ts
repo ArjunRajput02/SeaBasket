@@ -14,7 +14,7 @@ export const registerUser = (data: RegisterPayload) => {
 };
 
 export const verifyOtp = (data: OtpPayload) => {
-  const token = store.getState().auth.token;
+  const token = store.getState().auth.token;//use getState for Ts file to get the token
   return API.post("/verify-login-otp", data, {
     headers: {
       Authorization: `Bearer ${token}`,

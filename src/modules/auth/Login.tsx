@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ChangeEvent } from "react";
 import {
   Card,
   CardContent,
@@ -16,33 +16,88 @@ import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "./authMutation";
 import { useDispatch } from "react-redux";
 import { setToken } from "@/store/slice/authSlice";
+import { z } from "zod";
+import FormError from "@/components/layout/FormError";
+import type { LoginFormErrors } from "./authType";
+
+export const loginSchema = z.object({
+  login: z
+    .string()
+    .min(1, "Email or phone is required")
+    //schema for checking email or password
+    .refine((value) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneRegex = /^[0-9]{10}$/;
+      return emailRegex.test(value) || phoneRegex.test(value);
+    }, "Enter a valid email or 10 digit phone number"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])/,
+      "Password must include a letter, number, and special character",
+    ),
+});
+
+export type LoginSchemaType = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const { mutate: login, isPending } = useLoginMutation();
   const dispatch = useDispatch();
+
+  const { mutate: login, isPending } = useLoginMutation();
+
+  const [formData, setFormData] = useState<LoginSchemaType>({
+    login: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState<LoginFormErrors>({});
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [id]: "",
+    }));
+  };
 
   //validate user
   const handleLogin = (e: FormEvent) => {
     e.preventDefault();
 
-login(
-  { login: username, password },
-  {
-    onSuccess: (data) => {
-      const login_token = data.data.token;
-      dispatch(setToken(login_token));
+    const result = loginSchema.safeParse(formData);
 
-      toast.success("Login successful");
-      navigate("/verification");
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Invalid credentials");
-    },
-  }
-);
+    if (!result.success) {
+      const fieldErrors: LoginFormErrors = {};
+
+      result.error.issues.forEach((err) => {
+        const field = err.path[0] as keyof LoginFormErrors;
+        fieldErrors[field] = err.message;
+      });
+
+      setErrors(fieldErrors);
+      return;
+    }
+
+    login(formData, {
+      onSuccess: (data) => {
+        const login_token = data.data.token;
+        dispatch(setToken(login_token));
+
+        toast.success("Login successful");
+        navigate("/verification");
+      },
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Invalid credentials");
+      },
+    });
   };
 
   return (
@@ -72,14 +127,15 @@ login(
             <form onSubmit={handleLogin}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="login">Email</Label>
                   <Input
-                    id="email"
-                    placeholder="Enter an email or phone"
+                    id="login"
+                    placeholder="Enter email or phone"
                     className="bg-orange-50"
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
+                    value={formData.login}
+                    onChange={handleChange}
                   />
+                  {errors.login && <FormError message={errors.login} />}
                 </div>
 
                 <div className="grid gap-2">
@@ -90,14 +146,17 @@ login(
                     type="password"
                     placeholder="********"
                     className="bg-orange-50"
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
+                    value={formData.password}
+                    onChange={handleChange}
                   />
+
+                  {errors.password && <FormError message={errors.password} />}
 
                   <span className="text-sm text-orange-400 cursor-pointer hover:underline w-fit ml-auto">
                     Forgot password?
                   </span>
                 </div>
+
                 <Button
                   type="submit"
                   disabled={isPending}
@@ -123,7 +182,7 @@ login(
         </Card>
       </div>
 
-      {/* Animating shopping logo here with framer motion*/}
+      {/* Animation */}
       <div className="hidden md:flex items-center justify-start pl-10 bg-rose-100 overflow-hidden">
         <motion.img
           src="/shopping.png"
