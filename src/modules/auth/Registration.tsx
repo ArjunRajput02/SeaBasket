@@ -1,7 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { z } from "zod";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,7 +45,6 @@ const registrationSchema = z
 type FormData = z.infer<typeof registrationSchema>;
 
 export default function Registration() {
-  const navigate = useNavigate();
   const { mutate: register, isPending } = useRegisterMutation();
   const [formData, setFormData] = useState<FormData>({
     first_name: "",
@@ -126,15 +124,8 @@ export default function Registration() {
 
     const { confirmPassword, ...payload } = formData;
 
-    register(payload, {
-      onSuccess: () => {
-        toast.success("User Registered");
-        navigate("/verification");
-      },
-      onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      },
-    });
+    register(payload);
+
   };
 
   return (

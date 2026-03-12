@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import {
   Card,
@@ -14,8 +13,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "./authMutation";
-import { useDispatch } from "react-redux";
-import { setToken } from "@/store/slice/authSlice";
 import { z } from "zod";
 import FormError from "@/components/layout/FormError";
 import type { LoginFormErrors } from "./authType";
@@ -43,7 +40,7 @@ export type LoginSchemaType = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+
 
   const { mutate: login, isPending } = useLoginMutation();
 
@@ -86,18 +83,7 @@ export default function Login() {
       return;
     }
 
-    login(formData, {
-      onSuccess: (data) => {
-        const login_token = data.data.token;
-        dispatch(setToken(login_token));
-
-        toast.success("Login successful");
-        navigate("/verification");
-      },
-      onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Invalid credentials");
-      },
-    });
+    login(formData);
   };
 
   return (
