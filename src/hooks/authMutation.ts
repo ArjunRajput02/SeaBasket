@@ -1,11 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
-import { loginUser, registerUser, verifyOtp, resendOtp } from "../modules/auth/authApi";
+import {
+  loginUser,
+  registerUser,
+  verifyOtp,
+  resendOtp,
+} from "../modules/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setToken, setSessionToken } from "@/store/slice/authSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import type { ApiError } from "@/utils/types";
-
 
 export const useLoginMutation = () => {
   const dispatch = useDispatch();
@@ -30,7 +34,7 @@ export const useRegisterMutation = () => {
 
   return useMutation({
     mutationFn: registerUser,
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       const token = data?.data?.data?.token;
       toast.success("User Registered ");
       dispatch(setToken(token));

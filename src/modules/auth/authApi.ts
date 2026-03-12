@@ -28,7 +28,6 @@ export const loginUser = (data: LoginPayload) => {
 
 export const resendOtp = () => {
   const token = store.getState().auth.token;
-  console.log(token);
   return API.post(
     "/users/resend-otp",
     {},
