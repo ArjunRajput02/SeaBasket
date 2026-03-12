@@ -50,9 +50,9 @@ export default function TrendingCarousel() {
                 <Card className="overflow-hidden rounded-2xl shadow-xl border-none group cursor-pointer">
                   <CardContent className="p-0 relative">
                     <img
-                      src={products.image}
+                      src={products.images?.[0]?.image_url}
                       alt={products.name}
-                      className="h-80 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="h-50 w-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                   </CardContent>
                 </Card>
