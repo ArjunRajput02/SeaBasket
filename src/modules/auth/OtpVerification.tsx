@@ -25,7 +25,7 @@ const otpSchema = z
 
 export default function OtpVerification() {
   const [code, setCode] = useState("");
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(0);
 
   const { mutate: verify, isPending } = useVerifyOtpMutation();
   const { mutate: resendOtp, isPending: resendPending } =
@@ -39,16 +39,14 @@ export default function OtpVerification() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [timer]);
 
   const handleVerify = () => {
-    verify(
-      { otp: code },
-    );
+    verify({ otp: code });
   };
   const handleResend = () => {
-   resendOtp();  
-   setTimer(60);
+    setTimer(60);
+    resendOtp();
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
