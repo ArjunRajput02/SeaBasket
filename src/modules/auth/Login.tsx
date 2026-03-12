@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLoginMutation } from "./authMutation";
+import { useLoginMutation } from "../../hooks/authMutation";
 import { z } from "zod";
 import FormError from "@/components/layout/FormError";
 import type { LoginFormErrors } from "./authType";

@@ -13,8 +13,8 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useVerifyOtpMutation } from "./authMutation";
-import { useResendOtpMutation } from "./authMutation";
+import { useVerifyOtpMutation } from "../../hooks/authMutation";
+import { useResendOtpMutation } from "../../hooks/authMutation";
 import { z } from "zod";
 import { useEffect } from "react";
 

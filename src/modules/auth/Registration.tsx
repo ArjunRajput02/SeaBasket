@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import type { registrationForm, TouchedFields } from "./authType";
-import { useRegisterMutation } from "./authMutation";
+import { useRegisterMutation } from "../../hooks/authMutation";
 
 //zod object for verify email
 const registrationSchema = z

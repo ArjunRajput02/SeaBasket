@@ -1,9 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { loginUser, registerUser, verifyOtp, resendOtp } from "./authApi";
+import { loginUser, registerUser, verifyOtp, resendOtp } from "../modules/auth/authApi";
 import { useDispatch } from "react-redux";
 import { setToken, setSessionToken } from "@/store/slice/authSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import type { ApiError } from "@/utils/types";
 
 
 export const useLoginMutation = () => {
@@ -17,7 +18,7 @@ export const useLoginMutation = () => {
       toast.success("Login successful");
       navigate("/verification");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Invalid credentials");
     },
   });
@@ -35,7 +36,7 @@ export const useRegisterMutation = () => {
       dispatch(setToken(token));
       navigate("/verification");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Something went wrong");
     },
   });
@@ -52,7 +53,7 @@ export const useVerifyOtpMutation = () => {
       toast.success("OTP Verified Successfully");
       navigate("/");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Invalid OTP");
     },
   });
@@ -64,7 +65,7 @@ export const useResendOtpMutation = () => {
     onSuccess: () => {
       toast.success("New OTP sent to your email");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to resend OTP");
     },
   });
