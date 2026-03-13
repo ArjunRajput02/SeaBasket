@@ -8,8 +8,15 @@ import OrderDetails from "../modules/order/OrderDetails";
 import Cart from "../modules/order/Cart";
 import Registration from "@/modules/auth/Registration";
 import OtpVerification from "@/modules/auth/OtpVerification";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { Navigate } from "react-router-dom";
 
 const AppRoutes = () => {
+  const token = useSelector<RootState>((state) => state.auth.token);
+  const sessionToken = useSelector<RootState>(
+    (state) => state.auth.sessionToken,
+  );
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -20,7 +27,20 @@ const AppRoutes = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/registration" element={<Registration />} />
-      <Route path="/verification" element={<OtpVerification />} />
+      {/* <Route
+        path="/verification"
+        element={
+          token && !sessionToken ? (
+            <OtpVerification />
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+        /> */}
+        <Route
+        path="/verification"
+        element={token && !sessionToken? <OtpVerification />:!token && !sessionToken ? <Navigate to="/login" />:<Navigate to="/" />}
+        />
     </Routes>
   );
 };

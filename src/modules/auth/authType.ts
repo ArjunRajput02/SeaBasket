@@ -1,8 +1,8 @@
 export type registrationForm = {
-  firstName?: string;
-  lastName?: string;
+  first_name?: string;
+  last_name?: string;
   email?: string;
-  mobile?: string;
+  phone?: string;
   password?: string;
   confirmPassword?: string;
   address?: string;
@@ -11,10 +11,10 @@ export type registrationForm = {
   pincode?: string;
 };
 export type TouchedFields = {
-  firstName?: boolean;
-  lastName?: boolean;
+  first_name?: boolean;
+  last_name?: boolean;
   email?: boolean;
-  mobile?: boolean;
+  phone?: boolean;
   password?: boolean;
   confirmPassword?: boolean;
   address?: boolean;
@@ -23,3 +23,28 @@ export type TouchedFields = {
   pincode?: boolean;
 };
 
+export type LoginFormErrors = {
+  login?: string;
+  password?: string;
+};
+
+export interface RegisterPayload {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  password: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+}
+
+export type LoginPayload = {
+  login: string;
+  password: string;
+};
+
+export type OtpPayload = {
+  otp: string;
+};

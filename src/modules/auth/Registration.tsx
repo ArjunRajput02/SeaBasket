@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -14,15 +14,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import type { registrationForm, TouchedFields } from "./authType";
+import { useRegisterMutation } from "../../hooks/authMutation";
 
 //zod object for verify email
 const registrationSchema = z
   .object({
-    firstName: z.string().min(2, "First name must be at least 2 characters"),
-    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    first_name: z.string().min(2, "First name must be at least 2 characters"),
+    last_name: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Invalid email"),
-    mobile: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])/,
+        "Password must include a letter, number, and special character",
+      ),
     confirmPassword: z.string(),
     address: z.string().min(5, "Address is required"),
     city: z.string().min(2, "City is required"),
@@ -38,12 +45,12 @@ const registrationSchema = z
 type FormData = z.infer<typeof registrationSchema>;
 
 export default function Registration() {
-  const navigate = useNavigate();
+  const { mutate: register, isPending } = useRegisterMutation();
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    mobile: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     address: "",
@@ -104,11 +111,9 @@ export default function Registration() {
       const fieldErrors: registrationForm = {};
       const newTouched: TouchedFields = {};
 
-      //show errors
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof FormData;
         fieldErrors[field] = issue.message;
-        //if user submit and not touched
         newTouched[field] = true;
       });
 
@@ -117,7 +122,10 @@ export default function Registration() {
       return;
     }
 
-    navigate("/verification");
+    const { confirmPassword, ...payload } = formData;
+
+    register(payload);
+
   };
 
   return (
@@ -133,23 +141,25 @@ export default function Registration() {
             <div className="flex flex-col gap-1">
               <Label>First Name</Label>
               <Input
-                name="firstName"
-                value={formData.firstName}
+                name="first_name"
+                value={formData.first_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="First Name"
               />
-              {touched.firstName && <FormError message={errors.firstName} />}
+              {touched.first_name && <FormError message={errors.first_name} />}
             </div>
 
             <div className="flex flex-col gap-1">
               <Label>Last Name</Label>
               <Input
-                name="lastName"
-                value={formData.lastName}
+                name="last_name"
+                value={formData.last_name}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Last Name"
               />
-              {touched.lastName && <FormError message={errors.lastName} />}
+              {touched.last_name && <FormError message={errors.last_name} />}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -160,19 +170,21 @@ export default function Registration() {
                 value={formData.email}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Email"
               />
               {touched.email && <FormError message={errors.email} />}
             </div>
 
             <div className="flex flex-col gap-1">
-              <Label>Mobile</Label>
+              <Label>phone</Label>
               <Input
-                name="mobile"
-                value={formData.mobile}
+                name="phone"
+                value={formData.phone}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Phone"
               />
-              {touched.mobile && <FormError message={errors.mobile} />}
+              {touched.phone && <FormError message={errors.phone} />}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -183,6 +195,7 @@ export default function Registration() {
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Password"
               />
               {touched.password && <FormError message={errors.password} />}
             </div>
@@ -195,6 +208,7 @@ export default function Registration() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Confirm Password"
               />
               {touched.confirmPassword && (
                 <FormError message={errors.confirmPassword} />
@@ -208,6 +222,7 @@ export default function Registration() {
                 value={formData.address}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Address"
               />
               {touched.address && <FormError message={errors.address} />}
             </div>
@@ -219,6 +234,7 @@ export default function Registration() {
                 value={formData.city}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="City"
               />
               {touched.city && <FormError message={errors.city} />}
             </div>
@@ -230,6 +246,7 @@ export default function Registration() {
                 value={formData.state}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="State"
               />
               {touched.state && <FormError message={errors.state} />}
             </div>
@@ -241,6 +258,7 @@ export default function Registration() {
                 value={formData.pincode}
                 onChange={handleChange}
                 onBlur={handleBlur}
+                placeholder="Pincode"
               />
               {touched.pincode && <FormError message={errors.pincode} />}
             </div>
@@ -250,8 +268,9 @@ export default function Registration() {
             <Button
               type="submit"
               className="w-full mt-1 bg-orange-500 hover:bg-orange-600"
+              disabled={isPending}
             >
-              Create Account
+              {isPending ? "Registering" : "Create Account "}
             </Button>
 
             <p className="text-sm text-center">
