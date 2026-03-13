@@ -1,16 +1,23 @@
 import * as React from "react";
-import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import { Button } from "@/components/ui/button";
 import { useTrendingProducts } from "./useTrendingProduct";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/slice/cartSlice";
+
+type CarouselApi = {
+  scrollNext: () => void;
+};
 
 export default function TrendingCarousel() {
-  const [api, setApi] = React.useState<any>();
+  const [api, setApi] = React.useState<CarouselApi | null>(null);
   const { data } = useTrendingProducts();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!api) return;
@@ -23,40 +30,52 @@ export default function TrendingCarousel() {
   }, [api]);
 
   return (
-    <section className="py-20 overflow-hidden">
-      <h2 className="text-3xl font-bold text-center mb-12">Trending Items</h2>
+    <section className="py-10">
+      <h2 className="text-2xl font-bold mb-6 font-sans">Trending Products</h2>
 
       <Carousel
         setApi={setApi}
         opts={{
-          align: "center",
+          align: "start",
           loop: true,
-          dragFree: true,
         }}
-        className="w-full max-w-6xl mx-auto"
+        className="w-full"
       >
-        <CarouselContent className="-ml-6">
-          {data?.products?.map((products) => (
+        <CarouselContent>
+          {data?.products?.map((product) => (
             <CarouselItem
-              key={products.id}
-              className="pl-6 basis-[70%] sm:basis-[45%] md:basis-[35%] lg:basis-[25%]"
+              key={product.id}
+              className="basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]"
             >
-              <motion.div
-                initial={{ scale: 0.85, opacity: 0.6 }}
-                animate={{ scale: 1, opacity: 1 }}
-                whileHover={{ scale: 1.08 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Card className="overflow-hidden rounded-2xl shadow-xl border-none group cursor-pointer">
-                  <CardContent className="p-0 relative">
-                    <img
-                      src={products.images?.[0]?.image_url}
-                      alt={products.name}
-                      className="h-50 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </CardContent>
-                </Card>
-              </motion.div>
+              <Card className="rounded-xl overflow-hidden hover:shadow-lg transition">
+                <CardContent className="p-3">
+                  <img
+                    src={product.images?.[0]?.image_url}
+                    alt={product.name}
+                    className="h-40 w-full object-contain"
+                  />
+
+                  <div className="flex items-center justify-between mt-3">
+                    <span className="text-green-600 font-semibold text-sm font-poppins">
+                      ₹{product.price}
+                    </span>
+
+                    <Button
+                      size="sm"
+                      className="bg-white text-pink-600 border border-pink-500 hover:bg-pink-50"
+                      onClick={() => {
+                        console.log(product);
+                        dispatch(addToCart(product));
+                      }}
+                    >
+                      ADD
+                    </Button>
+                  </div>
+                  <p className="text-sm mt-2 line-clamp-2 text-gray-700">
+                    {product.name}
+                  </p>
+                </CardContent>
+              </Card>
             </CarouselItem>
           ))}
         </CarouselContent>

@@ -1,8 +1,16 @@
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
 
 export default function Header() {
+  const cartItems = useSelector((state: RootState) => state.cart.items);
   const navigate = useNavigate();
-
+  
+  
+  const totalItems = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
   return (
     <header className="w-full sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-200">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-8 py-4">
@@ -27,7 +35,15 @@ export default function Header() {
             alt="Profile"
             className="h-8 w-8 rounded-full cursor-pointer"
           />
-          <img src="/cart.png" alt="Cart" className="h-7 w-7 cursor-pointer" />
+          <div className="relative cursor-pointer">
+            <img src="/cart.png" alt="Cart" className="h-7 w-7" />
+
+            {totalItems > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-1.5 rounded-full">
+                {totalItems}
+              </span>
+            )}
+          </div>
 
           <button
             onClick={() => navigate("/login")}

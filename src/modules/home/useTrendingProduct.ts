@@ -4,6 +4,6 @@ import { getTrendingProducts } from "./trendingProductsApi";
 export const useTrendingProducts = () => {
   return useQuery({
     queryKey: ["trending-products"],
-    queryFn: getTrendingProducts,
+    queryFn: () => getTrendingProducts(),
   });
 };
