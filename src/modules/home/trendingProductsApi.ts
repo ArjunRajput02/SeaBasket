@@ -1,4 +1,5 @@
 import axios from "axios";
+import { store } from "@/store/store";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -18,5 +19,21 @@ export const getTrendingProducts = async () => {
 };
 export const getCategories = async () => {
   const res = await api.get("/products/categories");
+  return res.data;
+};
+
+export const getProfile = async () => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.get("/users/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+export const updateProfile = async (payload: any) => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.put("/users/update", payload, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return res.data;
 };

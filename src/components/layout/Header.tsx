@@ -5,7 +5,7 @@ import type { RootState } from "@/store/store";
 export default function Header() {
   const navigate = useNavigate();
   const sessionToken = useSelector(
-    (state: RootState) => state.auth.sessionToken
+    (state: RootState) => state.auth.sessionToken,
   );
 
   return (
@@ -40,12 +40,12 @@ export default function Header() {
           >
             <img src="/cart.png" alt="Cart" className="h-6 w-6 md:h-7 md:w-7" />
           </div>
-
           {sessionToken ? (
             <img
               src="/profile.png"
               alt="Profile"
               className="h-7 w-7 md:h-8 md:w-8 rounded-full cursor-pointer"
+              onClick={() => navigate("/profile")}
             />
           ) : (
             <button

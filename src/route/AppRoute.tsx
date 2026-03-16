@@ -27,20 +27,18 @@ const AppRoutes = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/registration" element={<Registration />} />
-      {/* <Route
+      <Route
         path="/verification"
         element={
           token && !sessionToken ? (
             <OtpVerification />
-          ) : (
+          ) : !token && !sessionToken ? (
             <Navigate to="/login" />
+          ) : (
+            <Navigate to="/" />
           )
         }
-        /> */}
-        <Route
-        path="/verification"
-        element={token && !sessionToken? <OtpVerification />:!token && !sessionToken ? <Navigate to="/login" />:<Navigate to="/" />}
-        />
+      />
     </Routes>
   );
 };

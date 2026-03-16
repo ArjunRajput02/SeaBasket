@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { useTrendingProducts } from "./useTrendingProduct";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { useNavigate } from "react-router-dom";
@@ -44,8 +43,6 @@ export default function TrendingCarousel() {
 
     console.log("Add to cart", product);
 
-    // later you can call API here
-    // await addToCartApi(product.id)
   };
 
   return (
