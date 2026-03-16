@@ -64,7 +64,7 @@ export default function Profile() {
         toast.success("Profile updated successfully");
       },
       onError: (error) => {
-        toast.error("Update failed", error);
+        toast.error(`Update failed: ${error.message}`);
       },
     });
   };

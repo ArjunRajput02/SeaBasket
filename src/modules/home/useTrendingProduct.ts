@@ -1,9 +1,10 @@
-import { useQuery,useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   getTrendingProducts,
   getCategories,
   getProfile,
-  updateProfile
+  updateProfile,
+  addProductToCart,
 } from "./trendingProductsApi";
 
 export const useTrendingProducts = () => {
@@ -30,5 +31,11 @@ export const useProfile = () => {
 export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: updateProfile,
+  });
+};
+
+export const useAddToCart = () => {
+  return useMutation({
+    mutationFn: (productId: number) => addProductToCart(productId),
   });
 };

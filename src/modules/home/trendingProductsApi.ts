@@ -37,3 +37,20 @@ export const updateProfile = async (payload: any) => {
   });
   return res.data;
 };
+export const addProductToCart = async (productId: number) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.post(
+    `/products/cart/${productId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+

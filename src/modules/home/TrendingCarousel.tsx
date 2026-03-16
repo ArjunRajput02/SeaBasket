@@ -7,22 +7,21 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { useTrendingProducts } from "./useTrendingProduct";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/store/store";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "@/store/slice/cartSlice";
+import type { RootState } from "@/store/store";
+import { useAddToCart } from "./useTrendingProduct";
 
 type CarouselApi = {
   scrollNext: () => void;
 };
-
+const sessionToken = useSelector((state: RootState) => state.auth.sessionToken);
 export default function TrendingCarousel() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const { data } = useTrendingProducts();
-  const sessionToken = useSelector(
-    (state: RootState) => state.auth.sessionToken,
-  );
-  const navigate = useNavigate();
+  const { mutate: addToCartApi } = useAddToCart();
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
     if (!api) return;
@@ -34,15 +33,22 @@ export default function TrendingCarousel() {
     return () => clearInterval(autoplay);
   }, [api]);
 
-  const handleAddToCart = (product: any) => {
-    if (!sessionToken) {
-      toast.error("You have to login to add items to cart");
-      navigate("/login");
-      return;
+  const handleAddToCart = async (product: any) => {
+    try {
+      if (sessionToken) {
+        await addToCartApi(product.id);
+      } else {
+        dispatch(
+          addToCart({
+            id: product.id,
+            quantity: 1,
+          }),
+        );
+      }
+      toast.success("Item added to cart");
+    } catch (error) {
+      toast.error("Failed to add item");
     }
-
-    console.log("Add to cart", product);
-
   };
 
   return (

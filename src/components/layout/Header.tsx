@@ -7,6 +7,8 @@ export default function Header() {
   const sessionToken = useSelector(
     (state: RootState) => state.auth.sessionToken,
   );
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
@@ -38,7 +40,22 @@ export default function Header() {
             className="relative cursor-pointer"
             onClick={() => navigate("/cart")}
           >
-            <img src="/cart.png" alt="Cart" className="h-6 w-6 md:h-7 md:w-7" />
+            <div
+              className="relative cursor-pointer"
+              onClick={() => navigate("/cart")}
+            >
+              <img
+                src="/cart.png"
+                alt="Cart"
+                className="h-6 w-6 md:h-7 md:w-7"
+              />
+
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">
+                  {cartCount}
+                </span>
+              )}
+            </div>
           </div>
           {sessionToken ? (
             <img
