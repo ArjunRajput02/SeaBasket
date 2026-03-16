@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "sonner";
 import {
   Card,
   CardHeader,
@@ -8,82 +7,110 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { useVerifyOtpMutation } from "../../hooks/authMutation";
+import { useResendOtpMutation } from "../../hooks/authMutation";
+import { z } from "zod";
+import { useEffect } from "react";
 
-const OTP = [1, 2, 3, 4, 5, 6];
+const otpSchema = z
+  .string()
+  .regex(/^\d*$/, "Only numbers allowed")
+  .max(6, "OTP must be 6 digits");
 
 export default function OtpVerification() {
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [code, setCode] = useState("");
+  const [timer, setTimer] = useState(0);
 
-  //funcction to check entered otp and actual otp
+  const { mutate: verify, isPending } = useVerifyOtpMutation();
+  const { mutate: resendOtp, isPending: resendPending } =
+    useResendOtpMutation();
+
+  useEffect(() => {
+    if (timer === 0) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
   const handleVerify = () => {
-    const enteredOtp = code.join("");
-    const actualOtp = OTP.join("");
-
-    if (enteredOtp === actualOtp) {
-      toast.success("OTP Verified Succesfully");
-      navigate("/");
-      setError("");
-    } else {
-      toast.error("Invalid OTP. Try again.");
-    }
+    verify({ otp: code });
   };
-
-
-const handleChange = (value: string, index: number) => {
-  if (!/^[0-9]?$/.test(value)) return;
-
-  const newCode = [...code];
-  newCode[index] = value;
-  setCode(newCode);
-
-  if (value) {
-    // If user type a number, focus next input
-    const next = document.getElementById(`otp-${index + 1}`);
-    if (next) next.focus();
-  }
-  //if user backwards or delete 
-  else {
-    const prev = document.getElementById(`otp-${index - 1}`);
-    if (prev) prev.focus();
-  }
-};
-
+  const handleResend = () => {
+    setTimer(60);
+    resendOtp();
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-xl rounded-2xl">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl font-bold">Confirm it's you</CardTitle>
-
           <CardDescription>
             Enter the 6-digit code we sent to your email
           </CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <div className="flex justify-center gap-3">
-            {code.map((digit, index) => (
-              <Input
-                key={index}
-                id={`otp-${index}`}
-                value={digit}
-                maxLength={1}
-                onChange={(e) => handleChange(e.target.value, index)}
-                className="h-12 w-12 text-center text-lg font-semibold"
-              />
-            ))}
+          <div className="flex justify-center">
+            <InputOTP
+              maxLength={6}
+              value={code}
+              onChange={(value) => {
+                const result = otpSchema.safeParse(value);
+                if (result.success) {
+                  setCode(value);
+                }
+              }}
+            >
+              <InputOTPGroup className="gap-3">
+                <InputOTPSlot
+                  index={0}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={1}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={2}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={3}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={4}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+                <InputOTPSlot
+                  index={5}
+                  className="h-12 w-12 text-lg font-semibold rounded-md"
+                />
+              </InputOTPGroup>
+            </InputOTP>
           </div>
 
-          {error && <p className="text-center text-sm text-red-500">{error}</p>}
-
-          <p className="text-center text-sm text-muted-foreground ">
+          <p className="text-center text-sm text-muted-foreground">
             Didn't receive the code?{" "}
-            <button className=" font-medium hover:underline text-orange-500">
-              Resend
+            <button
+              onClick={handleResend}
+              disabled={resendPending || timer > 0}
+              className="font-medium hover:underline text-orange-500 disabled:text-gray-400"
+            >
+              {resendPending
+                ? "Sending..."
+                : timer > 0
+                  ? `Resend in ${timer}s`
+                  : "Resend"}
             </button>
           </p>
         </CardContent>
@@ -91,9 +118,10 @@ const handleChange = (value: string, index: number) => {
         <CardFooter>
           <Button
             onClick={handleVerify}
-            className="w-full  bg-orange-500 hover:bg-orange-600"
+            disabled={isPending}
+            className="w-full bg-orange-500 hover:bg-orange-600"
           >
-            Verify
+            {isPending ? "Verifying..." : "Verify"}
           </Button>
         </CardFooter>
       </Card>

@@ -1,22 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
-import cartReducer from "./slice/cartSlice";
+import { combineReducers } from "redux";
+import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore } from "redux-persist";
+import authReducer from "./slice/authSlice";
 
 const persistConfig = {
-  key: "cart",
+  key: "root",
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, cartReducer);
-
-export const store = configureStore({
-  reducer: {
-    cart: persistedReducer,
-  },
+const rootReducer = combineReducers({
+  auth: authReducer,
 });
 
-export const persistor = persistStore(store);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export const store = configureStore({
+  reducer: {},
+});
