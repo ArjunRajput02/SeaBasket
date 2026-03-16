@@ -8,7 +8,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTrendingProducts } from "./useTrendingProduct";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/store/slice/cartSlice";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type CarouselApi = {
   scrollNext: () => void;
@@ -17,7 +20,10 @@ type CarouselApi = {
 export default function TrendingCarousel() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const { data } = useTrendingProducts();
-  const dispatch = useDispatch();
+  const sessionToken = useSelector(
+    (state: RootState) => state.auth.sessionToken,
+  );
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (!api) return;
@@ -28,6 +34,19 @@ export default function TrendingCarousel() {
 
     return () => clearInterval(autoplay);
   }, [api]);
+
+  const handleAddToCart = (product: any) => {
+    if (!sessionToken) {
+      toast.error("You have to login to add items to cart");
+      navigate("/login");
+      return;
+    }
+
+    console.log("Add to cart", product);
+
+    // later you can call API here
+    // await addToCartApi(product.id)
+  };
 
   return (
     <section className="py-10">
@@ -63,10 +82,7 @@ export default function TrendingCarousel() {
                     <Button
                       size="sm"
                       className="bg-white text-pink-600 border border-pink-500 hover:bg-pink-50"
-                      onClick={() => {
-                        console.log(product);
-                        dispatch(addToCart(product));
-                      }}
+                      onClick={() => handleAddToCart(product)}
                     >
                       ADD
                     </Button>

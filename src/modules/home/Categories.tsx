@@ -3,39 +3,34 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { useState } from "react";
+import { useCategories } from "./useTrendingProduct";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-const categories = [
-  { name: "Electronics" },
-  { name: "Clothing" },
-  { name: "Home" },
-  { name: "Toys" },
-  { name: "Fresh" },
-  { name: "Groceries" },
-  { name: "Mobiles" },
-  { name: "Beauty" },
-  { name: "Fashion" },
-];
+export default function Categories() {
+  const { data } = useCategories();
+  const navigate = useNavigate();
+  const [params] = useSearchParams();
 
-export default function CategoryNav() {
-  const [active, setActive] = useState("");
+  const activeCategory = params.get("categoryId");
 
   return (
     <div className="border-b bg-white">
       <NavigationMenu className="max-w-full">
         <NavigationMenuList className="flex gap-6 px-6 py-3 overflow-x-auto">
-          {categories.map((cat) => (
-            <NavigationMenuItem key={cat.name}>
+          {data?.categories?.map((cat: any) => (
+            <NavigationMenuItem key={cat.id}>
               <button
-                onClick={() => setActive(cat.name)}
+                onClick={() => {
+                  navigate(`/products?categoryId=${cat.id}`);
+                }}
                 className={`pb-2 whitespace-nowrap text-sm font-medium transition
                 ${
-                  active === cat.name
+                  activeCategory === String(cat.id)
                     ? "text-black border-b-2 border-orange-600"
                     : "text-gray-600 hover:text-black"
                 }`}
               >
-                {cat.name}
+                {cat.category_name}
               </button>
             </NavigationMenuItem>
           ))}
