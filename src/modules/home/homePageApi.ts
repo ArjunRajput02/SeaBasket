@@ -1,5 +1,6 @@
 import axios from "axios";
 import { store } from "@/store/store";
+import type { ProfileForm } from "./homeType";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -30,7 +31,7 @@ export const getProfile = async () => {
   return res.data;
 };
 
-export const updateProfile = async (payload: any) => {
+export const updateProfile = async (payload: ProfileForm) => {
   const token = store.getState().auth.sessionToken;
   const res = await api.put("/users/update", payload, {
     headers: { Authorization: `Bearer ${token}` },

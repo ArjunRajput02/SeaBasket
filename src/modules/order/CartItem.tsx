@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
-
-type CartItemProps = {
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-};
+import type {CartItemProps} from "./cartType"
 
 export default function CartItem({
   name,

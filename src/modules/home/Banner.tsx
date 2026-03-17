@@ -1,5 +1,4 @@
 "use client";
-
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -7,7 +6,6 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
 
 const banners = [
   {
@@ -19,7 +17,6 @@ const banners = [
     glow: "from-orange-400/20 to-transparent",
     eyebrow: "Fresh Picks",
     eyebrowColor: "bg-orange-100 text-orange-700",
-    btnColor: "bg-orange-600 hover:bg-orange-700 text-white",
   },
   {
     eyebrow: "New Arrivals",
@@ -30,7 +27,6 @@ const banners = [
     bg: "from-yellow-50 via-yellow-100 to-yellow-200",
     glow: "from-yellow-400/20 to-transparent",
     eyebrowColor: "bg-yellow-100 text-yellow-700",
-    btnColor: "bg-yellow-600 hover:bg-yellow-700 text-white",
   },
   {
     eyebrow: "100% Organic",
@@ -41,7 +37,6 @@ const banners = [
     bg: "from-green-50 via-green-100 to-green-200",
     glow: "from-green-400/20 to-transparent",
     eyebrowColor: "bg-green-100 text-green-700",
-    btnColor: "bg-green-700 hover:bg-green-800 text-white",
   },
 ];
 
