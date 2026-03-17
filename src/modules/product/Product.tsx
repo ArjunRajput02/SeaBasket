@@ -1,20 +1,59 @@
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import type { Product } from "./productType";
+import { Star } from "lucide-react";
 
-
-
-export default function ProductCard({ product }: { product:  Product}) {
+export default function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate();
 
   return (
-    <div
-      className="p-4 border rounded-xl cursor-pointer hover:shadow"
+    <Card
+      className="rounded-xl overflow-hidden hover:shadow-lg transition cursor-pointer"
       onClick={() => navigate(`/product/${product.id}`)}
     >
-      <img src={product.image} className="w-full h-40 object-cover" />
-      <h2 className="font-semibold mt-2">{product.name}</h2>
-      <p>₹{product.price}</p>
-      <p> {product.rating}</p>
-    </div>
+      <CardContent className="p-3">
+        <img
+          src={product.images?.[0]?.image_url}
+          alt={product.name}
+          className="h-40 w-full object-contain"
+        />
+
+        <div className="flex items-center justify-between mt-3">
+          <span className="text-green-600 font-semibold text-sm">
+            ₹{product.price}
+          </span>
+
+          <Button
+            size="sm"
+            className="bg-white text-pink-600 border border-pink-500 hover:bg-pink-50"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            ADD
+          </Button>
+        </div>
+
+        <p className="text-sm mt-2 line-clamp-2 text-gray-700">
+          {product.name}
+        </p>
+
+        <div className="flex items-center mt-1 gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              size={14}
+              className={
+                star <= Math.round(product.rating)
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-black-300"
+              }
+            />
+          ))}
+          <span className="text-xs text-gray-500 ml-1">{product.rating}</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

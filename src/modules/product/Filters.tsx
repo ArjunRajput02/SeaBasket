@@ -5,49 +5,72 @@ type Props = {
 
 export default function Filters({ filters, setFilters }: Props) {
   return (
-    <div className="space-y-4">
+    <div className="p-3 bg-white rounded-xl shadow-sm space-y-3 w-64">
       <div>
-        <p>Price Range</p>
-        <input
-          type="number"
-          placeholder="Min"
-          onChange={(e) =>
-            setFilters({ ...filters, minPrice: Number(e.target.value) })
-          }
-        />
-        <input
-          type="number"
-          placeholder="Max"
-          onChange={(e) =>
-            setFilters({ ...filters, maxPrice: Number(e.target.value) })
-          }
-        />
+        <p className="text-sm font-medium mb-1">Price</p>
+        <div className="flex gap-2">
+          <input
+            type="number"
+            placeholder="Min"
+            className="w-full border rounded-md px-2 py-1 text-sm"
+            onChange={(e) =>
+              setFilters({ ...filters, minPrice: Number(e.target.value) })
+            }
+          />
+          <input
+            type="number"
+            placeholder="Max"
+            className="w-full border rounded-md px-2 py-1 text-sm"
+            onChange={(e) =>
+              setFilters({ ...filters, maxPrice: Number(e.target.value) })
+            }
+          />
+        </div>
       </div>
 
       <div>
-        <p>Rating</p>
-        <select
-          onChange={(e) =>
-            setFilters({ ...filters, rating: Number(e.target.value) })
-          }
-        >
-          <option value={0}>All</option>
-          <option value={4}>4+</option>
-          <option value={3}>3+</option>
-        </select>
+        <p className="text-sm font-medium mb-1">Rating</p>
+        <div className="flex gap-2 flex-wrap">
+          {[4, 3].map((r) => (
+            <button
+              key={r}
+              className={`px-2 py-1 text-xs rounded-md border ${
+                filters.rating === r ? "bg-black text-white" : "bg-white"
+              }`}
+              onClick={() => setFilters({ ...filters, rating: r })}
+            >
+              {r}+ 
+            </button>
+          ))}
+          <button
+            className="px-2 py-1 text-xs rounded-md border"
+            onClick={() => setFilters({ ...filters, rating: 0 })}
+          >
+            All
+          </button>
+        </div>
       </div>
-
       <div>
-        <p>Discount</p>
-        <select
-          onChange={(e) =>
-            setFilters({ ...filters, discount: Number(e.target.value) })
-          }
-        >
-          <option value={0}>All</option>
-          <option value={10}>10%+</option>
-          <option value={20}>20%+</option>
-        </select>
+        <p className="text-sm font-medium mb-1">Discount</p>
+        <div className="flex gap-2 flex-wrap">
+          {[10, 20].map((d) => (
+            <button
+              key={d}
+              className={`px-2 py-1 text-xs rounded-md border ${
+                filters.discount === d ? "bg-black text-white" : ""
+              }`}
+              onClick={() => setFilters({ ...filters, discount: d })}
+            >
+              {d}%
+            </button>
+          ))}
+          <button
+            className="px-2 py-1 text-xs rounded-md border"
+            onClick={() => setFilters({ ...filters, discount: 0 })}
+          >
+            All
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Search } from "lucide-react";
+import { useState } from "react";
 import type { RootState } from "@/store/store";
 
 export default function Header() {
@@ -8,11 +10,18 @@ export default function Header() {
     (state: RootState) => state.auth.sessionToken,
   );
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+  const cartCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
+
+  const [showSearch, setShowSearch] = useState(false);
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-8">
+
         <div
           className="flex items-center cursor-pointer flex-shrink-0"
           onClick={() => navigate("/")}
@@ -27,36 +36,39 @@ export default function Header() {
           </span>
         </div>
 
-        <div className="flex-1 mx-4 max-w-xl">
+        <div className="hidden md:flex flex-1 mx-4 max-w-xl">
           <input
             type="text"
             placeholder="Search Items"
-            className="w-full px-3 py-2 md:px-4 md:py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 text-sm md:text-base"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+          />
+        </div>
+        <div className="md:hidden flex items-center">
+          <Search
+            className="w-6 h-6 cursor-pointer"
+            onClick={() => setShowSearch(!showSearch)}
           />
         </div>
 
         <div className="flex items-center space-x-3 md:space-x-5 flex-shrink-0">
+
           <div
             className="relative cursor-pointer"
             onClick={() => navigate("/cart")}
           >
-            <div
-              className="relative cursor-pointer"
-              onClick={() => navigate("/cart")}
-            >
-              <img
-                src="/cart.png"
-                alt="Cart"
-                className="h-6 w-6 md:h-7 md:w-7"
-              />
+            <img
+              src="/cart.png"
+              alt="Cart"
+              className="h-6 w-6 md:h-7 md:w-7"
+            />
 
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">
-                  {cartCount}
-                </span>
-              )}
-            </div>
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">
+                {cartCount}
+              </span>
+            )}
           </div>
+
           {sessionToken ? (
             <img
               src="/profile.png"
@@ -74,6 +86,16 @@ export default function Header() {
           )}
         </div>
       </div>
+
+      {showSearch && (
+        <div className="md:hidden px-4 pb-3">
+          <input
+            type="text"
+            placeholder="Search Items"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+          />
+        </div>
+      )}
     </header>
   );
 }
