@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { useProfile, useUpdateProfile } from "./useTrendingProduct";
+import { useProfile, useUpdateProfile } from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
 import {
   AlertDialog,

@@ -3,7 +3,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { useCategories } from "./useTrendingProduct";
+import { useCategories } from "../../hooks/useTrendingProduct";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Categories() {

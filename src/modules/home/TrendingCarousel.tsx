@@ -6,22 +6,23 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { useTrendingProducts } from "./useTrendingProduct";
+import { useTrendingProducts } from "../../hooks/useTrendingProduct";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/store/slice/cartSlice";
 import type { RootState } from "@/store/store";
-import { useAddToCart } from "./useTrendingProduct";
+import { useAddToCart } from "../../hooks/useTrendingProduct";
+import type { CarouselApi } from "@/components/ui/carousel";
+import type { Product } from "./homeType";
 
-type CarouselApi = {
-  scrollNext: () => void;
-};
-const sessionToken = useSelector((state: RootState) => state.auth.sessionToken);
 export default function TrendingCarousel() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const { data } = useTrendingProducts();
   const { mutate: addToCartApi } = useAddToCart();
   const dispatch = useDispatch();
+  const sessionToken = useSelector(
+    (state: RootState) => state.auth.sessionToken,
+  );
 
   React.useEffect(() => {
     if (!api) return;
@@ -36,7 +37,7 @@ export default function TrendingCarousel() {
   const handleAddToCart = async (product: any) => {
     try {
       if (sessionToken) {
-        await addToCartApi(product.id);
+        addToCartApi(product.id);
       } else {
         dispatch(
           addToCart({
@@ -64,7 +65,7 @@ export default function TrendingCarousel() {
         className="w-full"
       >
         <CarouselContent>
-          {data?.products?.map((product) => (
+          {data?.products?.map((product: Product) => (
             <CarouselItem
               key={product.id}
               className="basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]"

@@ -5,7 +5,7 @@ import {
   getProfile,
   updateProfile,
   addProductToCart,
-} from "./trendingProductsApi";
+} from "../modules/home/homePageApi";
 
 export const useTrendingProducts = () => {
   return useQuery({

@@ -8,7 +8,6 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
 
 const banners = [
   {
@@ -18,9 +17,9 @@ const banners = [
     image: "/fruits-banner.jpeg",
     bg: "from-orange-50 via-orange-100 to-amber-200",
     glow: "from-orange-400/20 to-transparent",
+    eyebrow: "Fresh Picks",
     eyebrowColor: "bg-orange-100 text-orange-700",
     btnColor: "bg-orange-600 hover:bg-orange-700 text-white",
-    dotActive: "bg-orange-600",
   },
   {
     eyebrow: "New Arrivals",
@@ -32,7 +31,6 @@ const banners = [
     glow: "from-yellow-400/20 to-transparent",
     eyebrowColor: "bg-yellow-100 text-yellow-700",
     btnColor: "bg-yellow-600 hover:bg-yellow-700 text-white",
-    dotActive: "bg-yellow-600",
   },
   {
     eyebrow: "100% Organic",
@@ -44,7 +42,6 @@ const banners = [
     glow: "from-green-400/20 to-transparent",
     eyebrowColor: "bg-green-100 text-green-700",
     btnColor: "bg-green-700 hover:bg-green-800 text-white",
-    dotActive: "bg-green-700",
   },
 ];
 
@@ -62,7 +59,10 @@ export default function Banner() {
     }, 3000);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) 
+        {
+          clearInterval(intervalRef.current);
+        }
     };
   }, [api, isHovered]);
 
@@ -74,53 +74,42 @@ export default function Banner() {
   }, [api]);
 
   return (
-    <div className="w-full py-6">
-      <Carousel
-        setApi={setApi}
-        className="w-full max-w-5xl mx-auto banner-body"
-        opts={{ loop: true }}
-      >
+    <div className="w-full">
+      <Carousel setApi={setApi} className="w-full" opts={{ loop: true }}>
         <CarouselContent>
           {banners.map((banner, index) => (
             <CarouselItem key={index}>
               <Card
-                className={`bg-gradient-to-br ${banner.bg} border-none rounded-3xl overflow-hidden`}
+                className={`bg-gradient-to-br ${banner.bg} border-none rounded-none sm:rounded-3xl overflow-hidden`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
               >
-                <CardContent className="flex items-center justify-between p-0 relative min-h-[220px]">
+                <CardContent className="flex flex-col sm:flex-row items-center justify-between p-6 sm:p-10 relative min-h-[220px] sm:min-h-[300px]">
                   <div
-                    className={`absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l ${banner.glow} pointer-events-none`}
+                    className={`absolute inset-y-0 right-0 w-full sm:w-1/2 bg-gradient-to-l ${banner.glow} pointer-events-none`}
                   />
 
-                  <div className="relative z-10 space-y-3 max-w-sm pl-10 py-10 pr-4">
+                  <div className="relative z-10 space-y-3 max-w-xl">
                     <span
-                      className={`inline-block text-[11px] font-medium tracking-widest uppercase px-3 py-1 rounded-full ${banner.eyebrowColor}`}
+                      className={`inline-block text-[10px] sm:text-xs font-medium tracking-widest uppercase px-3 py-1 rounded-full ${banner.eyebrowColor}`}
                     >
                       {banner.eyebrow}
                     </span>
 
-                    <h2 className="banner-title text-4xl text-gray-900">
+                    <h2 className="text-2xl sm:text-4xl font-semibold text-gray-900 whitespace-pre-line">
                       {banner.title}
                     </h2>
 
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                       {banner.description}
                     </p>
-
-                    <Button
-                      className={`shop-btn rounded-full px-6 py-2 text-sm font-medium shadow-md ${banner.btnColor} flex items-center gap-2`}
-                    >
-                      Shop Now
-                    </Button>
                   </div>
-
-                  <div className="relative z-10 pr-8 py-6 flex-shrink-0">
+                  <div className="relative z-10 mt-6 sm:mt-0 sm:pr-8 hidden sm:block">
                     <img
                       src={banner.image}
                       alt={banner.title}
-                      className={`banner-img w-52 h-44 object-cover rounded-2xl shadow-lg ${
-                        current === index ? "active" : ""
+                      className={`w-56 h-44 object-cover rounded-2xl shadow-lg transition-all duration-500 ${
+                        current === index ? "scale-105" : "scale-95 opacity-80"
                       }`}
                     />
                   </div>
@@ -130,19 +119,6 @@ export default function Banner() {
           ))}
         </CarouselContent>
       </Carousel>
-
-      <div className="flex justify-center items-center gap-2 mt-4">
-        {banners.map((banner, index) => (
-          <button
-            key={index}
-            onClick={() => api?.scrollTo(index)}
-            className={`dot-pill h-2 rounded-full border-none cursor-pointer ${
-              current === index ? `w-6 ${banner.dotActive}` : "w-2 bg-gray-300"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
     </div>
   );
 }
