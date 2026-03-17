@@ -30,7 +30,6 @@ const banners = [
     bg: "from-yellow-50 via-yellow-100 to-yellow-200",
     glow: "from-yellow-400/20 to-transparent",
     eyebrowColor: "bg-yellow-100 text-yellow-700",
-    btnColor: "bg-yellow-600 hover:bg-yellow-700 text-white",
   },
   {
     eyebrow: "100% Organic",
@@ -41,7 +40,6 @@ const banners = [
     bg: "from-green-50 via-green-100 to-green-200",
     glow: "from-green-400/20 to-transparent",
     eyebrowColor: "bg-green-100 text-green-700",
-    btnColor: "bg-green-700 hover:bg-green-800 text-white",
   },
 ];
 

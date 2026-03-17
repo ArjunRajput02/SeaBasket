@@ -34,7 +34,7 @@ export default function TrendingCarousel() {
     return () => clearInterval(autoplay);
   }, [api]);
 
-  const handleAddToCart = async (product: any) => {
+  const handleAddToCart = async (product: Product) => {
     try {
       if (sessionToken) {
         addToCartApi(product.id);
