@@ -3,21 +3,55 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Product } from "./productType";
 import { Star, Plus, Minus } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "@/store/store";
+import {
+  useAddToCart,
+  useCart,
+  useDecreaseFromCart,
+} from "@/hooks/useAddtoCart";
 
-import { useAddToCart, useCart, useDecreaseFromCart } from "@/hooks/useAddtoCart";
-
+import { addToCart, decreaseFromCart } from "@/store/slice/cartSlice";
 export default function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { data: cartData } = useCart();
-  const { mutate: addToCart } = useAddToCart();
-  const { mutate: decreaseFromCart } = useDecreaseFromCart();
+  const { mutate: mutateAdd } = useAddToCart();
+  const { mutate: mutateDecrease } = useDecreaseFromCart();
 
-  const cartItems = cartData?.cart || [];
+  const sessionToken = useSelector(
+    (state: RootState) => state.auth.sessionToken,
+  );
+
+  const localCart = useSelector((state: RootState) => state.cart.items);
+
+
+  const cartItems = sessionToken ? cartData?.cart || [] : localCart;
 
   const cartItem = cartItems.find(
-    (item: any) => item.product_id === product.id,
+    (item: any) => item.product_id === product.id || item.id === product.id,
   );
+
+  const handleAdd = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+
+    if (sessionToken) {
+      mutateAdd(product.id); 
+    } else {
+      dispatch(addToCart(product.id)); 
+    }
+  };
+
+  const handleDecrease = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+
+    if (sessionToken) {
+      mutateDecrease(product.id);
+    } else {
+      dispatch(decreaseFromCart(product.id));
+    }
+  };
 
   return (
     <Card
@@ -39,11 +73,8 @@ export default function ProductCard({ product }: { product: Product }) {
           {!cartItem ? (
             <Button
               size="sm"
-              className="bg-white text-pink-600 border border-pink-500 "
-              onClick={(e) => {
-                e.stopPropagation();
-                addToCart(product.id);
-              }}
+              className="bg-white text-pink-600 border border-pink-500"
+              onClick={handleAdd}
             >
               ADD
             </Button>
@@ -52,13 +83,13 @@ export default function ProductCard({ product }: { product: Product }) {
               className="flex items-center gap-2 border px-2 py-1 rounded"
               onClick={(e) => e.stopPropagation()}
             >
-              <button onClick={() => decreaseFromCart(product.id)}>
+              <button onClick={handleDecrease}>
                 <Minus size={14} />
               </button>
 
               <span>{cartItem.quantity}</span>
 
-              <button onClick={() => addToCart(product.id)}>
+              <button onClick={handleAdd}>
                 <Plus size={14} />
               </button>
             </div>

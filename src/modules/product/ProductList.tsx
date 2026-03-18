@@ -7,6 +7,7 @@ import { useProducts } from "./getProducts";
 import Filters from "./Filters";
 import SortBar from "./SortBar";
 import ProductCard from "./Product";
+import type { Product } from "./productType";
 
 export default function ProductList() {
   const [filters, setFilters] = useState({
@@ -20,17 +21,17 @@ export default function ProductList() {
   const categoryId = params.get("categoryId");
 
   const [sort, setSort] = useState("");
-  const [showFilters, setShowFilters] = useState(false); 
+  const [showFilters, setShowFilters] = useState(false);
 
   const { data } = useProducts(categoryId || undefined);
 
   const products = data?.products || [];
 
   const filteredProducts = products
-    .filter((p) => p.price >= filters.minPrice)
-    .filter((p) => p.price <= filters.maxPrice)
-    .filter((p) => p.rating >= filters.rating)
-    .filter((p) => p.discount >= filters.discount);
+    .filter((p: Product) => p.price >= filters.minPrice)
+    .filter((p: Product) => p.price <= filters.maxPrice)
+    .filter((p: Product) => p.rating >= filters.rating)
+    .filter((p: Product) => p.discount >= filters.discount);
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sort === "low") return a.price - b.price;

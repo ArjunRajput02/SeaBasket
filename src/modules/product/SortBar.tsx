@@ -1,8 +1,6 @@
-type Props = {
-  setSort: (val: string) => void;
-};
+import type { SortBarProps } from "./productType";
 
-export default function SortBar({ setSort }: Props) {
+export default function SortBar({ setSort }: SortBarProps) {
   return (
     <select onChange={(e) => setSort(e.target.value)}>
       <option value="">Sort</option>

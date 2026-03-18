@@ -1,9 +1,6 @@
-type Props = {
-  filters: any;
-  setFilters: (val: any) => void;
-};
+import type { FilterTypeProps } from "./productType";
 
-export default function Filters({ filters, setFilters }: Props) {
+export default function Filters({ filters, setFilters }: FilterTypeProps) {
   return (
     <div className="p-3 bg-white rounded-xl shadow-sm space-y-3 w-64">
       <div>
