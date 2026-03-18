@@ -17,18 +17,6 @@ export const getProducts = async (categoryId?: string) => {
   return res.data;
 };
 
-export const getCart = async () => {
-  const token = store.getState().auth.sessionToken;
-
-  const res = await api.get("/products/cart", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return res.data;
-};
-
 export const decreaseFromCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
   const res = await api.put(

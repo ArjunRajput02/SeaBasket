@@ -14,6 +14,7 @@ import type { RootState } from "@/store/store";
 import { useAddToCart } from "@/hooks/useAddtoCart";
 import type { CarouselApi } from "@/components/ui/carousel";
 import type { Product } from "./homeType";
+import { IndianRupee } from "lucide-react";
 
 export default function TrendingCarousel() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
@@ -39,12 +40,7 @@ export default function TrendingCarousel() {
       if (sessionToken) {
         addToCartApi(product.id);
       } else {
-        dispatch(
-          addToCart({
-            id: product.id,
-            quantity: 1,
-          }),
-        );
+        dispatch(addToCart(product.id));
       }
       toast.success("Item added to cart");
     } catch (error) {
@@ -79,9 +75,10 @@ export default function TrendingCarousel() {
                   />
 
                   <div className="flex items-center justify-between mt-3">
-                    <span className="text-green-600 font-semibold text-sm font-poppins">
-                      ₹{product.price}
-                    </span>
+                    <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
+                      <IndianRupee size={14} />
+                      <span>{product.price}</span>
+                    </div>
 
                     <Button
                       size="sm"

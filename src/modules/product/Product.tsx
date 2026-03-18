@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Product } from "./productType";
-import { Star, Plus, Minus } from "lucide-react";
+import { Star, Plus, Minus, IndianRupee } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store/store";
 import {
@@ -26,7 +26,6 @@ export default function ProductCard({ product }: { product: Product }) {
 
   const localCart = useSelector((state: RootState) => state.cart.items);
 
-
   const cartItems = sessionToken ? cartData?.cart || [] : localCart;
 
   const cartItem = cartItems.find(
@@ -37,9 +36,9 @@ export default function ProductCard({ product }: { product: Product }) {
     e?.stopPropagation();
 
     if (sessionToken) {
-      mutateAdd(product.id); 
+      mutateAdd(product.id);
     } else {
-      dispatch(addToCart(product.id)); 
+      dispatch(addToCart(product.id));
     }
   };
 
@@ -66,9 +65,10 @@ export default function ProductCard({ product }: { product: Product }) {
         />
 
         <div className="flex items-center justify-between mt-3">
-          <span className="text-green-600 font-semibold text-sm">
-            ₹{product.price}
-          </span>
+          <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
+            <IndianRupee size={14} />
+            <span>{product.price}</span>
+          </div>
 
           {!cartItem ? (
             <Button
