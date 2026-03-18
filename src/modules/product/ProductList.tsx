@@ -28,10 +28,20 @@ export default function ProductList() {
   const products = data?.products || [];
 
   const filteredProducts = products
-    .filter((p: Product) => p.price >= filters.minPrice)
-    .filter((p: Product) => p.price <= filters.maxPrice)
-    .filter((p: Product) => p.rating >= filters.rating)
-    .filter((p: Product) => p.discount >= filters.discount);
+    .filter((p: Product) =>
+      filters.minPrice ? p.price >= filters.minPrice : true,
+    )
+    .filter((p: Product) =>
+      filters.maxPrice && filters.maxPrice !== Infinity
+        ? p.price <= filters.maxPrice
+        : true,
+    )
+    .filter((p: Product) =>
+      filters.rating ? p.rating >= filters.rating : true,
+    )
+    .filter((p: Product) =>
+      filters.discount ? p.discount >= filters.discount : true,
+    );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     if (sort === "low") return a.price - b.price;

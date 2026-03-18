@@ -11,7 +11,10 @@ export default function Filters({ filters, setFilters }: FilterTypeProps) {
             placeholder="Min"
             className="w-full border rounded-md px-2 py-1 text-sm"
             onChange={(e) =>
-              setFilters({ ...filters, minPrice: Number(e.target.value) })
+              setFilters({
+                ...filters,
+                minPrice: e.target.value ? Number(e.target.value) : 0,
+              })
             }
           />
           <input
@@ -19,7 +22,10 @@ export default function Filters({ filters, setFilters }: FilterTypeProps) {
             placeholder="Max"
             className="w-full border rounded-md px-2 py-1 text-sm"
             onChange={(e) =>
-              setFilters({ ...filters, maxPrice: Number(e.target.value) })
+              setFilters({
+                ...filters,
+                maxPrice: e.target.value ? Number(e.target.value) : 0,
+              })
             }
           />
         </div>
