@@ -55,7 +55,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <Card
       className="rounded-xl overflow-hidden hover:shadow-lg transition cursor-pointer"
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={() => navigate(`/products/${product.id}`)}
     >
       <CardContent className="p-3">
         <img
