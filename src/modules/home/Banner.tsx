@@ -50,16 +50,14 @@ export default function Banner() {
 
   useEffect(() => {
     if (!api || isHovered) return;
-
     intervalRef.current = setInterval(() => {
       api.scrollNext();
     }, 3000);
 
     return () => {
-      if (intervalRef.current) 
-        {
-          clearInterval(intervalRef.current);
-        }
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
   }, [api, isHovered]);
 

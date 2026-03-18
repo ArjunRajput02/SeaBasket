@@ -15,9 +15,13 @@ export default function ProductList() {
     rating: 0,
     discount: 0,
   });
+
   const [params] = useSearchParams();
   const categoryId = params.get("categoryId");
+
   const [sort, setSort] = useState("");
+  const [showFilters, setShowFilters] = useState(false); 
+
   const { data } = useProducts(categoryId || undefined);
 
   const products = data?.products || [];
@@ -33,23 +37,45 @@ export default function ProductList() {
     if (sort === "high") return b.price - a.price;
     return 0;
   });
+
   return (
     <>
       <Header />
       <Categories />
 
-      <div className="flex gap-6 p-6">
-        <div className="w-1/4">
-          <Filters filters={filters} setFilters={setFilters} />
+      <div className="p-3 md:p-6">
+        <div className="flex justify-between items-center mb-3 md:hidden">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="border px-3 py-1 rounded-md text-sm"
+          >
+            Filters
+          </button>
+
+          <SortBar setSort={setSort} />
         </div>
 
-        <div className="w-3/4">
-          <SortBar setSort={setSort} />
+        <div className="flex gap-6">
+          <div className="hidden md:block w-64">
+            <Filters filters={filters} setFilters={setFilters} />
+          </div>
 
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            {sortedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          {showFilters && (
+            <div className="absolute z-50 bg-white p-3 shadow-md rounded-md md:hidden w-[90%]">
+              <Filters filters={filters} setFilters={setFilters} />
+            </div>
+          )}
+
+          <div className="flex-1">
+            <div className="hidden md:flex justify-end mb-3">
+              <SortBar setSort={setSort} />
+            </div>
+
+            <div className="grid grid-cols-2 xs:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+              {sortedProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

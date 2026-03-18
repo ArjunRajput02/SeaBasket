@@ -39,7 +39,7 @@ export default function Filters({ filters, setFilters }: Props) {
               }`}
               onClick={() => setFilters({ ...filters, rating: r })}
             >
-              {r}+ 
+              {r}+
             </button>
           ))}
           <button

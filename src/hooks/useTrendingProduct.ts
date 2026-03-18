@@ -4,7 +4,6 @@ import {
   getCategories,
   getProfile,
   updateProfile,
-  addProductToCart,
 } from "../modules/home/homePageApi";
 
 export const useTrendingProducts = () => {
@@ -34,8 +33,4 @@ export const useUpdateProfile = () => {
   });
 };
 
-export const useAddToCart = () => {
-  return useMutation({
-    mutationFn: (productId: number) => addProductToCart(productId),
-  });
-};
+

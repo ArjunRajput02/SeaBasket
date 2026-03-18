@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/store/slice/cartSlice";
 import type { RootState } from "@/store/store";
-import { useAddToCart } from "../../hooks/useTrendingProduct";
+import { useAddToCart } from "@/hooks/useAddtoCart";
 import type { CarouselApi } from "@/components/ui/carousel";
 import type { Product } from "./homeType";
 

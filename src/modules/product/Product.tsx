@@ -2,10 +2,22 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import type { Product } from "./productType";
-import { Star } from "lucide-react";
+import { Star, Plus, Minus } from "lucide-react";
+
+import { useAddToCart, useCart, useDecreaseFromCart } from "@/hooks/useAddtoCart";
 
 export default function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate();
+
+  const { data: cartData } = useCart();
+  const { mutate: addToCart } = useAddToCart();
+  const { mutate: decreaseFromCart } = useDecreaseFromCart();
+
+  const cartItems = cartData?.cart || [];
+
+  const cartItem = cartItems.find(
+    (item: any) => item.product_id === product.id,
+  );
 
   return (
     <Card
@@ -24,15 +36,33 @@ export default function ProductCard({ product }: { product: Product }) {
             ₹{product.price}
           </span>
 
-          <Button
-            size="sm"
-            className="bg-white text-pink-600 border border-pink-500 hover:bg-pink-50"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            ADD
-          </Button>
+          {!cartItem ? (
+            <Button
+              size="sm"
+              className="bg-white text-pink-600 border border-pink-500 "
+              onClick={(e) => {
+                e.stopPropagation();
+                addToCart(product.id);
+              }}
+            >
+              ADD
+            </Button>
+          ) : (
+            <div
+              className="flex items-center gap-2 border px-2 py-1 rounded"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button onClick={() => decreaseFromCart(product.id)}>
+                <Minus size={14} />
+              </button>
+
+              <span>{cartItem.quantity}</span>
+
+              <button onClick={() => addToCart(product.id)}>
+                <Plus size={14} />
+              </button>
+            </div>
+          )}
         </div>
 
         <p className="text-sm mt-2 line-clamp-2 text-gray-700">
@@ -47,7 +77,7 @@ export default function ProductCard({ product }: { product: Product }) {
               className={
                 star <= Math.round(product.rating)
                   ? "text-yellow-400 fill-yellow-400"
-                  : "text-black-300"
+                  : "text-gray-300"
               }
             />
           ))}
