@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
-import { toast } from "sonner";
 import { useProfile, useUpdateProfile } from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
 import {
@@ -19,17 +18,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDispatch } from "react-redux";
 import { clearToken } from "@/store/slice/authSlice";
+import type{ ProfileForm } from "./homeType";
 
-type ProfileForm = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-};
+
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -59,14 +50,7 @@ export default function Profile() {
     }
   }, [data, reset]);
   const onSubmit = (formData: ProfileForm) => {
-    mutate(formData, {
-      onSuccess: () => {
-        toast.success("Profile updated successfully");
-      },
-      onError: (error) => {
-        toast.error(`Update failed: ${error.message}`);
-      },
-    });
+    mutate(formData);
   };
 
   const handleLogout = () => {

@@ -13,11 +13,4 @@ export type ApiError = {
   };
 };
 
-export type CartItem = {
-  id: number;
-  quantity: number;
-};
 
-export type CartState = {
-  items: CartItem[];
-};
