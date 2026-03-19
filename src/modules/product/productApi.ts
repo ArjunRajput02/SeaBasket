@@ -38,6 +38,7 @@ export const getProductById = async (id: string) => {
 
 export const buyNow = async (id: string) => {
   const token = store.getState().auth.sessionToken;
+
   const res = await api.post(
     `/orders/buy-now/${id}`,
     {},
@@ -47,5 +48,6 @@ export const buyNow = async (id: string) => {
       },
     },
   );
+
   return res.data;
 };

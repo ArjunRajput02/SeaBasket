@@ -11,6 +11,10 @@ import { Plus, Minus } from "lucide-react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { addToCart as addToCartRedux } from "@/store/slice/cartSlice";
+import { decreaseFromCart as decreaseFromCartRedux } from "@/store/slice/cartSlice";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -20,11 +24,12 @@ export default function ProductDetails() {
   const addToCartMutation = useAddToCart();
   const decreaseFromCartMutation = useDecreaseFromCart();
   const navigate = useNavigate();
-  const buyProduct =useBuyNow();
+  const buyProduct = useBuyNow();
+  const dispatch = useDispatch();
 
-const sessionToken = useSelector(
-  (state: RootState) => state.auth.sessionToken
-);
+  const sessionToken = useSelector(
+    (state: RootState) => state.auth.sessionToken,
+  );
 
   const avgRating = product?.reviews?.length
     ? product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) /
@@ -45,21 +50,44 @@ const sessionToken = useSelector(
 
   const handleAddToCart = () => {
     if (!product?.id) return;
-    addToCartMutation.mutate(product.id);
+
+    if (sessionToken) {
+      dispatch(addToCartRedux(product.id));
+    } else {
+      addToCartMutation.mutate(product.id);
+    }
   };
 
-  const handleDecrease = () => {
-    if (!product?.id) return;
-    decreaseFromCartMutation.mutate(product.id);
-  };
+const handleDecrease = () => {
+  if (!product?.id) 
+    return;
 
-  const handleBuyNow = () => {
   if (sessionToken) {
-    navigate("/checkout");
+    dispatch(decreaseFromCartRedux(product.id));
   } else {
-    navigate("/login");
+    decreaseFromCartMutation.mutate(product.id);
   }
 };
+
+  const handleBuyNow = () => {
+    if (!product?.id) 
+      return;
+
+    if (!sessionToken) {
+      navigate("/login");
+      return;
+    }
+
+    buyProduct.mutate(product.id.toString(), {
+      onSuccess: (data) => {
+        const url = data?.checkout_url || data?.url;
+        window.location.href = url;
+      },
+      onError: () => {
+        toast.error("Failed to Add to Cart");
+      },
+    });
+  };
 
   return (
     <>
@@ -177,7 +205,6 @@ const sessionToken = useSelector(
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-
                     <span className="font-semibold text-lg">{quantity}</span>
 
                     <button
@@ -190,9 +217,13 @@ const sessionToken = useSelector(
                   </div>
                 )}
 
-                <button className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 rounded-lg transition">
+                <button
+                  onClick={handleBuyNow}
+                  disabled={buyProduct.isPending}
+                  className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 rounded-lg transition disabled:opacity-60"
+                >
                   <Zap className="w-4 h-4" />
-                  Buy Now
+                  {buyProduct.isPending ? "Processing..." : "Buy Now"}
                 </button>
               </div>
             </div>
