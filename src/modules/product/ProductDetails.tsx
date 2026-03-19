@@ -4,11 +4,18 @@ import { Star, ShoppingCart, Zap, Package } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import type { review } from "./productType";
+import { useAddToCart, useDecreaseFromCart } from "@/hooks/useAddtoCart";
+import { useCart } from "@/hooks/useAddtoCart";
+import { Plus, Minus } from "lucide-react";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { data: product, isLoading } = useProductbyId(id!);
   const [selectedImage, setSelectedImage] = useState(0);
+  const { data: cart } = useCart();
+  const addToCartMutation = useAddToCart();
+  const decreaseFromCartMutation = useDecreaseFromCart();
 
   const avgRating = product?.reviews?.length
     ? product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) /
@@ -20,6 +27,22 @@ export default function ProductDetails() {
     : product?.image
       ? [{ image_url: product.image }]
       : [];
+
+  const cartItem = cart?.cart?.find(
+    (item: any) => item.product_id === product?.id,
+  );
+
+  const quantity = cartItem?.quantity || 0;
+
+  const handleAddToCart = () => {
+    if (!product?.id) return;
+    addToCartMutation.mutate(product.id);
+  };
+
+  const handleDecrease = () => {
+    if (!product?.id) return;
+    decreaseFromCartMutation.mutate(product.id);
+  };
 
   return (
     <>
@@ -38,7 +61,6 @@ export default function ProductDetails() {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-16 mb-20">
-            {/* Images */}
             <div className="flex gap-4">
               <div className="flex flex-col gap-3 pt-1">
                 {images.map((img, index) => (
@@ -120,10 +142,37 @@ export default function ProductDetails() {
               </div>
 
               <div className="flex flex-col gap-3 mt-8">
-                <button className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 rounded-lg transition">
-                  <ShoppingCart className="w-4 h-4" />
-                  Add to Cart
-                </button>
+                {quantity === 0 ? (
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={addToCartMutation.isPending}
+                    className="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 rounded-lg transition disabled:opacity-60"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-2">
+                    <button
+                      onClick={handleDecrease}
+                      disabled={decreaseFromCartMutation.isPending}
+                      className="p-2 bg-white rounded-md shadow hover:bg-gray-50 transition disabled:opacity-50"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+
+                    <span className="font-semibold text-lg">{quantity}</span>
+
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={addToCartMutation.isPending}
+                      className="p-2 bg-white rounded-md shadow hover:bg-gray-50 transition disabled:opacity-50"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
                 <button className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-medium py-3 rounded-lg transition">
                   <Zap className="w-4 h-4" />
                   Buy Now
@@ -164,14 +213,14 @@ export default function ProductDetails() {
             )}
 
             <div className="grid md:grid-cols-2 gap-5">
-              {product?.reviews?.map((review, index) => (
+              {product?.reviews?.map((review: review, index: number) => (
                 <div
                   key={index}
                   className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow transition"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <p className="font-semibold text-gray-900 text-sm">
-                      {review.user?.name || "Anonymous"}
+                      {review.user?.first_name || "Anonymous"}
                     </p>
                     <div className="flex items-center gap-0.5">
                       {[1, 2, 3, 4, 5].map((star) => (

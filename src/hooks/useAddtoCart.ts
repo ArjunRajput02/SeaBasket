@@ -17,6 +17,7 @@ export const useAddToCart = () => {
     mutationFn: (productId: number) => addProductToCart(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      
     },
   });
 };
@@ -28,6 +29,7 @@ export const useDecreaseFromCart = () => {
     mutationFn: (productId: number) => decreaseFromCart(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      
     },
   });
 };
