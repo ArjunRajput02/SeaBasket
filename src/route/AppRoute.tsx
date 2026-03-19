@@ -36,8 +36,10 @@ const AppRoutes = () => {
         element={
           token && !sessionToken ? (
             <OtpVerification />
-          ) : (
+          ) : !token && !sessionToken ? (
             <Navigate to="/login" />
+          ) : (
+            <Navigate to="/" />
           )
         }
         /> */}

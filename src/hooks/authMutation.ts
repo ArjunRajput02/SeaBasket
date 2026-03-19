@@ -10,6 +10,7 @@ import { setToken, setSessionToken } from "@/store/slice/authSlice";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import type { ApiError } from "@/utils/types";
+import { clearCart } from "@/store/slice/cartSlice";
 import { forgotPassword, resetPassword } from "../modules/auth/authApi";
 
 export const useLoginMutation = () => {
@@ -55,6 +56,7 @@ export const useVerifyOtpMutation = () => {
     onSuccess: (data) => {
       const session_token = data.data.data.token;
       dispatch(setSessionToken(session_token));
+      dispatch(clearCart());
       toast.success("OTP Verified Successfully");
       navigate("/");
     },

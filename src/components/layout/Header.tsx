@@ -1,76 +1,101 @@
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { clearToken } from "@/store/slice/authSlice";
+import { useSelector } from "react-redux";
+import { Search } from "lucide-react";
+import { useState } from "react";
 import type { RootState } from "@/store/store";
 
 export default function Header() {
   const navigate = useNavigate();
-
   const sessionToken = useSelector(
     (state: RootState) => state.auth.sessionToken,
   );
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const dispatch = useDispatch();
-  const handleLogout = () => {
-    dispatch(clearToken());
-    navigate("/login");
-  };
+  const cartCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0,
+  );
+
+  const [showSearch, setShowSearch] = useState(false);
+
   return (
-    <header className="w-full bg-white shadow-2xl sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4 md:px-10">
+    <header className="w-full bg-white shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-8">
+
         <div
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer flex-shrink-0"
           onClick={() => navigate("/")}
         >
           <img
             src="/seaBasket.png"
             alt="SeaBasket Logo"
-            className="h-16 w-16"
+            className="h-10 w-10 md:h-12 md:w-12"
           />
-          <span className="text-2xl font-bold text-gray-800 ml-2 hidden md:block">
+          <span className="text-lg md:text-xl font-semibold tracking-wide ml-2">
             SeaBasket
           </span>
         </div>
 
-        <div className="flex-1 max-w-lg mx-6 hidden md:flex">
+        <div className="hidden md:flex flex-1 mx-4 max-w-xl">
           <input
             type="text"
             placeholder="Search Items"
-            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-l-lg focus:outline-none focus:border-orange-500 bg-orange-50"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+          />
+        </div>
+        <div className="md:hidden flex items-center">
+          <Search
+            className="w-6 h-6 cursor-pointer"
+            onClick={() => setShowSearch(!showSearch)}
           />
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 md:space-x-5 flex-shrink-0">
+
+          <div
+            className="relative cursor-pointer"
+            onClick={() => navigate("/cart")}
+          >
+            <img
+              src="/cart.png"
+              alt="Cart"
+              className="h-6 w-6 md:h-7 md:w-7"
+            />
+
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">
+                {cartCount}
+              </span>
+            )}
+          </div>
+
           {sessionToken ? (
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-medium"
-            >
-              Logout
-            </button>
+            <img
+              src="/profile.png"
+              alt="Profile"
+              className="h-7 w-7 md:h-8 md:w-8 rounded-full cursor-pointer"
+              onClick={() => navigate("/profile")}
+            />
           ) : (
             <button
               onClick={() => navigate("/login")}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition font-medium"
+              className="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-medium border border-orange-500 text-orange-500 rounded-md hover:bg-orange-500 hover:text-white transition"
             >
               Login
             </button>
           )}
-
-          <div className="relative">
-            <img src="/cart.png" alt="Cart" className="h-8 w-8" />
-          </div>
         </div>
       </div>
 
-      {/* Mobile search bar */}
-      <div className="md:hidden px-6 pb-4">
-        <input
-          type="text"
-          placeholder="Search Items"
-          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 bg-orange-50"
-        />
-      </div>
+      {showSearch && (
+        <div className="md:hidden px-4 pb-3">
+          <input
+            type="text"
+            placeholder="Search Items"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+          />
+        </div>
+      )}
     </header>
   );
 }
