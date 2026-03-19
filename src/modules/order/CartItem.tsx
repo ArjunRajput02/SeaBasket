@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2 } from "lucide-react";
-import type {CartItemProps} from "./cartType"
+import { Minus, Plus, Trash2,IndianRupee } from "lucide-react";
+import type { CartItemProps } from "./cartTypes";
 
 export default function CartItem({
   name,
@@ -20,7 +20,10 @@ export default function CartItem({
         <h2 className="text-sm font-semibold text-gray-800 line-clamp-2">
           {name}
         </h2>
-        <p className="text-orange-500 font-semibold mt-1">₹{price}</p>
+        <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
+            <IndianRupee size={14} />
+            <span>{price}</span>
+          </div>
 
         <div className="flex items-center gap-2 mt-2">
           <Button size="icon" variant="outline" className="h-8 w-8">

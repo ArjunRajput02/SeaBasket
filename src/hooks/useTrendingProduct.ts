@@ -4,7 +4,6 @@ import {
   getCategories,
   getProfile,
   updateProfile,
-  addProductToCart,
 } from "../modules/home/homePageApi";
 import { toast } from "sonner";
 import type { CategoriesResponse} from "@/modules/home/homeType";
@@ -42,8 +41,4 @@ export const useUpdateProfile = () => {
   });
 };
 
-export const useAddToCart = () => {
-  return useMutation({
-    mutationFn: (productId: number) => addProductToCart(productId),
-  });
-};
+
