@@ -35,3 +35,17 @@ export const getProductById = async (id: string) => {
   const res = await api.get(`/products/${id}`);
   return res.data.product;
 };
+
+export const buyNow = async (id: string) => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.post(
+    `/orders/buy-now/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+};

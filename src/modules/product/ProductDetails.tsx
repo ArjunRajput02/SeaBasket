@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useProductbyId } from "./getProducts";
+import { useBuyNow, useProductbyId } from "./getProducts";
 import { Star, ShoppingCart, Zap, Package } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/layout/Header";
@@ -8,6 +8,9 @@ import type { review } from "./productType";
 import { useAddToCart, useDecreaseFromCart } from "@/hooks/useAddtoCart";
 import { useCart } from "@/hooks/useAddtoCart";
 import { Plus, Minus } from "lucide-react";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store/store";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -16,6 +19,12 @@ export default function ProductDetails() {
   const { data: cart } = useCart();
   const addToCartMutation = useAddToCart();
   const decreaseFromCartMutation = useDecreaseFromCart();
+  const navigate = useNavigate();
+  const buyProduct =useBuyNow();
+
+const sessionToken = useSelector(
+  (state: RootState) => state.auth.sessionToken
+);
 
   const avgRating = product?.reviews?.length
     ? product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) /
@@ -43,6 +52,14 @@ export default function ProductDetails() {
     if (!product?.id) return;
     decreaseFromCartMutation.mutate(product.id);
   };
+
+  const handleBuyNow = () => {
+  if (sessionToken) {
+    navigate("/checkout");
+  } else {
+    navigate("/login");
+  }
+};
 
   return (
     <>

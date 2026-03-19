@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { getProducts, getProductById } from "./productApi";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getProducts, getProductById, buyNow } from "./productApi";
 
 export const useProducts = (categoryId?: string) => {
   return useQuery({
@@ -13,5 +13,12 @@ export const useProductbyId = (id: string) => {
     queryKey: ["product", id],
     queryFn: () => getProductById(id),
     enabled: !!id,
+  });
+};
+
+export const useBuyNow = () => {
+  return useMutation({
+    mutationKey: ["buy"],
+    mutationFn: (id: string) => buyNow(id),
   });
 };
