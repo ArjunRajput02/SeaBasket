@@ -138,7 +138,7 @@ export default function Login() {
 
                   {errors.password && <FormError message={errors.password} />}
 
-                  <span className="text-sm text-orange-400 cursor-pointer hover:underline w-fit ml-auto">
+                  <span onClick={()=> navigate('/forgot-password')} className="text-sm text-orange-400 cursor-pointer hover:underline w-fit ml-auto">
                     Forgot password?
                   </span>
                 </div>

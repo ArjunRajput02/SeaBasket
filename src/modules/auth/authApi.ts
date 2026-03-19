@@ -1,6 +1,12 @@
 import axios from "axios";
 import { store } from "@/store/store";
-import type { RegisterPayload, LoginPayload, OtpPayload } from "./authType";
+import type {
+  RegisterPayload,
+  LoginPayload,
+  OtpPayload,
+  ForgotPasswordPayload,
+  ResetPasswordPayload,
+} from "./authType";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -46,4 +52,11 @@ export const resendOtp = () => {
       },
     },
   );
+};
+export const forgotPassword = (data: ForgotPasswordPayload) => {
+  return API.post("/users/forgot-password", data);
+};
+
+export const resetPassword = (data: ResetPasswordPayload) => {
+  return API.post("/users/reset-password", data);
 };

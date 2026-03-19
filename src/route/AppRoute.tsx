@@ -11,6 +11,8 @@ import OtpVerification from "@/modules/auth/OtpVerification";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { Navigate } from "react-router-dom";
+import ForgotPassword from "@/modules/auth/ForgotPassword";
+import ResetPassword from "@/modules/auth/ResetPassword";
 
 const AppRoutes = () => {
   const token = useSelector<RootState>((state) => state.auth.token);
@@ -27,6 +29,20 @@ const AppRoutes = () => {
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/registration" element={<Registration />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset/:token" element={<ResetPassword />} />
+      {/* <Route
+        path="/verification"
+        element={
+          token && !sessionToken ? (
+            <OtpVerification />
+          ) : !token && !sessionToken ? (
+            <Navigate to="/login" />
+          ) : (
+            <Navigate to="/" />
+          )
+        }
+        /> */}
       <Route
         path="/verification"
         element={
