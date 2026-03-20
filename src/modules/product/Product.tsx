@@ -108,7 +108,7 @@ export default function ProductCard({ product }: { product: Product }) {
               className={
                 star <= Math.round(product.rating)
                   ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-300"
+                  : "text-black-300"
               }
             />
           ))}

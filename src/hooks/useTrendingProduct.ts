@@ -5,6 +5,8 @@ import {
   getProfile,
   updateProfile,
 } from "../modules/home/homePageApi";
+import { toast } from "sonner";
+import type { CategoriesResponse} from "@/modules/home/homeType";
 
 export const useTrendingProducts = () => {
   return useQuery({
@@ -14,7 +16,7 @@ export const useTrendingProducts = () => {
 };
 
 export const useCategories = () => {
-  return useQuery({
+  return useQuery<CategoriesResponse>({
     queryKey: ["categories"],
     queryFn: () => getCategories(),
   });
@@ -30,6 +32,12 @@ export const useProfile = () => {
 export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: updateProfile,
+    onSuccess: () => {
+      toast.success("Profile updated successfully");
+    },
+    onError: (error) => {
+      toast.error(`Update failed: ${error.message}`);
+    },
   });
 };
 

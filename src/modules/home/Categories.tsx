@@ -6,6 +6,7 @@ import {
 import { useCategories } from "../../hooks/useTrendingProduct";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+
 export default function Categories() {
   const { data } = useCategories();
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export default function Categories() {
     <div className="border-b bg-white">
       <NavigationMenu className="max-w-full">
         <NavigationMenuList className="flex gap-6 px-6 py-3 overflow-x-auto">
-          {data?.categories?.map((cat: any) => (
+          {data?.categories?.map((cat) => (
             <NavigationMenuItem key={cat.id}>
               <button
                 onClick={() => {

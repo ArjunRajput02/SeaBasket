@@ -48,3 +48,12 @@ export type LoginPayload = {
 export type OtpPayload = {
   otp: string;
 };
+
+export type ForgotPasswordPayload = {
+  email: string;
+};
+
+export type ResetPasswordPayload = {
+  password: string;
+  token: string;
+};

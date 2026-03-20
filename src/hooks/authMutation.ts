@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import type { ApiError } from "@/utils/types";
 import { clearCart } from "@/store/slice/cartSlice";
+import { forgotPassword, resetPassword } from "../modules/auth/authApi";
 
 export const useLoginMutation = () => {
   const dispatch = useDispatch();
@@ -73,6 +74,34 @@ export const useResendOtpMutation = () => {
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to resend OTP");
+    },
+  });
+};
+
+export const useForgotPasswordMutation = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: forgotPassword,
+    onSuccess: () => {
+      toast.success("Password reset link sent to your email");
+      navigate("/login");
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response?.data?.message || "Failed to send reset link");
+    },
+  });
+};
+
+export const useResetPasswordMutation = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: resetPassword,
+    onSuccess: () => {
+      toast.success("Password reset successfully");
+      navigate("/login");
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response?.data?.message || "Failed to reset password");
     },
   });
 };

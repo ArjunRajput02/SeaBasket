@@ -1,5 +1,4 @@
 "use client";
-
 import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -18,7 +17,6 @@ const banners = [
     glow: "from-orange-400/20 to-transparent",
     eyebrow: "Fresh Picks",
     eyebrowColor: "bg-orange-100 text-orange-700",
-    btnColor: "bg-orange-600 hover:bg-orange-700 text-white",
   },
   {
     eyebrow: "New Arrivals",
