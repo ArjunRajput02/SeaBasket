@@ -9,7 +9,7 @@ export default function ReviewList({ reviews }: { reviews: Review[] }) {
         <p className="text-gray-400 text-sm mt-1">
           Be the first to share your experience
         </p>
-      </div>git add
+      </div>
     );
   }
 
