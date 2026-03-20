@@ -37,8 +37,10 @@ export default function ProductDetails() {
   );
 
   const avgRating = product?.reviews?.length
-    ? product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) /
-      product.reviews.length
+    ? product.reviews.reduce(
+        (acc: number, rating: any) => acc + rating.rating,
+        0,
+      ) / product.reviews.length
     : parseFloat(product?.rating || "0");
 
   const images = product?.images?.length
@@ -57,7 +59,14 @@ export default function ProductDetails() {
     if (!product?.id) return;
 
     if (!sessionToken) {
-      dispatch(addToCartRedux(product.id));
+      dispatch(
+        addToCartRedux({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images?.[0]?.image_url,
+        }),
+      );
     } else {
       addToCartMutation.mutate(product.id);
     }
@@ -74,8 +83,7 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    if (!product?.id)
-      return;
+    if (!product?.id) return;
 
     if (!sessionToken) {
       navigate("/login");
@@ -110,7 +118,7 @@ export default function ProductDetails() {
           <div className="grid lg:grid-cols-2 gap-16 mb-20">
             <div className="flex gap-4">
               <div className="flex flex-col gap-3">
-                {images.map((img:any, index:any) => (
+                {images.map((img: any, index: any) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}

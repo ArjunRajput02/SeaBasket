@@ -1,7 +1,7 @@
 import { Star } from "lucide-react";
-import type { review } from "./productType";
+import type { Review } from "./productType";
 
-export default function ReviewList({ reviews }: { reviews: review[] }) {
+export default function ReviewList({ reviews }: { reviews: Review[] }) {
   if (!reviews || reviews.length === 0) {
     return (
       <div className="border border-dashed border-gray-300 rounded-xl p-10 text-center">

@@ -66,7 +66,7 @@ export default function ReviewForm({
       },
       {
         onSuccess: () => {
-          toast.success("Review submitted! ");
+          toast.success("Review submitted ");
           reset();
         },
         onError: () => toast.error("Failed to submit review"),

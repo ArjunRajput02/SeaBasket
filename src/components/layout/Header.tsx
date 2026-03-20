@@ -3,25 +3,34 @@ import { useSelector } from "react-redux";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import type { RootState } from "@/store/store";
+import { useCart } from "@/hooks/useAddtoCart";
 
 export default function Header() {
   const navigate = useNavigate();
+  const { data } = useCart();
   const sessionToken = useSelector(
     (state: RootState) => state.auth.sessionToken,
   );
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const cartCount = cartItems.reduce(
+  const reduxCartCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0,
   );
+
+  const apiCartCount =
+    data?.cart?.reduce(
+      (total: number, item: any) => total + item.quantity,
+      0,
+    ) || 0;
+
+  const cartCount = sessionToken ? apiCartCount : reduxCartCount;
 
   const [showSearch, setShowSearch] = useState(false);
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-8">
-
         <div
           className="flex items-center cursor-pointer flex-shrink-0"
           onClick={() => navigate("/")}
@@ -51,16 +60,11 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-3 md:space-x-5 flex-shrink-0">
-
           <div
             className="relative cursor-pointer"
             onClick={() => navigate("/cart")}
           >
-            <img
-              src="/cart.png"
-              alt="Cart"
-              className="h-6 w-6 md:h-7 md:w-7"
-            />
+            <img src="/cart.png" alt="Cart" className="h-6 w-6 md:h-7 md:w-7" />
 
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">

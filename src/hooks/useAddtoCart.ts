@@ -2,6 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addProductToCart } from "@/modules/home/homePageApi";
 import { decreaseFromCart } from "@/modules/product/productApi";
 import { decleteFromCart, getCart } from "@/modules/order/cartApi";
+import { toast } from "sonner";
+import { postCheckout } from "@/modules/order/cartApi";
+import { useNavigate } from "react-router-dom";
 
 export const useCart = () => {
   return useQuery({
@@ -39,6 +42,21 @@ export const useDeleteFromCart = () => {
     mutationFn: (productId: number) => decleteFromCart(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
+
+export const useCheckout = () => {
+  const navigate = useNavigate();
+  return useMutation({
+    mutationFn: postCheckout,
+    onSuccess: (data) => {
+      const url = data.url;
+      toast.success("Order Placed");
+      window.location.href = url;
+    },
+    onError: (error: any) => {
+      toast.error(error?.response?.data?.message || "Checkout failed.");
     },
   });
 };

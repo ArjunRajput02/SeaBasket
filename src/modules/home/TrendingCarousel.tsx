@@ -40,7 +40,14 @@ export default function TrendingCarousel() {
       if (sessionToken) {
         addToCartApi(product.id);
       } else {
-        dispatch(addToCart(product.id));
+        dispatch(
+          addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.images?.[0]?.image_url || "",
+          }),
+        );
       }
       toast.success("Item added to cart");
     } catch (error) {
