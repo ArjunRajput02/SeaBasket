@@ -18,9 +18,27 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDispatch } from "react-redux";
 import { clearToken } from "@/store/slice/authSlice";
-import type{ ProfileForm } from "./homeType";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+const profileSchema = z.object({
+  first_name: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
+    .regex(/^[A-Za-z\s]+$/, "First name must contain letters only"),
+  last_name: z
+    .string()
+    .min(2, "Last name must be at least 2 characters")
+    .regex(/^[A-Za-z\s]+$/, "First name must contain letters only"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
+  address: z.string().min(5, "Address is required"),
+  city: z.string().min(2, "City is required"),
+  state: z.string().min(2, "State is required"),
+  pincode: z.string().regex(/^[0-9]{6}$/, "Pincode must be 6 digits"),
+});
 
+type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -33,7 +51,9 @@ export default function Profile() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProfileForm>();
+  } = useForm<ProfileForm>({
+    resolver: zodResolver(profileSchema),
+  });
 
   useEffect(() => {
     if (data) {
@@ -49,6 +69,7 @@ export default function Profile() {
       });
     }
   }, [data, reset]);
+
   const onSubmit = (formData: ProfileForm) => {
     mutate(formData);
   };
@@ -95,6 +116,7 @@ export default function Profile() {
               )}
             </div>
           </div>
+
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div className="flex flex-col gap-1.5">
               <Label>Email</Label>
@@ -142,6 +164,9 @@ export default function Profile() {
                 className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
                 {...register("city")}
               />
+              {errors.city && (
+                <p className="text-red-500 text-xs">{errors.city.message}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -151,6 +176,9 @@ export default function Profile() {
                 className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
                 {...register("state")}
               />
+              {errors.state && (
+                <p className="text-red-500 text-xs">{errors.state.message}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-1.5">
@@ -160,6 +188,9 @@ export default function Profile() {
                 className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
                 {...register("pincode")}
               />
+              {errors.pincode && (
+                <p className="text-red-500 text-xs">{errors.pincode.message}</p>
+              )}
             </div>
           </div>
 
@@ -176,7 +207,6 @@ export default function Profile() {
                   Logout
                 </Button>
               </AlertDialogTrigger>
-
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Are you sure?</AlertDialogTitle>
@@ -184,7 +214,6 @@ export default function Profile() {
                     You will be logged out of your account.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-
                 <AlertDialogFooter>
                   <AlertDialogCancel>No</AlertDialogCancel>
                   <AlertDialogAction
