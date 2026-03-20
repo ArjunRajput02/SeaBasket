@@ -38,7 +38,14 @@ export default function ProductCard({ product }: { product: Product }) {
     if (sessionToken) {
       mutateAdd(product.id);
     } else {
-      dispatch(addToCart(product.id));
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images?.[0]?.image_url,
+        }),
+      );
     }
   };
 

@@ -57,7 +57,14 @@ export default function ProductDetails() {
     if (!product?.id) return;
 
     if (!sessionToken) {
-      dispatch(addToCartRedux(product.id));
+      dispatch(
+        addToCartRedux({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.images?.[0]?.image_url,
+        }),
+      );
     } else {
       addToCartMutation.mutate(product.id);
     }
@@ -74,8 +81,7 @@ export default function ProductDetails() {
   };
 
   const handleBuyNow = () => {
-    if (!product?.id)
-      return;
+    if (!product?.id) return;
 
     if (!sessionToken) {
       navigate("/login");
@@ -110,7 +116,7 @@ export default function ProductDetails() {
           <div className="grid lg:grid-cols-2 gap-16 mb-20">
             <div className="flex gap-4">
               <div className="flex flex-col gap-3">
-                {images.map((img:any, index:any) => (
+                {images.map((img: any, index: any) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
