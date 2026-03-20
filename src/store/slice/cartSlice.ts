@@ -1,16 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type {CartState } from "@/utils/types";
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-}
-
-interface CartState {
-  items: CartItem[];
-}
 
 const initialState: CartState = {
   items: [],
@@ -28,8 +18,7 @@ const cartSlice = createSlice({
         price: number;
         image: string;
       }>,
-    ) => {
-      console.log("ADD PAYLOAD:", action.payload); // 👈 DEBUG
+    ) => {; 
 
       const existingItem = state.items.find(
         (item) => item.id === action.payload.id,

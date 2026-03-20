@@ -3,7 +3,7 @@ import CartItem from "./CartItem";
 import { useCart } from "@/hooks/useAddtoCart";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import { IndianRupee, ShoppingBag, ArrowRight } from "lucide-react";
+import { IndianRupee, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCheckout } from "@/hooks/useAddtoCart";
 import { useNavigate } from "react-router-dom";
@@ -46,8 +46,7 @@ export default function Cart() {
       <>
         <Header />
         <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
-          <ShoppingBag className="text-gray-300" size={56} strokeWidth={1} />
-          <p className="text-gray-500 font-medium">Your cart is empty 🥲</p>
+          <p className="text-gray-500 font-medium">Your cart is empty </p>
         </div>
       </>
     );

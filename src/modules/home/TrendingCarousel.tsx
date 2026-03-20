@@ -45,7 +45,7 @@ export default function TrendingCarousel() {
             id: product.id,
             name: product.name,
             price: product.price,
-            image: product.images?.[0]?.image_url,
+            image: product.images?.[0]?.image_url || "",
           }),
         );
       }

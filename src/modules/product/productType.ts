@@ -25,14 +25,13 @@ export type FilterTypeProps = {
   filters: FiltersType;
   setFilters: (val: FiltersType) => void;
 };
-export type user = {
-  user: {
-    first_name: string;
-  };
+export type User = {
+  first_name: string;
 };
-export type review = {
+
+export type Review = {
   id: number;
   rating: number;
   comment: string;
-  user: user[];
+  user?: User;
 };

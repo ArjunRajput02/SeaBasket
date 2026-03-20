@@ -37,8 +37,10 @@ export default function ProductDetails() {
   );
 
   const avgRating = product?.reviews?.length
-    ? product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) /
-      product.reviews.length
+    ? product.reviews.reduce(
+        (acc: number, rating: any) => acc + rating.rating,
+        0,
+      ) / product.reviews.length
     : parseFloat(product?.rating || "0");
 
   const images = product?.images?.length
