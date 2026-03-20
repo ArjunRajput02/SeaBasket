@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addProductToCart } from "@/modules/home/homePageApi";
 import { decreaseFromCart } from "@/modules/product/productApi";
-import { getCart } from "@/modules/order/cartApi";
+import { decleteFromCart, getCart } from "@/modules/order/cartApi";
 
 export const useCart = () => {
   return useQuery({
@@ -17,7 +17,6 @@ export const useAddToCart = () => {
     mutationFn: (productId: number) => addProductToCart(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
-      
     },
   });
 };
@@ -29,7 +28,17 @@ export const useDecreaseFromCart = () => {
     mutationFn: (productId: number) => decreaseFromCart(productId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
-      
+    },
+  });
+};
+
+export const useDeleteFromCart = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (productId: number) => decleteFromCart(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 };

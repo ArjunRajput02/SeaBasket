@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import { useBuyNow, useProductbyId } from "./getProducts";
-import { Star, ShoppingCart, Zap, Package } from "lucide-react";
+import { useBuyNow, useProductbyId, useAddReview } from "./getProducts";
+import { Star, ShoppingCart, Zap, Package, Send } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -26,6 +26,13 @@ export default function ProductDetails() {
   const navigate = useNavigate();
   const buyProduct = useBuyNow();
   const dispatch = useDispatch();
+  const addReviewMutation = useAddReview();
+
+  const [reviewForm, setReviewForm] = useState({
+    rating: 0,
+    comment: "",
+    hoverRating: 0,
+  });
 
   const sessionToken = useSelector(
     (state: RootState) => state.auth.sessionToken,
@@ -50,34 +57,28 @@ export default function ProductDetails() {
 
   const handleAddToCart = () => {
     if (!product?.id) return;
-
-    if (sessionToken) {
+    if (!sessionToken) {
       dispatch(addToCartRedux(product.id));
     } else {
       addToCartMutation.mutate(product.id);
     }
   };
 
-const handleDecrease = () => {
-  if (!product?.id) 
-    return;
-
-  if (sessionToken) {
-    dispatch(decreaseFromCartRedux(product.id));
-  } else {
-    decreaseFromCartMutation.mutate(product.id);
-  }
-};
+  const handleDecrease = () => {
+    if (!product?.id) return;
+    if (!sessionToken) {
+      dispatch(decreaseFromCartRedux(product.id));
+    } else {
+      decreaseFromCartMutation.mutate(product.id);
+    }
+  };
 
   const handleBuyNow = () => {
-    if (!product?.id) 
-      return;
-
+    if (!product?.id) return;
     if (!sessionToken) {
       navigate("/login");
       return;
     }
-
     buyProduct.mutate(product.id.toString(), {
       onSuccess: (data) => {
         const url = data?.checkout_url || data?.url;
@@ -89,6 +90,28 @@ const handleDecrease = () => {
     });
   };
 
+  const handleSubmitReview = () => {
+    if (!product?.id || reviewForm.rating === 0) return;
+    if (!sessionToken) {
+      navigate("/login");
+      return;
+    }
+    addReviewMutation.mutate(
+      {
+        productId: product.id.toString(),
+        rating: reviewForm.rating,
+        comment: reviewForm.comment,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Review submitted!");
+          setReviewForm({ rating: 0, comment: "", hoverRating: 0 });
+        },
+        onError: () => toast.error("Failed to submit review"),
+      },
+    );
+  };
+
   return (
     <>
       <Header />
@@ -97,6 +120,7 @@ const handleDecrease = () => {
         <div className="h-1 w-full bg-amber-500" />
 
         <div className="max-w-6xl mx-auto px-6 py-12">
+          {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-10 text-xs text-gray-400 uppercase tracking-widest">
             <span>Shop</span>
             <span>/</span>
@@ -105,7 +129,9 @@ const handleDecrease = () => {
             <span className="text-gray-900 font-medium">{product?.name}</span>
           </div>
 
+          {/* Product Grid */}
           <div className="grid lg:grid-cols-2 gap-16 mb-20">
+            {/* Images */}
             <div className="flex gap-4">
               <div className="flex flex-col gap-3 pt-1">
                 {images.map((img, index) => (
@@ -138,7 +164,7 @@ const handleDecrease = () => {
 
             <div className="flex flex-col justify-between py-2">
               <div className="flex flex-col gap-6">
-                <span className="text-xs uppercase tracking-wide text-amber-600 font-medium border border-amber-200 px-3 py-1 rounded-full bg-amber-50">
+                <span className="text-xs uppercase tracking-wide text-amber-600 font-medium border border-amber-200 px-3 py-1 rounded-full bg-amber-50 w-fit">
                   {product?.category?.category_name}
                 </span>
 
@@ -206,7 +232,6 @@ const handleDecrease = () => {
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="font-semibold text-lg">{quantity}</span>
-
                     <button
                       onClick={handleAddToCart}
                       disabled={addToCartMutation.isPending}
@@ -234,7 +259,6 @@ const handleDecrease = () => {
               <h2 className="text-2xl font-semibold text-gray-900">
                 Customer Reviews
               </h2>
-
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -252,7 +276,7 @@ const handleDecrease = () => {
             <div className="h-px bg-gray-200 mb-8" />
 
             {(!product?.reviews || product.reviews.length === 0) && (
-              <div className="border border-dashed border-gray-300 rounded-xl p-10 text-center">
+              <div className="border border-dashed border-gray-300 rounded-xl p-10 text-center mb-8">
                 <p className="text-gray-500 font-medium">No reviews yet</p>
                 <p className="text-gray-400 text-sm mt-1">
                   Be the first to share your experience
@@ -260,7 +284,7 @@ const handleDecrease = () => {
               </div>
             )}
 
-            <div className="grid md:grid-cols-2 gap-5">
+            <div className="grid md:grid-cols-2 gap-5 mb-12">
               {product?.reviews?.map((review: review, index: number) => (
                 <div
                   key={index}
@@ -283,18 +307,79 @@ const handleDecrease = () => {
                       ))}
                     </div>
                   </div>
-
-                  <div
-                    className="text-5xl leading-none text-gray-200 font-serif mb-1 -mt-1"
-                    aria-hidden
-                  >
-                    "
-                  </div>
                   <p className="text-gray-600 text-sm leading-relaxed">
                     {review.comment || "No comment provided."}
                   </p>
                 </div>
               ))}
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-1 h-6 bg-amber-500 rounded-full" />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Write a Review
+                </h3>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-xs uppercase tracking-widest text-black mb-3 font-medium">
+                  Your Rating
+                </p>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() =>
+                        setReviewForm((f) => ({ ...f, rating: star }))
+                      }
+                      onMouseEnter={() =>
+                        setReviewForm((f) => ({ ...f, hoverRating: star }))
+                      }
+                      onMouseLeave={() =>
+                        setReviewForm((f) => ({ ...f, hoverRating: 0 }))
+                      }
+                      className="transition-transform hover:scale-110 focus:outline-none"
+                      aria-label={`Rate ${star} star${star > 1 ? "s" : ""}`}
+                    >
+                      <Star
+                        className={`h-7 w-7 transition-colors duration-100 ${
+                          star <= (reviewForm.hoverRating || reviewForm.rating)
+                            ? "fill-amber-500 text-amber-500"
+                            : "text-gray-200 hover:text-amber-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-6">
+                <p className="text-xs uppercase tracking-widest text-black mb-3 font-medium">
+                  Your Comment
+                </p>
+                <textarea
+                  value={reviewForm.comment}
+                  onChange={(e) =>
+                    setReviewForm((f) => ({ ...f, comment: e.target.value }))
+                  }
+                  placeholder="Share your experience with this product..."
+                  rows={4}
+                  className="w-full text-sm text-gray-700 placeholder-gray-300 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={handleSubmitReview}
+                  disabled={addReviewMutation.isPending}
+                  className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-6 py-2.5 rounded-lg transition"
+                >
+                  {addReviewMutation.isPending
+                    ? "Submitting..."
+                    : "Submit Review"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

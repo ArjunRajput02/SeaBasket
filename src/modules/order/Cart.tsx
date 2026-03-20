@@ -1,6 +1,6 @@
 import Header from "@/components/layout/Header";
 import CartItem from "./CartItem";
-import { useCart } from "./useCart";
+import { useCart } from "@/hooks/useAddtoCart";
 
 export default function Cart() {
   const { data } = useCart();
@@ -10,7 +10,7 @@ export default function Cart() {
       <div className="space-y-4">
         {data?.cart?.map((item: any) => (
           <CartItem
-            key={item.id}
+            id={item.product.id}
             name={item.product.name}
             price={Number(item.product.price)}
             image={item.product.images?.[0]?.image_url}
