@@ -9,7 +9,7 @@ export default function Cart() {
     <>
       <Header />
       <div className="space-y-4">
-        {data?.cart?.map((item) => (
+        {data?.cart?.map((item:any) => (
           <CartItem
             id={item.product.id}
             name={item.product.name}
