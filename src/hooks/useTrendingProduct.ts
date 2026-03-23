@@ -4,6 +4,7 @@ import {
   getCategories,
   getProfile,
   updateProfile,
+  getOrders
 } from "../modules/home/homePageApi";
 import { toast } from "sonner";
 import type { CategoriesResponse} from "@/modules/home/homeType";
@@ -41,4 +42,9 @@ export const useUpdateProfile = () => {
   });
 };
 
-
+export const useOrders = () => {
+  return useQuery({
+    queryKey: ["orders"],
+    queryFn: () => getOrders(),
+  });
+};

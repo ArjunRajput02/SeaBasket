@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
-import { useProfile, useUpdateProfile } from "../../hooks/useTrendingProduct";
+import {
+  useProfile,
+  useUpdateProfile,
+  useOrders,
+} from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
@@ -16,10 +20,12 @@ import {
   AlertDialogDescription,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type { Order } from "./homeType";
 import { useDispatch } from "react-redux";
 import { clearToken } from "@/store/slice/authSlice";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Orders from "./Orders";
 
 const profileSchema = z.object({
   first_name: z
@@ -29,7 +35,7 @@ const profileSchema = z.object({
   last_name: z
     .string()
     .min(2, "Last name must be at least 2 characters")
-    .regex(/^[A-Za-z\s]+$/, "First name must contain letters only"),
+    .regex(/^[A-Za-z\s]+$/, "Last name must contain letters only"),
   email: z.string().email("Invalid email"),
   phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
   address: z.string().min(5, "Address is required"),
@@ -45,6 +51,8 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { data } = useProfile();
   const { mutate, isPending } = useUpdateProfile();
+  const { data: ordersData, isLoading: ordersLoading } = useOrders();
+  const orders: Order[] = ordersData?.orders ?? [];
 
   const {
     register,
@@ -70,9 +78,7 @@ export default function Profile() {
     }
   }, [data, reset]);
 
-  const onSubmit = (formData: ProfileForm) => {
-    mutate(formData);
-  };
+  const onSubmit = (formData: ProfileForm) => mutate(formData);
 
   const handleLogout = () => {
     dispatch(clearToken());
@@ -80,19 +86,20 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+    <div className="flex flex-col items-center min-h-screen bg-gray-100 px-4 py-8 gap-6">
       <div className="w-full max-w-3xl bg-white rounded-xl shadow-sm border p-8">
         <div className="text-center mb-6">
           <h1 className="text-xl font-semibold">My Profile</h1>
           <p className="text-sm text-gray-500">Update your personal details</p>
         </div>
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div className="flex flex-col gap-1.5">
               <Label>First Name</Label>
               <Input
                 placeholder="First Name"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("first_name")}
               />
               {errors.first_name && (
@@ -101,12 +108,11 @@ export default function Profile() {
                 </p>
               )}
             </div>
-
             <div className="flex flex-col gap-1.5">
               <Label>Last Name</Label>
               <Input
                 placeholder="Last Name"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("last_name")}
               />
               {errors.last_name && (
@@ -123,19 +129,18 @@ export default function Profile() {
               <Input
                 type="email"
                 placeholder="Email"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("email")}
               />
               {errors.email && (
                 <p className="text-red-500 text-xs">{errors.email.message}</p>
               )}
             </div>
-
             <div className="flex flex-col gap-1.5">
               <Label>Mobile Number</Label>
               <Input
                 placeholder="Phone"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("phone")}
               />
               {errors.phone && (
@@ -148,7 +153,7 @@ export default function Profile() {
             <Label>Shipping Address</Label>
             <Input
               placeholder="Address"
-              className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+              className="border-orange-200 focus-visible:ring-orange-400 h-11"
               {...register("address")}
             />
             {errors.address && (
@@ -161,31 +166,29 @@ export default function Profile() {
               <Label>City</Label>
               <Input
                 placeholder="City"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("city")}
               />
               {errors.city && (
                 <p className="text-red-500 text-xs">{errors.city.message}</p>
               )}
             </div>
-
             <div className="flex flex-col gap-1.5">
               <Label>State</Label>
               <Input
                 placeholder="State"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("state")}
               />
               {errors.state && (
                 <p className="text-red-500 text-xs">{errors.state.message}</p>
               )}
             </div>
-
             <div className="flex flex-col gap-1.5">
               <Label>Pincode</Label>
               <Input
                 placeholder="Pincode"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
                 {...register("pincode")}
               />
               {errors.pincode && (
@@ -236,6 +239,7 @@ export default function Profile() {
           </div>
         </form>
       </div>
+      <Orders orders={orders} ordersLoading={ordersLoading} />;
     </div>
   );
 }

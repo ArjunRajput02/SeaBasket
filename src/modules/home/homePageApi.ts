@@ -48,10 +48,19 @@ export const addProductToCart = async (productId: number) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }
+    },
   );
 
   return res.data;
 };
 
+export const getOrders = async () => {
+  const token = store.getState().auth.sessionToken;
+  const response = await api.get("/orders/my-orders/", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
+  return response.data;
+};
