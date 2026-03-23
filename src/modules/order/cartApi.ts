@@ -31,16 +31,17 @@ export const decleteFromCart = async (productId: number) => {
   return res.data;
 };
 
-export const postCheckout = async () => {
+export const postCheckout = async (payload: any) => {
   const token = store.getState().auth.sessionToken;
   const res = await api.post(
     "/orders/checkout",
-    {},
+    payload, 
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     }
   );
+
   return res.data;
 };
