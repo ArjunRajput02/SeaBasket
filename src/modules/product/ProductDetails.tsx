@@ -90,12 +90,11 @@ export default function ProductDetails() {
       return;
     }
 
-    buyProduct.mutate(product.id.toString(), {
-      onSuccess: (data) => {
-        const url = data?.checkout_url || data?.url;
-        window.location.href = url;
+    navigate("/checkout", {
+      state: {
+        isSingle: true,
+        productId: product.id,
       },
-      onError: () => toast.error("Failed to process"),
     });
   };
 

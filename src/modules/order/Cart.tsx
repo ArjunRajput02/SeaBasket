@@ -32,14 +32,17 @@ export default function Cart() {
     0,
   );
 
-  const handleCheckout = () => {
-    if (!isLoggedIn) {
-      toast.error("Please login to place an order.");
-      navigation("/login");
-      return;
-    }
-    checkout();
-  };
+const handleCheckout = () => {
+  if (!isLoggedIn) {
+    toast.error("Please login to place an order.");
+    navigation("/login");
+    return;
+  }
+
+  navigation("/checkout", {
+    state: { isSingle: false }, 
+  });
+};
 
   if (!cartItems.length) {
     return (
