@@ -5,3 +5,4 @@ export type CartItemProps = {
   image: string;
   quantity: number;
 };
+export type cartItem = CartItemProps[]

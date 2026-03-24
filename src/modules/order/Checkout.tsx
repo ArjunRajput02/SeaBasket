@@ -12,6 +12,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import StripeModal from "./StripeModal";
 import PaymentSuccessModal from "./PaymentSuccessModal";
 import { toast } from "sonner";
+import type { CartItemProps } from "./cartTypes";
 
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY_STRIPE);
 
@@ -29,17 +30,13 @@ export default function CheckoutPage() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { data: profileData, isLoading: profileLoading } = useProfile();
-  const { data: cartData, isLoading: cartLoading } = useCart({
-    enabled: !isSingle,
-  });
-  const { data: productData, isLoading: productLoading } = useProductbyId(
-    productId,
-    { enabled: isSingle },
-  );
+  const { data: cartData, isLoading: cartLoading } = useCart();
+  const { data: productData, isLoading: productLoading } =
+    useProductbyId(productId);
 
   const { mutate: checkout, isPending } = useCheckout();
 
-  const items = isSingle
+  const items:CartItemProps[] = isSingle
     ? productData
       ? [
           {
@@ -51,7 +48,7 @@ export default function CheckoutPage() {
           },
         ]
       : []
-    : cartData?.cart?.map((item) => ({
+    : cartData?.cart?.map((item:any) => ({
         id: item.id,
         name: item.product.name,
         price: item.product.price,
@@ -60,7 +57,7 @@ export default function CheckoutPage() {
       })) || [];
 
   const subtotal = items.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (acc:number, item) => acc + item.price * item.quantity,
     0,
   );
   const total = subtotal;
@@ -113,7 +110,7 @@ export default function CheckoutPage() {
             });
           } else if (formData.paymentMethod === "COD") {
             toast.success("Order Placed!");
-            navigate("/orders"); 
+            navigate("/orders");
           } else {
             toast.error("Unexpected checkout response");
           }
@@ -149,7 +146,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-               
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Email
@@ -161,7 +157,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Phone
@@ -173,7 +168,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-          
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Address
@@ -212,7 +206,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-             
               <div className="bg-white rounded-3xl shadow-sm p-6">
                 <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                   Order Summary
@@ -222,11 +215,11 @@ export default function CheckoutPage() {
                   {items.length === 0 ? (
                     <p className="text-sm text-gray-400">Your cart is empty</p>
                   ) : (
-                    items.map((item) => (
+                    items.map((item:CartItemProps) => (
                       <div key={item.id} className="flex items-center gap-3">
                         <div className="relative w-16 h-12 rounded-xl overflow-hidden bg-gray-100">
                           <img
-                            src={item.image || "/placeholder.png"}
+                            src={item.image || "/seaBasket.png"}
                             alt={item.name}
                             className="w-full h-full object-cover"
                           />
@@ -258,7 +251,6 @@ export default function CheckoutPage() {
                   </span>
                 </div>
 
-                {/* PAYMENT */}
                 <div className="mb-4">
                   <h3 className="text-sm font-semibold mb-3 text-gray-700">
                     Payment Method
@@ -316,7 +308,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* STRIPE MODAL */}
       {paymentState && (
         <Elements
           stripe={stripePromise}
