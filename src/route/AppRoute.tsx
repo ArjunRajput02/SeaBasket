@@ -33,18 +33,7 @@ const AppRoutes = () => {
       <Route path="/registration" element={<Registration />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset/:token" element={<ResetPassword />} />
-      {/* <Route
-        path="/verification"
-        element={
-          token && !sessionToken ? (
-            <OtpVerification />
-          ) : !token && !sessionToken ? (
-            <Navigate to="/login" />
-          ) : (
-            <Navigate to="/" />
-          )
-        }
-        /> */}
+
       <Route
         path="/verification"
         element={

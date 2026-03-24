@@ -10,13 +10,13 @@ import Footer from "@/components/layout/Footer";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeModal from "./StripeModal";
+import PaymentSuccessModal from "./PaymentSuccessModal";
 import { toast } from "sonner";
 
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY_STRIPE);
 
 type PaymentState = {
   clientSecret: string;
-  orderId: number;
 } | null;
 
 export default function CheckoutPage() {
@@ -24,6 +24,9 @@ export default function CheckoutPage() {
   const location = useLocation();
   const isSingle = location.state?.isSingle || false;
   const productId = location.state?.productId;
+
+  const [paymentState, setPaymentState] = useState<PaymentState>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const { data: profileData, isLoading: profileLoading } = useProfile();
   const { data: cartData, isLoading: cartLoading } = useCart({
@@ -35,8 +38,6 @@ export default function CheckoutPage() {
   );
 
   const { mutate: checkout, isPending } = useCheckout();
-
-  const [paymentState, setPaymentState] = useState<PaymentState>(null);
 
   const items = isSingle
     ? productData
@@ -109,11 +110,10 @@ export default function CheckoutPage() {
 
             setPaymentState({
               clientSecret: data.client_secret,
-              orderId: data.order?.id,
             });
-          } else if (formData.paymentMethod === "COD" && data.order?.id) {
+          } else if (formData.paymentMethod === "COD") {
             toast.success("Order Placed!");
-            navigate(`/orders/${data.order.id}`);
+            navigate("/orders"); 
           } else {
             toast.error("Unexpected checkout response");
           }
@@ -148,6 +148,8 @@ export default function CheckoutPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-100"
                   />
                 </div>
+
+               
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Email
@@ -158,6 +160,8 @@ export default function CheckoutPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-100"
                   />
                 </div>
+
+                
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Phone
@@ -168,6 +172,8 @@ export default function CheckoutPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-100"
                   />
                 </div>
+
+          
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Address
@@ -186,60 +192,27 @@ export default function CheckoutPage() {
                     </p>
                   )}
                 </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <label className="text-xs font-semibold text-gray-600">
-                      City
-                    </label>
-                    <input
-                      {...register("city", { required: "City is required" })}
-                      className={`w-full border rounded-xl px-4 py-3 ${
-                        errors.city ? "border-red-400" : "border-gray-200"
-                      }`}
-                    />
-                    {errors.city && (
-                      <p className="text-red-500 text-xs">
-                        {String(errors.city.message)}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-gray-600">
-                      State
-                    </label>
-                    <input
-                      {...register("state", { required: "State is required" })}
-                      className={`w-full border rounded-xl px-4 py-3 ${
-                        errors.state ? "border-red-400" : "border-gray-200"
-                      }`}
-                    />
-                    {errors.state && (
-                      <p className="text-red-500 text-xs">
-                        {String(errors.state.message)}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="text-xs font-semibold text-gray-600">
-                      Pincode
-                    </label>
-                    <input
-                      {...register("pincode", {
-                        required: "Pincode is required",
-                      })}
-                      className={`w-full border rounded-xl px-4 py-3 ${
-                        errors.pincode ? "border-red-400" : "border-gray-200"
-                      }`}
-                    />
-                    {errors.pincode && (
-                      <p className="text-red-500 text-xs">
-                        {String(errors.pincode.message)}
-                      </p>
-                    )}
-                  </div>
+                  <input
+                    {...register("city")}
+                    placeholder="City"
+                    className="border p-3 rounded-xl"
+                  />
+                  <input
+                    {...register("state")}
+                    placeholder="State"
+                    className="border p-3 rounded-xl"
+                  />
+                  <input
+                    {...register("pincode")}
+                    placeholder="Pincode"
+                    className="border p-3 rounded-xl"
+                  />
                 </div>
               </div>
 
+             
               <div className="bg-white rounded-3xl shadow-sm p-6">
                 <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                   Order Summary
@@ -261,11 +234,13 @@ export default function CheckoutPage() {
                             {item.quantity}
                           </span>
                         </div>
+
                         <div className="flex-1">
                           <p className="text-sm font-semibold truncate text-gray-800">
                             {item.name}
                           </p>
                         </div>
+
                         <div className="flex items-center text-sm font-semibold text-gray-800">
                           <IndianRupee size={14} />
                           {(item.price * item.quantity).toFixed(2)}
@@ -283,10 +258,12 @@ export default function CheckoutPage() {
                   </span>
                 </div>
 
+                {/* PAYMENT */}
                 <div className="mb-4">
                   <h3 className="text-sm font-semibold mb-3 text-gray-700">
                     Payment Method
                   </h3>
+
                   <div className="space-y-3">
                     <label
                       className={`flex items-center border rounded-xl px-4 py-3 cursor-pointer transition-colors ${
@@ -303,6 +280,7 @@ export default function CheckoutPage() {
                       />
                       Cash on Delivery
                     </label>
+
                     <label
                       className={`flex items-center border rounded-xl px-4 py-3 cursor-pointer transition-colors ${
                         selectedPayment === "ONLINE"
@@ -323,7 +301,7 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={items.length === 0 || isPending}
+                  disabled={!items.length || isPending}
                   className="w-full bg-orange-400 hover:bg-orange-600 disabled:bg-gray-300 text-white font-semibold py-3.5 rounded-xl transition-colors"
                 >
                   {isPending
@@ -338,6 +316,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
+      {/* STRIPE MODAL */}
       {paymentState && (
         <Elements
           stripe={stripePromise}
@@ -346,10 +325,19 @@ export default function CheckoutPage() {
           <StripeModal
             isOpen={true}
             onClose={() => setPaymentState(null)}
-            order_id={paymentState.orderId}
+            onSuccess={() => {
+              setPaymentState(null);
+              setShowSuccess(true);
+            }}
           />
         </Elements>
       )}
+
+      <PaymentSuccessModal
+        isOpen={showSuccess}
+        onClose={() => setShowSuccess(false)}
+      />
+
       <Footer />
     </>
   );

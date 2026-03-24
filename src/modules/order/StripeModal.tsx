@@ -9,10 +9,14 @@ import { motion } from "framer-motion";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  order_id: number | null;
+  onSuccess: () => void; 
 };
 
-export default function StripeModal({ isOpen, onClose, order_id }: Props) {
+export default function StripeModal({
+  isOpen,
+  onClose,
+  onSuccess,
+}: Props) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -21,21 +25,23 @@ export default function StripeModal({ isOpen, onClose, order_id }: Props) {
   const handlePay = async () => {
     if (!stripe || !elements) return;
 
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout?success=true&order_id=${order_id}`,
-      },
+      redirect: "if_required", 
     });
 
     if (error) {
       toast.error(error.message || "Payment Failed. Try again.");
+      return;
+    }
+
+    if (paymentIntent?.status === "succeeded") {
+      onSuccess(); 
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-
       <div className="absolute inset-0" onClick={onClose} />
 
       <motion.div
@@ -44,29 +50,26 @@ export default function StripeModal({ isOpen, onClose, order_id }: Props) {
         transition={{ duration: 0.25 }}
         className="relative z-10 w-[92%] max-w-xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[85vh]"
       >
-        
         <div className="p-5 border-b">
           <h2 className="text-xl font-semibold text-gray-800">
-            Complete Payment 
+            Complete Payment
           </h2>
           <p className="text-sm text-gray-500">
             Secure checkout powered by Stripe
           </p>
         </div>
 
-        {/* Scrollable Content */}
         <div className="p-5 overflow-y-auto flex-1">
           <div className="border rounded-xl p-4 bg-gray-50">
             <PaymentElement
               options={{
                 layout: "tabs",
-                paymentMethodOrder: ["card"], // ✅ removes UPI & others
+                paymentMethodOrder: ["card"],
               }}
             />
           </div>
         </div>
 
-        {/* Footer */}
         <div className="p-5 border-t flex flex-col gap-3">
           <button
             onClick={handlePay}
