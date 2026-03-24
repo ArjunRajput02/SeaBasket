@@ -113,7 +113,7 @@ export default function CheckoutPage() {
             });
           } else if (formData.paymentMethod === "COD") {
             toast.success("Order Placed!");
-            navigate("/orders"); 
+            navigate("/order");
           } else {
             toast.error("Unexpected checkout response");
           }
@@ -149,7 +149,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-               
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Email
@@ -161,7 +160,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-                
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Phone
@@ -173,7 +171,6 @@ export default function CheckoutPage() {
                   />
                 </div>
 
-          
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
                     Address
@@ -212,7 +209,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-             
               <div className="bg-white rounded-3xl shadow-sm p-6">
                 <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                   Order Summary

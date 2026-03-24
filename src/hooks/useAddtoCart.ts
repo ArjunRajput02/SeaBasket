@@ -4,7 +4,7 @@ import { decreaseFromCart } from "@/modules/product/productApi";
 import { decleteFromCart, getCart } from "@/modules/order/cartApi";
 import { toast } from "sonner";
 import { postCheckout } from "@/modules/order/cartApi";
-import { useNavigate } from "react-router-dom";
+
 
 export const useCart = () => {
   return useQuery({
