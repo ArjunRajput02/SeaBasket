@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import {
   PaymentElement,
   useStripe,
@@ -17,22 +16,10 @@ export default function StripeModal({ isOpen, onClose, order_id }: Props) {
   const stripe = useStripe();
   const elements = useElements();
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden"; // lock scroll
-    } else {
-      document.body.style.overflow = ""; // unlock scroll
-    }
-
-    return () => {
-      document.body.style.overflow = ""; // cleanup on unmount
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   const handlePay = async () => {
-    if (!stripe || !elements || !order_id) return;
+    if (!stripe || !elements) return;
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -42,41 +29,55 @@ export default function StripeModal({ isOpen, onClose, order_id }: Props) {
     });
 
     if (error) {
-      toast.error(error.message || "Payment Failed Please Try Again");
+      toast.error(error.message || "Payment Failed. Try again.");
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+
+      <div className="absolute inset-0" onClick={onClose} />
+
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 30 }}
+        initial={{ opacity: 0, scale: 0.95, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="relative z-10 w-[90%] max-w-lg sm:max-w-xl md:max-w-2xl bg-white rounded-3xl shadow-2xl p-6 space-y-6"
+        transition={{ duration: 0.25 }}
+        className="relative z-10 w-[92%] max-w-xl bg-white rounded-3xl shadow-2xl flex flex-col max-h-[85vh]"
       >
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-bold text-gray-800">
-            Secure Payment 💳
+        
+        <div className="p-5 border-b">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Complete Payment 
           </h2>
-          <p className="text-sm text-gray-500">Pay safely using Stripe</p>
+          <p className="text-sm text-gray-500">
+            Secure checkout powered by Stripe
+          </p>
         </div>
-        <div className="w-full border border-gray-200 rounded-xl p-5 bg-gray-50">
-          <PaymentElement options={{ layout: "tabs" }} />
+
+        {/* Scrollable Content */}
+        <div className="p-5 overflow-y-auto flex-1">
+          <div className="border rounded-xl p-4 bg-gray-50">
+            <PaymentElement
+              options={{
+                layout: "tabs",
+                paymentMethodOrder: ["card"], // ✅ removes UPI & others
+              }}
+            />
+          </div>
         </div>
-        <div className="flex flex-col gap-3">
+
+        {/* Footer */}
+        <div className="p-5 border-t flex flex-col gap-3">
           <button
             onClick={handlePay}
-            className="w-full bg-linear-to-r from-emerald-500 to-emerald-600 text-white py-3 rounded-xl font-medium shadow-md hover:shadow-emerald-200 transition-all hover:scale-[1.02]"
+            className="w-full bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition"
           >
             Pay Now
           </button>
+
           <button
             onClick={onClose}
-            className="w-full border border-gray-300 py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition"
+            className="w-full border py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition"
           >
             Cancel
           </button>

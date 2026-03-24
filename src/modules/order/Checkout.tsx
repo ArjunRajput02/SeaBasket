@@ -14,7 +14,6 @@ import { toast } from "sonner";
 
 const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY_STRIPE);
 
-// Single atomic state for payment — eliminates the race condition
 type PaymentState = {
   clientSecret: string;
   orderId: number;
@@ -37,7 +36,6 @@ export default function CheckoutPage() {
 
   const { mutate: checkout, isPending } = useCheckout();
 
-  // ✅ Single atomic state — no more setTimeout race condition
   const [paymentState, setPaymentState] = useState<PaymentState>(null);
 
   const items = isSingle
@@ -108,9 +106,10 @@ export default function CheckoutPage() {
         onSuccess: (data) => {
           if (formData.paymentMethod === "ONLINE" && data.client_secret) {
             toast.success("Proceed to payment");
+
             setPaymentState({
               clientSecret: data.client_secret,
-              orderId: data.order?.id || 0,
+              orderId: data.order?.id,
             });
           } else if (formData.paymentMethod === "COD" && data.order?.id) {
             toast.success("Order Placed!");
@@ -138,7 +137,6 @@ export default function CheckoutPage() {
               onSubmit={handleSubmit(onSubmit)}
               className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8"
             >
-              {/* ── Left: Shipping Details ── */}
               <div className="bg-white rounded-3xl p-8 shadow-sm space-y-5">
                 <div>
                   <label className="text-xs font-semibold text-gray-600">
@@ -242,7 +240,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* ── Right: Order Summary ── */}
               <div className="bg-white rounded-3xl shadow-sm p-6">
                 <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-6">
                   Order Summary
@@ -286,7 +283,6 @@ export default function CheckoutPage() {
                   </span>
                 </div>
 
-                {/* Payment Method */}
                 <div className="mb-4">
                   <h3 className="text-sm font-semibold mb-3 text-gray-700">
                     Payment Method
@@ -342,7 +338,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* ✅ Modal only mounts when BOTH clientSecret and orderId are ready */}
       {paymentState && (
         <Elements
           stripe={stripePromise}
@@ -355,7 +350,6 @@ export default function CheckoutPage() {
           />
         </Elements>
       )}
-
       <Footer />
     </>
   );
