@@ -18,7 +18,7 @@ export default function ProductList() {
   });
 
   const [params] = useSearchParams();
-  const categoryId = params.get("categoryId");
+  const categoryId = params.get("categoryId") ?? undefined;
   const name = params.get("name") ?? undefined;
 
   const [sort, setSort] = useState("");
@@ -50,6 +50,9 @@ export default function ProductList() {
 
     if (sort === "low") return priceA - priceB;
     if (sort === "high") return priceB - priceA;
+    if (sort === "name-asc") return a.name.localeCompare(b.name);
+    if (sort === "name-desc") return b.name.localeCompare(a.name);
+
     return 0;
   });
 

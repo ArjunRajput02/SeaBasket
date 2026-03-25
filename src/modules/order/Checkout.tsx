@@ -38,7 +38,8 @@ export default function CheckoutPage() {
           {
             id: productData.id,
             name: productData.name,
-            price: productData.price,
+            price: Number(productData.price),
+            finalPrice: Number(productData.finalPrice),
             quantity: 1,
             image: productData.images?.[0]?.image_url,
           },
@@ -47,7 +48,8 @@ export default function CheckoutPage() {
     : cartData?.cart?.map((item: any) => ({
         id: item.id,
         name: item.product.name,
-        price: item.product.price,
+        price: Number(item.product.price),
+        finalPrice: Number(item.product.finalPrice),
         quantity: item.quantity,
         image: item.product.images?.[0]?.image_url,
       })) || [];
@@ -232,7 +234,9 @@ export default function CheckoutPage() {
 
                         <div className="flex items-center text-sm font-semibold text-gray-800">
                           <IndianRupee size={14} />
-                          {(item.price * item.quantity).toFixed(2)}
+                          {(
+                            (item.finalPrice ?? item.price) * item.quantity
+                          ).toFixed(2)}
                         </div>
                       </div>
                     ))
