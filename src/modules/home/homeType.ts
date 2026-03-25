@@ -2,7 +2,7 @@ export type CarouselApi = {
   scrollNext: () => void;
 };
 type ProductImage = {
-  image_url: string;
+  image_url?: string;
 };
 
 export type Product = {

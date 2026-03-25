@@ -17,3 +17,30 @@ export const getCart = async () => {
   });
   return res.data;
 };
+
+export const decleteFromCart = async (productId: number) => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.delete(
+    `/products/cart/${productId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+};
+
+export const postCheckout = async () => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.post(
+    "/orders/checkout",
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data;
+};

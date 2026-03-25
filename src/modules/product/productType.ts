@@ -25,3 +25,13 @@ export type FilterTypeProps = {
   filters: FiltersType;
   setFilters: (val: FiltersType) => void;
 };
+export type User = {
+  first_name: string;
+};
+
+export type Review = {
+  id: number;
+  rating: number;
+  comment: string;
+  user?: User;
+};
