@@ -30,11 +30,11 @@ export default function ProductList() {
 
   const filteredProducts = products
     .filter((p: Product) =>
-      filters.minPrice ? p.final_price >= filters.minPrice : true,
+      filters.minPrice ? p.finalPrice >= filters.minPrice : true,
     )
     .filter((p: Product) =>
       filters.maxPrice && filters.maxPrice !== Infinity
-        ? p.final_price <= filters.maxPrice
+        ? p.finalPrice <= filters.maxPrice
         : true,
     )
     .filter((p: Product) =>
@@ -45,8 +45,8 @@ export default function ProductList() {
     );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const priceA = Number(a.final_price);
-    const priceB = Number(b.final_price);
+    const priceA = Number(a.finalPrice);
+    const priceB = Number(b.finalPrice);
 
     if (sort === "low") return priceA - priceB;
     if (sort === "high") return priceB - priceA;

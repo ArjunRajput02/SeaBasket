@@ -19,7 +19,7 @@ export default function CartItem({
   price,
   image,
   quantity,
-  final_price,
+  finalPrice,
   isLoggedIn,
 }: CartItemProps & { isLoggedIn: boolean }) {
   const dispatch = useDispatch();
@@ -71,10 +71,10 @@ export default function CartItem({
         <div className="flex items-center gap-2 text-sm">
           <div className="flex items-center gap-1 text-green-600 font-semibold">
             <IndianRupee size={14} />
-            <span>{isLoggedIn ? final_price : price}</span>
+            <span>{finalPrice ?? price}</span>
           </div>
 
-          {isLoggedIn && final_price && final_price < price && (
+          {finalPrice && finalPrice < price && (
             <div className="flex items-center gap-1 text-gray-400 line-through">
               <IndianRupee size={12} />
               <span>{price}</span>

@@ -25,7 +25,7 @@ export default function Cart() {
         id: item.product_id,
         name: item.product.name,
         price: item.product.price,
-        final_price: item.product.final_price,
+        finalPrice: item.product.finalPrice,
         image: item.product.images?.[0]?.image_url || "",
         quantity: item.quantity,
       })) || []
@@ -34,7 +34,8 @@ export default function Cart() {
   const subtotal = isLoggedIn
     ? data?.subtotal || 0
     : reduxCart.reduce(
-        (acc: number, item: any) => acc + item.final_price * item.quantity,
+        (acc: number, item: any) =>
+          acc + (item.finalPrice ?? item.price) * item.quantity,
         0,
       );
 
@@ -68,7 +69,7 @@ export default function Cart() {
                   name={item.name}
                   price={item.price}
                   image={item.image}
-                  final_price={item.final_price}
+                  finalPrice={item.finalPrice}
                   quantity={item.quantity}
                   isLoggedIn={isLoggedIn}
                 />
