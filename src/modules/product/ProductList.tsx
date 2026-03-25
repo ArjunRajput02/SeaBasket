@@ -55,7 +55,6 @@ export default function ProductList() {
 
     return 0;
   });
-
   return (
     <>
       <Header />

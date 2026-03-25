@@ -28,7 +28,7 @@ export default function Categories() {
                         : "text-gray-600 hover:text-black"
                     }`}
                 >
-                  {cat.category_name}
+                  {cat.category_name.replace(/^\w/, (c) => c.toUpperCase())}
                 </button>
               </NavigationMenuItem>
             ))}
