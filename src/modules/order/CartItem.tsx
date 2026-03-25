@@ -19,6 +19,7 @@ export default function CartItem({
   price,
   image,
   quantity,
+  final_price,
   isLoggedIn,
 }: CartItemProps & { isLoggedIn: boolean }) {
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ export default function CartItem({
     if (isLoggedIn) {
       addToCartAPI(id);
     } else {
-      dispatch(addToCartRedux({ id, name, price, image }));
+      dispatch(addToCartRedux({ id }));
     }
   };
 
@@ -67,12 +68,20 @@ export default function CartItem({
           {name}
         </h2>
 
-        <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
-          <IndianRupee size={14} />
-          <span>{price}</span>
+        <div className="flex items-center gap-2 text-sm">
+          <div className="flex items-center gap-1 text-green-600 font-semibold">
+            <IndianRupee size={14} />
+            <span>{isLoggedIn ? final_price : price}</span>
+          </div>
+
+          {isLoggedIn && final_price && final_price < price && (
+            <div className="flex items-center gap-1 text-gray-400 line-through">
+              <IndianRupee size={12} />
+              <span>{price}</span>
+            </div>
+          )}
         </div>
 
-        {/* Quantity Controls */}
         <div className="flex items-center gap-2 mt-2">
           <Button
             size="icon"

@@ -9,7 +9,7 @@ export type Product = {
   rating: number;
   discount: number;
   images: ProductImage[];
-  finalPrice: number;
+  final_price: number;
 };
 
 export type SortBarProps = {

@@ -65,6 +65,8 @@ export default function ProductDetails() {
           name: product.name,
           price: product.price,
           image: product.images?.[0]?.image_url,
+          discount: product.discount,
+          final_price:product.final_price
         }),
       );
     } else {

@@ -39,13 +39,15 @@ export default function ProductCard({ product }: { product: Product }) {
       mutateAdd(product.id);
     } else {
       dispatch(
-        addToCart({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.images?.[0]?.image_url,
-        }),
-      );
+  addToCart({
+    id: product.id,
+    name: product.name,
+    price: Number(product.price),          
+    image: product.images?.[0]?.image_url,
+    discount: Number(product.discount),    
+    final_price: Number(product.final_price), 
+  }),
+);
     }
   };
 
@@ -61,7 +63,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   const price = Number(product.price);
   const discount = Number(product.discount);
-  const finalPrice = Number(product.finalPrice);
+  const final_price = Number(product.final_price);
 
   return (
     <Card
@@ -80,7 +82,7 @@ export default function ProductCard({ product }: { product: Product }) {
             <div className="flex items-center gap-2">
               <div className="flex items-center text-green-600 font-semibold text-sm">
                 <IndianRupee size={14} />
-                <span>{finalPrice.toFixed(0)}</span>
+                <span>{final_price.toFixed(0)}</span>
               </div>
 
               <div className="flex items-center text-gray-400 text-xs line-through">

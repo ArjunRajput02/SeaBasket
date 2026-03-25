@@ -4,4 +4,5 @@ export type CartItemProps = {
   price: number;
   image: string;
   quantity: number;
+  final_price: number;
 };
