@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import {
   useProfile,
   useUpdateProfile,
-  useOrders,
+  useMyOrders,
 } from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
 import {
@@ -53,7 +53,7 @@ export default function Profile() {
   const dispatch = useDispatch();
   const { data } = useProfile();
   const { mutate, isPending } = useUpdateProfile();
-  const { data: ordersData, isLoading: ordersLoading } = useOrders();
+  const { data: ordersData, isLoading: ordersLoading } = useMyOrders();
   const orders: Order[] = ordersData?.orders ?? [];
 
   const {
