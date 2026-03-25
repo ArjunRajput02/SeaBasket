@@ -11,9 +11,24 @@ import { cn } from "@/lib/utils";
 import { STATUS_STYLE } from "@/utils/constants";
 import OrderStepper from "./OrderStepper";
 import OrderItems from "./OrderItems";
+import { useMemo } from "react";
 
 export default function OrderCard({ order }: any) {
   const [open, setOpen] = useState(false);
+
+  const expectedDelivery = useMemo(() => {
+    const today = new Date();
+    const randomDays = Math.floor(Math.random() * 6) + 2;
+
+    const deliveryDate = new Date(today);
+    deliveryDate.setDate(today.getDate() + randomDays);
+
+    return deliveryDate.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  }, []);
 
   const style = STATUS_STYLE[order.status?.toLowerCase()] ?? {
     badge: "bg-gray-100 text-gray-500 ring-gray-200",
@@ -66,6 +81,13 @@ export default function OrderCard({ order }: any) {
               <span className="text-xs text-gray-500">Payment</span>
               <span className="flex items-center gap-1 text-sm font-semibold">
                 <CreditCard className="w-3 h-3" /> {order.payment_mode}
+              </span>
+            </div>
+
+            <div className="flex justify-between py-2 border-b">
+              <span className="text-xs text-gray-500">Expected Delivery</span>
+              <span className="text-sm font-semibold text-orange-600">
+                {expectedDelivery}
               </span>
             </div>
 

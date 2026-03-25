@@ -9,7 +9,7 @@ export default function OrdersDetails() {
   const orders = data?.orders ?? [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f7f8fc]">
+    <div className="min-h-screen flex flex-col ">
       <div className="w-full bg-white shadow-sm">
         <Header />
       </div>
@@ -22,7 +22,7 @@ export default function OrdersDetails() {
             <div>Loading...</div>
           ) : orders.length === 0 ? (
             <div className="flex flex-col items-center py-20 text-center">
-              <Package className="w-10 h-10 text-indigo-300" />
+              <Package className="w-10 h-10 text-orange-300" />
               <p className="text-gray-500 mt-2">No orders yet</p>
             </div>
           ) : (
