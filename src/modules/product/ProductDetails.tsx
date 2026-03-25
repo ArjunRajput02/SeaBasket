@@ -16,6 +16,7 @@ import {
   decreaseFromCart as decreaseFromCartRedux,
 } from "@/store/slice/cartSlice";
 import ProductReviews from "./ProductReview";
+import { toast } from "sonner";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -84,6 +85,7 @@ export default function ProductDetails() {
     if (!product?.id) return;
 
     if (!sessionToken) {
+      toast.success("Please Login to Buy Product");
       navigate("/login");
       return;
     }
