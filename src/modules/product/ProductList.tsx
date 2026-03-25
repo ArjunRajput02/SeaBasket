@@ -19,11 +19,12 @@ export default function ProductList() {
 
   const [params] = useSearchParams();
   const categoryId = params.get("categoryId");
+  const name = params.get("name") ?? undefined;
 
   const [sort, setSort] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  const { data } = useProducts(categoryId || undefined);
+const { data } = useProducts({ categoryId, name });        
 
   const products = data?.products || [];
 

@@ -8,10 +8,11 @@ const api = axios.create({
   },
 });
 
-export const getProducts = async (categoryId?: string) => {
+export const getProducts = async (params?: { categoryId?: string; name?: string }) => {
   const res = await api.get("/products", {
     params: {
-      categoryId,
+      ...(params?.categoryId && { categoryId: params.categoryId }),
+      ...(params?.name && { name: params.name }),
     },
   });
   return res.data;
