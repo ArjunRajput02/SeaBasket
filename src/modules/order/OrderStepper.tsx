@@ -1,66 +1,45 @@
-import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
-
-type Step = {
-  label: string;
-  value: string;
-};
-
-const steps: Step[] = [
-  { label: "Placed", value: "placed" },
-  { label: "Confirmed", value: "confirmed" },
-  { label: "Shipped", value: "shipped" },
-  { label: "Delivered", value: "delivered" },
-];
-
-const statusMap: Record<string, string> = {
-  PENDING: "placed",
-  SUCCESS: "confirmed",
-  CONFIRMED: "confirmed",
-  SHIPPED: "shipped",
-  DELIVERED: "delivered",
-};
+import { cn } from "@/lib/utils";
+import { STEPS, STATUS_INDEX } from "@/utils/constants";
 
 export default function OrderStepper({ status }: { status: string }) {
-  const mappedStatus = statusMap[status] || "placed";
-
-  const currentStep = steps.findIndex(
-    (s) => s.value === mappedStatus.toLowerCase()
-  );
+  const current = STATUS_INDEX[status] ?? 0;
 
   return (
-    <div className="flex items-center justify-between w-full">
-      {steps.map((step, index) => {
-        const isCompleted = index < currentStep;
-        const isCurrent = index === currentStep;
+    <div className="flex items-start w-full gap-0">
+      {STEPS.map((label, i) => {
+        const done = i < current;
+        const active = i === current;
+        const pending = i > current;
 
         return (
-          <div key={step.value} className="flex-1 flex items-center">
-            <div className="flex flex-col items-center w-full">
-              <div
-                className={cn(
-                  "w-7 h-7 flex items-center justify-center rounded-full border text-xs font-medium transition",
-                  isCompleted && "bg-primary text-white border-primary",
-                  isCurrent && "border-primary text-primary",
-                  !isCompleted && !isCurrent && "bg-muted text-muted-foreground"
-                )}
-              >
-                {isCompleted ? <Check className="w-4 h-4" /> : index + 1}
+          <div
+            key={label}
+            className="flex-1 flex flex-col items-center relative"
+          >
+            {i < STEPS.length - 1 && (
+              <div className="absolute left-1/2 top-4 w-full h-[2px] -z-0">
+                <div
+                  className={cn(
+                    "h-full",
+                    done ? "bg-emerald-400" : "bg-gray-200",
+                  )}
+                />
               </div>
+            )}
 
-              <span className="text-[11px] mt-1 text-center">
-                {step.label}
-              </span>
+            <div
+              className={cn(
+                "relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ring-2",
+                done && "bg-emerald-500 text-white",
+                active && "bg-white ring-indigo-400 text-indigo-600",
+                pending && "bg-gray-100 text-gray-400",
+              )}
+            >
+              {done ? <Check className="w-4 h-4" /> : i + 1}
             </div>
 
-            {index !== steps.length - 1 && (
-              <div
-                className={cn(
-                  "h-[2px] flex-1 mx-1 transition",
-                  index < currentStep ? "bg-primary" : "bg-muted"
-                )}
-              />
-            )}
+            <span className="mt-1.5 text-[10px] text-center">{label}</span>
           </div>
         );
       })}
