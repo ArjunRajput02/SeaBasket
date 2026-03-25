@@ -7,6 +7,7 @@ import {
 } from "../modules/home/homePageApi";
 import { toast } from "sonner";
 import type { CategoriesResponse} from "@/modules/home/homeType";
+import { getMyOrders,getOrderById } from "@/modules/order/cartApi";
 
 export const useTrendingProducts = () => {
   return useQuery({
@@ -41,4 +42,18 @@ export const useUpdateProfile = () => {
   });
 };
 
+export const useMyOrders = () => {
+  return useQuery({
+    queryKey: ["my-orders"],
+    queryFn: getMyOrders,
+  });
+};
+ 
+export const useOrderById = (orderId: string) => {
+  return useQuery({
+    queryKey: ["my-order", orderId],
+    queryFn: () => getOrderById(orderId),
+    enabled: !!orderId,
+  });
+};
 

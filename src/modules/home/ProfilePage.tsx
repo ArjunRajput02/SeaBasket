@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect } from "react";
-import { useProfile, useUpdateProfile } from "../../hooks/useTrendingProduct";
+import {
+  useProfile,
+  useUpdateProfile,
+  useMyOrders,
+} from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
@@ -16,24 +20,50 @@ import {
   AlertDialogDescription,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import type { Order } from "./homeType";
 import { useDispatch } from "react-redux";
 import { clearToken } from "@/store/slice/authSlice";
-import type{ ProfileForm } from "./homeType";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Orders from "./Orders";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
+const profileSchema = z.object({
+  first_name: z
+    .string()
+    .min(2, "First name must be at least 2 characters")
+    .regex(/^[A-Za-z\s]+$/, "First name must contain letters only"),
+  last_name: z
+    .string()
+    .min(2, "Last name must be at least 2 characters")
+    .regex(/^[A-Za-z\s]+$/, "Last name must contain letters only"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
+  address: z.string().min(5, "Address is required"),
+  city: z.string().min(2, "City is required"),
+  state: z.string().min(2, "State is required"),
+  pincode: z.string().regex(/^[0-9]{6}$/, "Pincode must be 6 digits"),
+});
 
+type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function Profile() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data } = useProfile();
   const { mutate, isPending } = useUpdateProfile();
+  const { data: ordersData, isLoading: ordersLoading } = useMyOrders();
+  const orders: Order[] = ordersData?.orders ?? [];
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<ProfileForm>();
+  } = useForm<ProfileForm>({
+    resolver: zodResolver(profileSchema),
+  });
 
   useEffect(() => {
     if (data) {
@@ -49,9 +79,8 @@ export default function Profile() {
       });
     }
   }, [data, reset]);
-  const onSubmit = (formData: ProfileForm) => {
-    mutate(formData);
-  };
+
+  const onSubmit = (formData: ProfileForm) => mutate(formData);
 
   const handleLogout = () => {
     dispatch(clearToken());
@@ -59,154 +88,168 @@ export default function Profile() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-sm border p-8">
-        <div className="text-center mb-6">
-          <h1 className="text-xl font-semibold">My Profile</h1>
-          <p className="text-sm text-gray-500">Update your personal details</p>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <div className="flex flex-col gap-1.5">
-              <Label>First Name</Label>
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <Header />
+      <main className="flex-1 flex flex-col items-center px-4 py-8 gap-6">
+        <div className="w-full max-w-3xl bg-white rounded-xl shadow-sm border p-8">
+          <div className="text-center mb-6">
+            <h1 className="text-xl font-semibold">My Profile</h1>
+            <p className="text-sm text-gray-500">
+              Update your personal details
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <div className="flex flex-col gap-1.5">
+                <Label>First Name</Label>
+                <Input
+                  placeholder="First Name"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("first_name")}
+                />
+                {errors.first_name && (
+                  <p className="text-red-500 text-xs">
+                    {errors.first_name.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>Last Name</Label>
+                <Input
+                  placeholder="Last Name"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("last_name")}
+                />
+                {errors.last_name && (
+                  <p className="text-red-500 text-xs">
+                    {errors.last_name.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4 mb-4">
+              <div className="flex flex-col gap-1.5">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  placeholder="Email"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>Mobile Number</Label>
+                <Input
+                  placeholder="Phone"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("phone")}
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-xs">{errors.phone.message}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5 mb-4">
+              <Label>Shipping Address</Label>
               <Input
-                placeholder="First Name"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("first_name")}
+                placeholder="Address"
+                className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                {...register("address")}
               />
-              {errors.first_name && (
-                <p className="text-red-500 text-xs">
-                  {errors.first_name.message}
-                </p>
+              {errors.address && (
+                <p className="text-red-500 text-xs">{errors.address.message}</p>
               )}
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <Label>Last Name</Label>
-              <Input
-                placeholder="Last Name"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("last_name")}
-              />
-              {errors.last_name && (
-                <p className="text-red-500 text-xs">
-                  {errors.last_name.message}
-                </p>
-              )}
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4 mb-4">
-            <div className="flex flex-col gap-1.5">
-              <Label>Email</Label>
-              <Input
-                type="email"
-                placeholder="Email"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("email")}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-xs">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <Label>Mobile Number</Label>
-              <Input
-                placeholder="Phone"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("phone")}
-              />
-              {errors.phone && (
-                <p className="text-red-500 text-xs">{errors.phone.message}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5 mb-4">
-            <Label>Shipping Address</Label>
-            <Input
-              placeholder="Address"
-              className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-              {...register("address")}
-            />
-            {errors.address && (
-              <p className="text-red-500 text-xs">{errors.address.message}</p>
-            )}
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div className="flex flex-col gap-1.5">
-              <Label>City</Label>
-              <Input
-                placeholder="City"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("city")}
-              />
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="flex flex-col gap-1.5">
+                <Label>City</Label>
+                <Input
+                  placeholder="City"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("city")}
+                />
+                {errors.city && (
+                  <p className="text-red-500 text-xs">{errors.city.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>State</Label>
+                <Input
+                  placeholder="State"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("state")}
+                />
+                {errors.state && (
+                  <p className="text-red-500 text-xs">{errors.state.message}</p>
+                )}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Label>Pincode</Label>
+                <Input
+                  placeholder="Pincode"
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  {...register("pincode")}
+                />
+                {errors.pincode && (
+                  <p className="text-red-500 text-xs">
+                    {errors.pincode.message}
+                  </p>
+                )}
+              </div>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <Label>State</Label>
-              <Input
-                placeholder="State"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("state")}
-              />
-            </div>
+            <hr className="border-orange-100 mb-6" />
 
-            <div className="flex flex-col gap-1.5">
-              <Label>Pincode</Label>
-              <Input
-                placeholder="Pincode"
-                className="border-orange-200 focus-visible:ring-orange-400 focus-visible:border-orange-400 h-11"
-                {...register("pincode")}
-              />
-            </div>
-          </div>
-
-          <hr className="border-orange-100 mb-6" />
-
-          <div className="flex gap-3">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 bg-orange-400 hover:bg-orange-600 text-white h-11 font-semibold"
-                >
-                  Logout
-                </Button>
-              </AlertDialogTrigger>
-
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    You will be logged out of your account.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-
-                <AlertDialogFooter>
-                  <AlertDialogCancel>No</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleLogout}
-                    className="bg-orange-400 hover:bg-orange-600"
+            <div className="flex gap-3">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="flex-1 bg-orange-400 hover:bg-orange-600 text-white h-11 font-semibold"
                   >
-                    Yes, Logout
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    Logout
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      You will be logged out of your account.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>No</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleLogout}
+                      className="bg-orange-400 hover:bg-orange-600"
+                    >
+                      Yes, Logout
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
 
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="flex-1 bg-orange-400 hover:bg-orange-600 text-white h-11 font-semibold"
-            >
-              {isPending ? "Updating..." : "Update Profile"}
-            </Button>
-          </div>
-        </form>
-      </div>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="flex-1 bg-orange-400 hover:bg-orange-600 text-white h-11 font-semibold"
+              >
+                {isPending ? "Updating..." : "Update Profile"}
+              </Button>
+            </div>
+          </form>
+        </div>
+        <Orders orders={orders} ordersLoading={ordersLoading} />
+      </main>
+      <Footer />
     </div>
   );
 }

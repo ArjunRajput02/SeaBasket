@@ -13,6 +13,8 @@ import type { RootState } from "@/store/store";
 import { Navigate } from "react-router-dom";
 import ForgotPassword from "@/modules/auth/ForgotPassword";
 import ResetPassword from "@/modules/auth/ResetPassword";
+import CheckoutPage from "@/modules/order/Checkout";
+import PrivateRoute from "./PrivateRoute";
 
 const AppRoutes = () => {
   const token = useSelector<RootState>((state) => state.auth.token);
@@ -25,24 +27,42 @@ const AppRoutes = () => {
       <Route path="/products" element={<ProductList />} />
       <Route path="/login" element={<Login />} />
       <Route path="/products/:id" element={<ProductDetails />} />
-      <Route path="/order" element={<OrderDetails />} />
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route
+        path="/order"
+        element={
+          <PrivateRoute>
+            <OrderDetails />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <ProfilePage />
+          </PrivateRoute>
+        }
+      />
       <Route path="/cart" element={<Cart />} />
+      <Route
+        path="/checkout"
+        element={
+          <PrivateRoute>
+            <CheckoutPage />
+          </PrivateRoute>
+        }
+      />
       <Route path="/registration" element={<Registration />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset/:token" element={<ResetPassword />} />
-      {/* <Route
-        path="/verification"
+      <Route
+        path="/reset/:token"
         element={
-          token && !sessionToken ? (
-            <OtpVerification />
-          ) : !token && !sessionToken ? (
-            <Navigate to="/login" />
-          ) : (
-            <Navigate to="/" />
-          )
+          <PrivateRoute>
+            <ResetPassword />
+          </PrivateRoute>
         }
-        /> */}
+      />
+
       <Route
         path="/verification"
         element={

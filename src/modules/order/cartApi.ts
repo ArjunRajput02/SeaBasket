@@ -20,27 +20,40 @@ export const getCart = async () => {
 
 export const decleteFromCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.delete(
-    `/products/cart/${productId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const res = await api.delete(`/products/cart/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+  });
   return res.data;
 };
 
-export const postCheckout = async () => {
+export const postCheckout = async (payload: any) => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.post(
-    "/orders/checkout",
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const res = await api.post("/orders/checkout", payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+export const getMyOrders = async () => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.get("/orders/my-orders", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
+
+export const getOrderById = async (orderId: string) => {
+  const token = store.getState().auth.sessionToken;
+  const res = await api.get(`/orders/my-order/${orderId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };

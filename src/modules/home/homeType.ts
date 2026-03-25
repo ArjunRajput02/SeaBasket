@@ -21,3 +21,20 @@ export type ProfileForm = {
   state: string;
   pincode: string;
 };
+
+export type OrderItem = {
+  id: number;
+  quantity: number;
+  price: string;
+  product: {
+    name: string;
+  };
+};
+
+export type Order = {
+  id: number;
+  total_amount: string;
+  status: "PAID" | "PENDING" | "CANCELLED";
+  created_at: string;
+  items: OrderItem[];
+};

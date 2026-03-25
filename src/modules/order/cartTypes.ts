@@ -6,3 +6,4 @@ export type CartItemProps = {
   quantity: number;
   finalPrice: number;
 };
+export type cartItem = CartItemProps[]
