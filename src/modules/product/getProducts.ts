@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProducts, getProductById, buyNow, addReview } from "./productApi";
 
-export const useProducts = (categoryId?: string) => {
+export const useProducts = (params?: {
+  categoryId?: string;
+  name?: string;
+}) => {
   return useQuery({
-    queryKey: ["products", categoryId],
-    queryFn: () => getProducts(categoryId),
+    queryKey: ["products", params?.categoryId, params?.name],
+    queryFn: () => getProducts(params),
   });
 };
 

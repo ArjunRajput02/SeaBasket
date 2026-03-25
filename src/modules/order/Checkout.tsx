@@ -32,13 +32,17 @@ export default function CheckoutPage() {
 
   const { mutate: checkout, isPending } = useCheckout();
 
+  // Map items safely from backend
   const items: CartItemProps[] = isSingle
     ? productData
       ? [
           {
             id: productData.id,
             name: productData.name,
-            price: productData.price,
+            price: Number(productData.price) || 0, // original price from string
+            finalPrice:
+              productData.finalPrice || Number(productData.price) || 0, // backend number
+            discount: Number(productData.discount) || 0, // from backend
             quantity: 1,
             image: productData.images?.[0]?.image_url,
           },
@@ -47,16 +51,23 @@ export default function CheckoutPage() {
     : cartData?.cart?.map((item: any) => ({
         id: item.id,
         name: item.product.name,
-        price: item.product.price,
-        quantity: item.quantity,
+        price: Number(item.product.price) || 0,
+        finalPrice: item.product.finalPrice || Number(item.product.price) || 0,
+        discount: Number(item.product.discount) || 0,
+        quantity: item.quantity || 1,
         image: item.product.images?.[0]?.image_url,
       })) || [];
 
   const subtotal = items.reduce(
-    (acc: number, item) => acc + item.price * item.quantity,
+    (acc, item) => acc + (item.price ?? 0) * (item.quantity ?? 1),
     0,
   );
-  const total = subtotal;
+  const totalAfterDiscount = items.reduce(
+    (acc, item) =>
+      acc + (item.finalPrice ?? item.price ?? 0) * (item.quantity ?? 1),
+    0,
+  );
+  const discountAmount = subtotal - totalAfterDiscount;
 
   const {
     register,
@@ -232,19 +243,38 @@ export default function CheckoutPage() {
 
                         <div className="flex items-center text-sm font-semibold text-gray-800">
                           <IndianRupee size={14} />
-                          {(item.price * item.quantity).toFixed(2)}
+                          {(
+                            (item.finalPrice ?? item.price) * item.quantity
+                          ).toFixed(2)}
                         </div>
                       </div>
                     ))
                   )}
                 </div>
 
-                <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-4 mb-4 text-gray-800">
-                  <span>Total</span>
-                  <span className="flex items-center gap-1">
-                    <IndianRupee size={16} />
-                    {total.toFixed(2)}
-                  </span>
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>Subtotal</span>
+                    <span className="flex items-center gap-1">
+                      <IndianRupee size={14} /> {subtotal.toFixed(2)}
+                    </span>
+                  </div>
+
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Discount</span>
+                      <span className="flex items-center gap-1">
+                        - <IndianRupee size={14} /> {discountAmount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-4 text-gray-800">
+                    <span>Total</span>
+                    <span className="flex items-center gap-1">
+                      <IndianRupee size={16} /> {totalAfterDiscount.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="mb-4">

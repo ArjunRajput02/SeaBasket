@@ -27,10 +27,26 @@ export default function Header() {
   const cartCount = sessionToken ? apiCartCount : reduxCartCount;
 
   const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate(`/products?name=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearch(false);
+    }
+  };
+
+  const handleSearchClick = () => {
+    if (searchQuery.trim()) {
+      navigate(`/products?name=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearch(false);
+    }
+  };
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-8">
+  
         <div
           className="flex items-center cursor-pointer flex-shrink-0"
           onClick={() => navigate("/")}
@@ -45,19 +61,28 @@ export default function Header() {
           </span>
         </div>
 
-        <div className="hidden md:flex flex-1 mx-4 max-w-xl">
+        <div className="hidden md:flex flex-1 mx-4 max-w-xl relative">
           <input
             type="text"
             placeholder="Search Items"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearch}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 pr-10"
           />
-        </div>
-        <div className="md:hidden flex items-center">
           <Search
-            className="w-6 h-6 cursor-pointer"
-            onClick={() => setShowSearch(!showSearch)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-orange-500 transition"
+            onClick={handleSearchClick}
           />
         </div>
+
+        <button
+          className="flex md:hidden items-center justify-center p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
+          onClick={() => setShowSearch(!showSearch)}
+          aria-label="Toggle search"
+        >
+          <Search className="w-5 h-5 text-gray-600" />
+        </button>
 
         <div className="flex items-center space-x-3 md:space-x-5 flex-shrink-0">
           <div
@@ -65,7 +90,6 @@ export default function Header() {
             onClick={() => navigate("/cart")}
           >
             <img src="/cart.png" alt="Cart" className="h-6 w-6 md:h-7 md:w-7" />
-
             {cartCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] md:text-xs font-semibold rounded-full px-1.5 py-0.5">
                 {cartCount}
@@ -91,15 +115,28 @@ export default function Header() {
         </div>
       </div>
 
+      
       {showSearch && (
         <div className="md:hidden px-4 pb-3">
-          <input
-            type="text"
-            placeholder="Search Items"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search Items"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
+              autoFocus
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 pr-10"
+            />
+            <Search
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-orange-500 transition"
+              onClick={handleSearchClick}
+            />
+          </div>
         </div>
       )}
     </header>
   );
 }
+
+  
