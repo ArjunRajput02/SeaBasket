@@ -15,7 +15,7 @@ export default function Cart() {
   const reduxCart = useSelector((state: any) => state.cart.items);
   const isLoggedIn = !!sessionToken;
 
-  const { mutate: checkout, isPending } = useCheckout();
+  const { isPending } = useCheckout();
 
   const cartItems = isLoggedIn
     ? data?.cart?.map((item: any) => ({
