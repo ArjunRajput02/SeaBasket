@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useBuyNow, useProductbyId } from "./getProducts";
+import { useProductbyId } from "./getProducts";
 import { Star, ShoppingCart, Zap, Package, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/layout/Header";
@@ -11,12 +11,12 @@ import {
 } from "@/hooks/useAddtoCart";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store/store";
-import { toast } from "sonner";
 import {
   addToCart as addToCartRedux,
   decreaseFromCart as decreaseFromCartRedux,
 } from "@/store/slice/cartSlice";
 import ProductReviews from "./ProductReview";
+import { toast } from "sonner";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -29,7 +29,6 @@ export default function ProductDetails() {
   const decreaseFromCartMutation = useDecreaseFromCart();
 
   const navigate = useNavigate();
-  const buyProduct = useBuyNow();
   const dispatch = useDispatch();
 
   const sessionToken = useSelector(
@@ -86,16 +85,16 @@ export default function ProductDetails() {
     if (!product?.id) return;
 
     if (!sessionToken) {
+      toast.success("Please Login to Buy Product");
       navigate("/login");
       return;
     }
 
-    buyProduct.mutate(product.id.toString(), {
-      onSuccess: (data) => {
-        const url = data?.checkout_url || data?.url;
-        window.location.href = url;
+    navigate("/checkout", {
+      state: {
+        isSingle: true,
+        productId: product.id,
       },
-      onError: () => toast.error("Failed to process"),
     });
   };
 

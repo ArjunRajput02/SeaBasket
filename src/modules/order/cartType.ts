@@ -33,3 +33,7 @@ export type CartItemType = {
 export type CartResponse = {
   cart: CartItemType[];
 };
+
+export type PaymentState = {
+  clientSecret: string;
+} | null;

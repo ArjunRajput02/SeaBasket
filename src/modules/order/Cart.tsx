@@ -15,7 +15,7 @@ export default function Cart() {
   const reduxCart = useSelector((state: any) => state.cart.items);
   const isLoggedIn = !!sessionToken;
 
-  const { mutate: checkout, isPending } = useCheckout();
+  const { isPending } = useCheckout();
 
   const cartItems = isLoggedIn
     ? data?.cart?.map((item: any) => ({
@@ -32,14 +32,17 @@ export default function Cart() {
     0,
   );
 
-  const handleCheckout = () => {
-    if (!isLoggedIn) {
-      toast.error("Please login to place an order.");
-      navigation("/login");
-      return;
-    }
-    checkout();
-  };
+const handleCheckout = () => {
+  if (!isLoggedIn) {
+    toast.error("Please login to place an order.");
+    navigation("/login");
+    return;
+  }
+
+  navigation("/checkout", {
+    state: { isSingle: false }, 
+  });
+};
 
   if (!cartItems.length) {
     return (

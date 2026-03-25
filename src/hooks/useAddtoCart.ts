@@ -47,14 +47,8 @@ export const useDeleteFromCart = () => {
 };
 
 export const useCheckout = () => {
-  const navigate = useNavigate();
   return useMutation({
     mutationFn: postCheckout,
-    onSuccess: (data) => {
-      const url = data.url;
-      toast.success("Order Placed");
-      window.location.href = url;
-    },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Checkout failed.");
     },
