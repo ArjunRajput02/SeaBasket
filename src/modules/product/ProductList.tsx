@@ -24,17 +24,17 @@ export default function ProductList() {
   const [sort, setSort] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-const { data } = useProducts({ categoryId, name });        
+  const { data } = useProducts({ categoryId, name });
 
   const products = data?.products || [];
 
   const filteredProducts = products
     .filter((p: Product) =>
-      filters.minPrice ? p.price >= filters.minPrice : true,
+      filters.minPrice ? p.finalPrice >= filters.minPrice : true,
     )
     .filter((p: Product) =>
       filters.maxPrice && filters.maxPrice !== Infinity
-        ? p.price <= filters.maxPrice
+        ? p.finalPrice <= filters.maxPrice
         : true,
     )
     .filter((p: Product) =>
@@ -45,8 +45,11 @@ const { data } = useProducts({ categoryId, name });
     );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sort === "low") return a.price - b.price;
-    if (sort === "high") return b.price - a.price;
+    const priceA = Number(a.finalPrice);
+    const priceB = Number(b.finalPrice);
+
+    if (sort === "low") return priceA - priceB;
+    if (sort === "high") return priceB - priceA;
     return 0;
   });
 

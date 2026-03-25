@@ -1,29 +1,17 @@
 import * as React from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
 import { useTrendingProducts } from "../../hooks/useTrendingProduct";
-import { toast } from "sonner";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "@/store/slice/cartSlice";
-import type { RootState } from "@/store/store";
-import { useAddToCart } from "@/hooks/useAddtoCart";
 import type { CarouselApi } from "@/components/ui/carousel";
-import type { Product } from "./homeType";
-import { IndianRupee } from "lucide-react";
+import ProductCard from "../product/Product";
+import type { Product } from "../product/productType";
 
 export default function TrendingCarousel() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const { data } = useTrendingProducts();
-  const { mutate: addToCartApi } = useAddToCart();
-  const dispatch = useDispatch();
-  const sessionToken = useSelector(
-    (state: RootState) => state.auth.sessionToken,
-  );
 
   React.useEffect(() => {
     if (!api) return;
@@ -34,26 +22,6 @@ export default function TrendingCarousel() {
 
     return () => clearInterval(autoplay);
   }, [api]);
-
-  const handleAddToCart = async (product: Product) => {
-    try {
-      if (sessionToken) {
-        addToCartApi(product.id);
-      } else {
-        dispatch(
-          addToCart({
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.images?.[0]?.image_url || "",
-          }),
-        );
-      }
-      toast.success("Item added to cart");
-    } catch (error) {
-      toast.error("Failed to add item");
-    }
-  };
 
   return (
     <section className="py-10">
@@ -73,33 +41,7 @@ export default function TrendingCarousel() {
               key={product.id}
               className="basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]"
             >
-              <Card className="rounded-xl overflow-hidden hover:shadow-lg transition">
-                <CardContent className="p-3">
-                  <img
-                    src={product.images?.[0]?.image_url}
-                    alt={product.name}
-                    className="h-40 w-full object-contain"
-                  />
-
-                  <div className="flex items-center justify-between mt-3">
-                    <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
-                      <IndianRupee size={14} />
-                      <span>{product.price}</span>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      className="bg-white text-pink-600 border border-pink-500 hover:bg-pink-50"
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      ADD
-                    </Button>
-                  </div>
-                  <p className="text-sm mt-2 line-clamp-2 text-gray-700">
-                    {product.name}
-                  </p>
-                </CardContent>
-              </Card>
+              <ProductCard product={product} />
             </CarouselItem>
           ))}
         </CarouselContent>

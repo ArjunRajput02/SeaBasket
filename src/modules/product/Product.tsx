@@ -59,6 +59,10 @@ export default function ProductCard({ product }: { product: Product }) {
     }
   };
 
+  const price = Number(product.price);
+  const discount = Number(product.discount);
+  const finalPrice = Number(product.finalPrice);
+
   return (
     <Card
       className="rounded-xl overflow-hidden hover:shadow-lg transition cursor-pointer"
@@ -72,9 +76,24 @@ export default function ProductCard({ product }: { product: Product }) {
         />
 
         <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center gap-1 text-green-600 font-semibold text-sm">
-            <IndianRupee size={14} />
-            <span>{product.price}</span>
+          <div className="flex flex-col items-start">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center text-green-600 font-semibold text-sm">
+                <IndianRupee size={14} />
+                <span>{finalPrice.toFixed(0)}</span>
+              </div>
+
+              <div className="flex items-center text-gray-400 text-xs line-through">
+                <IndianRupee size={12} />
+                <span>{price.toFixed(0)}</span>
+              </div>
+            </div>
+
+            {discount > 0 && (
+              <span className="text-xs text-green-600 font-medium">
+                {discount}% OFF
+              </span>
+            )}
           </div>
 
           {!cartItem ? (
