@@ -9,7 +9,7 @@ export default function OrdersDetails() {
   const { data, isLoading } = useMyOrders();
   const orders = data?.orders ?? [];
   const { id } = useParams();
-  console.log(id);
+  
 
   return (
     <div className="min-h-screen flex flex-col ">

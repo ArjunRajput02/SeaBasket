@@ -109,8 +109,7 @@ export default function CheckoutPage() {
       {
         onSuccess: (data) => {
           if (formData.paymentMethod === "ONLINE" && data.client_secret) {
-            toast.success("Proceed to payment");
-
+    
             setPaymentState({
               clientSecret: data.client_secret,
             });

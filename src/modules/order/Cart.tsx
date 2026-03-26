@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useCheckout } from "@/hooks/useAddtoCart";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/store/store";
+import { ShoppingCart } from "lucide-react";
 
 export default function Cart() {
   const { data } = useCart();
@@ -57,8 +58,14 @@ export default function Cart() {
 
       <div className="max-w-2xl mx-auto px-4 py-6">
         {!cartItems.length ? (
-          <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
-            <p className="text-gray-500 font-medium">Your cart is empty</p>
+          <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center">
+            <div className="bg-gray-100 p-5 rounded-full">
+              <ShoppingCart className="w-10 h-10 text-gray-400" />
+            </div>
+
+            <h2 className="text-lg font-semibold text-gray-800">
+              Your cart is empty
+            </h2>
           </div>
         ) : (
           <>
