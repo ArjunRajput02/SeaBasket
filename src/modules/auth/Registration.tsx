@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import type { registrationForm, TouchedFields } from "./authType";
 import { useRegisterMutation } from "../../hooks/authMutation";
+import PasswordInput from "@/components/layout/PasswordInput";
 
 //zod object for verify email
 const registrationSchema = z
@@ -125,7 +126,6 @@ export default function Registration() {
     const { confirmPassword, ...payload } = formData;
 
     register(payload);
-
   };
 
   return (
@@ -189,22 +189,22 @@ export default function Registration() {
 
             <div className="flex flex-col gap-1">
               <Label>Password</Label>
-              <Input
+
+              <PasswordInput
                 name="password"
-                type="password"
                 value={formData.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 placeholder="Password"
               />
+
               {touched.password && <FormError message={errors.password} />}
             </div>
 
             <div className="flex flex-col gap-1">
               <Label>Confirm Password</Label>
-              <Input
+              <PasswordInput
                 name="confirmPassword"
-                type="password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 onBlur={handleBlur}

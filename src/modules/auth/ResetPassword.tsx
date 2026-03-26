@@ -12,10 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import FormError from "@/components/layout/FormError";
 import { useResetPasswordMutation } from "@/hooks/authMutation";
+import PasswordInput from "@/components/layout/PasswordInput";
 
 const resetPasswordSchema = z
   .object({
@@ -85,9 +85,8 @@ export default function ResetPassword() {
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
                   <Label htmlFor="newPassword">New Password</Label>
-                  <Input
+                  <PasswordInput
                     id="newPassword"
-                    type="password"
                     placeholder="********"
                     className="bg-orange-50"
                     {...register("newPassword")}
@@ -99,9 +98,8 @@ export default function ResetPassword() {
 
                 <div className="grid gap-2">
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
+                  <PasswordInput
+                    id="newPassword"
                     placeholder="********"
                     className="bg-orange-50"
                     {...register("confirmPassword")}

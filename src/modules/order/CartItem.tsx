@@ -86,7 +86,7 @@ export default function CartItem({
           <Button
             size="icon"
             variant="outline"
-            className="h-8 w-8"
+            className="h-8 w-8 cursor-pointer"
             onClick={handleDecrease}
             disabled={isLoggedIn ? isDecreasing : false}
           >
@@ -98,7 +98,7 @@ export default function CartItem({
           <Button
             size="icon"
             variant="outline"
-            className="h-8 w-8"
+            className="h-8 w-8 cursor-pointer"
             onClick={handleIncrease}
             disabled={isLoggedIn ? isAdding : false}
           >
@@ -111,7 +111,7 @@ export default function CartItem({
       <Button
         variant="ghost"
         size="icon"
-        className="text-red-500 hover:bg-red-50"
+        className="text-red-500 hover:bg-red-50 cursor-pointer"
         onClick={handleDelete}
         disabled={isLoggedIn ? isDeleting : false}
       >

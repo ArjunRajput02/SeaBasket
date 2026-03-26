@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { useState, type FormEvent, type ChangeEvent } from "react";
+import PasswordInput from "@/components/layout/PasswordInput";
 import {
   Card,
   CardContent,
@@ -41,9 +42,7 @@ export type LoginSchemaType = z.infer<typeof loginSchema>;
 export default function Login() {
   const navigate = useNavigate();
 
-
   const { mutate: login, isPending } = useLoginMutation();
-
   const [formData, setFormData] = useState<LoginSchemaType>({
     login: "",
     password: "",
@@ -127,18 +126,21 @@ export default function Login() {
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
 
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
                     placeholder="********"
                     className="bg-orange-50"
                     value={formData.password}
                     onChange={handleChange}
+                    error={errors.password}
                   />
 
                   {errors.password && <FormError message={errors.password} />}
 
-                  <span onClick={()=> navigate('/forgot-password')} className="text-sm text-orange-400 cursor-pointer hover:underline w-fit ml-auto">
+                  <span
+                    onClick={() => navigate("/forgot-password")}
+                    className="text-sm text-orange-400 cursor-pointer hover:underline w-fit ml-auto"
+                  >
                     Forgot password?
                   </span>
                 </div>

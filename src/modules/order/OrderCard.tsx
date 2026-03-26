@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Package,
   ChevronDown,
@@ -13,9 +13,8 @@ import OrderStepper from "./OrderStepper";
 import OrderItems from "./OrderItems";
 import { useMemo } from "react";
 
-export default function OrderCard({ order }: any) {
-  const [open, setOpen] = useState(false);
-
+export default function OrderCard({ order, open }: any) {
+  const navigate = useNavigate();
   const expectedDelivery = useMemo(() => {
     const today = new Date();
     const randomDays = Math.floor(Math.random() * 6) + 2;
@@ -37,11 +36,17 @@ export default function OrderCard({ order }: any) {
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md">
       <button
-        onClick={() => setOpen((open) => !open)}
+        onClick={() => {
+          if (open) {
+            navigate("/order");
+          } else {
+            navigate(`/order/${order.id}`);
+          }
+        }}
         className="w-full flex items-center gap-4 p-4 text-left"
       >
-        <div className="w-10 h-10 bg-indigo-50 flex items-center justify-center rounded-xl">
-          <Package className="text-indigo-500" />
+        <div className="w-10 h-10 bg-orange-50 flex items-center justify-center rounded-xl">
+          <Package className="text-orange-400" />
         </div>
 
         <div className="flex-1 min-w-0">
@@ -71,28 +76,28 @@ export default function OrderCard({ order }: any) {
 
           <div className="bg-white rounded-xl px-4 py-1 border">
             <div className="flex justify-between py-2 border-b">
-              <span className="text-xs text-gray-500">Order ID</span>
+              <span className="text-xs text-black">Order ID</span>
               <span className="flex items-center gap-1 text-sm font-semibold">
                 <Hash className="w-3 h-3" /> {order.id}
               </span>
             </div>
 
             <div className="flex justify-between py-2 border-b">
-              <span className="text-xs text-gray-500">Payment</span>
+              <span className="text-xs text-black">Payment</span>
               <span className="flex items-center gap-1 text-sm font-semibold">
                 <CreditCard className="w-3 h-3" /> {order.payment_mode}
               </span>
             </div>
 
             <div className="flex justify-between py-2 border-b">
-              <span className="text-xs text-gray-500">Expected Delivery</span>
+              <span className="text-xs text-black">Expected Delivery</span>
               <span className="text-sm font-semibold text-orange-600">
                 {expectedDelivery}
               </span>
             </div>
 
             <div className="flex justify-between py-2 border-b">
-              <span className="text-xs text-gray-500">Total</span>
+              <span className="text-xs text-black">Total</span>
               <span className="flex items-center gap-1 text-indigo-600 font-semibold">
                 <IndianRupee className="w-4 h-4" />
                 {order.total_amount}
@@ -100,7 +105,7 @@ export default function OrderCard({ order }: any) {
             </div>
 
             <div className="flex justify-between py-2">
-              <span className="text-xs text-gray-500">Address</span>
+              <span className="text-xs text-black">Address</span>
               <span className="flex items-center gap-1 text-right text-sm font-semibold max-w-[200px]">
                 <MapPin className="w-3 h-3 shrink-0" />
                 {order.delivery_address}, {order.city}, {order.state}{" "}

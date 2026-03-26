@@ -32,17 +32,16 @@ export default function CheckoutPage() {
 
   const { mutate: checkout, isPending } = useCheckout();
 
- 
   const items: CartItemProps[] = isSingle
     ? productData
       ? [
           {
             id: productData.id,
             name: productData.name,
-            price: Number(productData.price) || 0, 
+            price: Number(productData.price) || 0,
             finalPrice:
-              productData.finalPrice || Number(productData.price) || 0, 
-            discount: Number(productData.discount) || 0, 
+              productData.finalPrice || Number(productData.price) || 0,
+            discount: Number(productData.discount) || 0,
             quantity: 1,
             image: productData.images?.[0]?.image_url,
           },
@@ -119,7 +118,7 @@ export default function CheckoutPage() {
             toast.success("Order Placed!");
             setShowSuccess(true);
           } else {
-            toast.error("Unexpected checkout response");
+            toast.error("Unexpected checkout Happened");
           }
         },
       },
@@ -334,6 +333,8 @@ export default function CheckoutPage() {
         </div>
       </div>
 
+      <Footer />
+
       {paymentState && (
         <Elements
           stripe={stripePromise}
@@ -354,8 +355,6 @@ export default function CheckoutPage() {
         isOpen={showSuccess}
         onClose={() => setShowSuccess(false)}
       />
-
-      <Footer />
     </>
   );
 }

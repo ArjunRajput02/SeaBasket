@@ -3,10 +3,13 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import OrderCard from "./OrderCard";
 import { Package } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 export default function OrdersDetails() {
   const { data, isLoading } = useMyOrders();
   const orders = data?.orders ?? [];
+  const { id } = useParams();
+  console.log(id);
 
   return (
     <div className="min-h-screen flex flex-col ">
@@ -28,7 +31,11 @@ export default function OrdersDetails() {
           ) : (
             <div className="space-y-4">
               {orders.map((order: any) => (
-                <OrderCard key={order.id} order={order} />
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  open={String(order.id) === id}
+                />
               ))}
             </div>
           )}

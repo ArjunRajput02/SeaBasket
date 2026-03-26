@@ -213,7 +213,7 @@ export default function Profile() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex-1 bg-orange-400 hover:bg-orange-600 text-white h-11 font-semibold"
+                    className="flex-1 bg-orange-400 hover:bg-orange-600 text-white hover:text-white h-11 font-semibold"
                   >
                     Logout
                   </Button>
@@ -227,11 +227,13 @@ export default function Profile() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>No</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleLogout}
-                      className="bg-orange-400 hover:bg-orange-600"
-                    >
-                      Yes, Logout
+                    <AlertDialogAction asChild>
+                      <Button
+                        onClick={handleLogout}
+                        className="bg-orange-400 hover:bg-orange-600 text-white"
+                      >
+                        Yes, Logout
+                      </Button>
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

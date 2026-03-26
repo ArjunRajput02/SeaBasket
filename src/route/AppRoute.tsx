@@ -36,6 +36,14 @@ const AppRoutes = () => {
         }
       />
       <Route
+        path="/order/:id"
+        element={
+          <PrivateRoute>
+            <OrderDetails />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/profile"
         element={
           <PrivateRoute>
