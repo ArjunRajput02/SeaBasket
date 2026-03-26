@@ -17,6 +17,7 @@ import {
 } from "@/store/slice/cartSlice";
 import ProductReviews from "./ProductReview";
 import { toast } from "sonner";
+import { IndianRupee } from "lucide-react";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -181,6 +182,26 @@ export default function ProductDetails() {
                       : "Out of stock"}
                   </span>
                 </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 text-2xl font-semibold text-gray-900">
+                  <IndianRupee className="w-5 h-5" />
+                  <span>{product?.finalPrice || product?.price}</span>
+                </div>
+
+                {product?.discount > 0 && (
+                  <div className="flex items-center gap-1 text-sm text-gray-400 line-through">
+                    <IndianRupee className="w-4 h-4" />
+                    <span>{product?.price}</span>
+                  </div>
+                )}
+
+                {product?.discount > 0 && (
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                    {product.discount}% OFF
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-col gap-3 mt-8">

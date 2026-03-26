@@ -15,6 +15,7 @@ import ForgotPassword from "@/modules/auth/ForgotPassword";
 import ResetPassword from "@/modules/auth/ResetPassword";
 import CheckoutPage from "@/modules/order/Checkout";
 import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 
 const AppRoutes = () => {
   const token = useSelector<RootState>((state) => state.auth.token);
@@ -25,7 +26,14 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/products" element={<ProductList />} />
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={
+          <PublicRoute>
+            <Login />{" "}
+          </PublicRoute>
+        }
+      />
       <Route path="/products/:id" element={<ProductDetails />} />
       <Route
         path="/order"
@@ -60,7 +68,14 @@ const AppRoutes = () => {
           </PrivateRoute>
         }
       />
-      <Route path="/registration" element={<Registration />} />
+      <Route
+        path="/registration"
+        element={
+          <PublicRoute>
+            <Registration />
+          </PublicRoute>
+        }
+      />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset/:token" element={<ResetPassword />} />
 
