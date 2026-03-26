@@ -71,10 +71,10 @@ export default function CartItem({
         <div className="flex items-center gap-2 text-sm">
           <div className="flex items-center gap-1 text-green-600 font-semibold">
             <IndianRupee size={14} />
-            <span>{finalPrice ?? price}</span>
+            <span>{finalPrice && finalPrice > 0 ? finalPrice : price}</span>
           </div>
 
-          {finalPrice && finalPrice < price && (
+          {finalPrice > 0 && finalPrice < price && (
             <div className="flex items-center gap-1 text-gray-400 line-through">
               <IndianRupee size={12} />
               <span>{price}</span>

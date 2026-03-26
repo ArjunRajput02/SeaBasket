@@ -25,7 +25,7 @@ export default function Cart() {
         id: item.product_id,
         name: item.product.name,
         price: item.product.price,
-        finalPrice: item.product.finalPrice,
+        finalPrice: item.product.finalPrice ?? item.product.price,
         image: item.product.images?.[0]?.image_url || "",
         quantity: item.quantity,
       })) || []
@@ -39,17 +39,17 @@ export default function Cart() {
         0,
       );
 
-const handleCheckout = () => {
-  if (!isLoggedIn) {
-    toast.error("Please login to place an order.");
-    navigation("/login");
-    return;
-  }
+  const handleCheckout = () => {
+    if (!isLoggedIn) {
+      toast.error("Please login to place an order.");
+      navigation("/login");
+      return;
+    }
 
-  navigation("/checkout", {
-    state: { isSingle: false }, 
-  });
-};
+    navigation("/checkout", {
+      state: { isSingle: false },
+    });
+  };
 
   return (
     <>
