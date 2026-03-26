@@ -8,6 +8,7 @@ import Filters from "./Filters";
 import SortBar from "./SortBar";
 import ProductCard from "./Product";
 import type { Product } from "./productType";
+import { PackageX } from "lucide-react";
 
 export default function ProductList() {
   const [filters, setFilters] = useState({
@@ -29,32 +30,20 @@ export default function ProductList() {
   const products = data?.products || [];
 
   const filteredProducts = products
-    .filter((p: Product) =>
-      filters.minPrice ? p.finalPrice >= filters.minPrice : true,
+    .filter(
+      (p: Product) =>
+        p.price >= filters.minPrice && p.price <= filters.maxPrice,
     )
-    .filter((p: Product) =>
-      filters.maxPrice && filters.maxPrice !== Infinity
-        ? p.finalPrice <= filters.maxPrice
-        : true,
-    )
-    .filter((p: Product) =>
-      filters.rating ? p.rating >= filters.rating : true,
-    )
-    .filter((p: Product) =>
-      filters.discount ? p.discount >= filters.discount : true,
-    );
+    .filter((p: Product) => p.rating >= filters.rating)
+    .filter((p: Product) => p.discount >= filters.discount)
+    .sort((a: Product, b: Product) => {
+      if (sort === "low") return a.price - b.price;
+      if (sort === "high") return b.price - a.price;
+      if (sort === "name-asc") return b.rating - a.rating;
+      if (sort === "name-dsc") return b.discount - a.discount;
+      return 0;
+    });
 
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const priceA = Number(a.finalPrice);
-    const priceB = Number(b.finalPrice);
-
-    if (sort === "low") return priceA - priceB;
-    if (sort === "high") return priceB - priceA;
-    if (sort === "name-asc") return a.name.localeCompare(b.name);
-    if (sort === "name-desc") return b.name.localeCompare(a.name);
-
-    return 0;
-  });
   return (
     <>
       <Header />
@@ -88,11 +77,18 @@ export default function ProductList() {
               <SortBar setSort={setSort} />
             </div>
 
-            <div className="grid grid-cols-2 xs:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-              {sortedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            {filteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {filteredProducts.map((product: Product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                <PackageX size={48} className="text-gray-400 mb-4" />
+                <h2 className="text-lg font-semibold">No products found</h2>
+              </div>
+            )}
           </div>
         </div>
       </div>

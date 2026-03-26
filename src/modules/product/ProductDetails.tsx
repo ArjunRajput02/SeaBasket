@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const { data: product, isLoading } = useProductbyId(id!);
+  const { data: product } = useProductbyId(id!);
 
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -48,9 +48,11 @@ export default function ProductDetails() {
       ? [{ image_url: product.image }]
       : [];
 
-  const cartItem = cart?.cart?.find(
-    (item: any) => item.product_id === product?.id,
-  );
+  const reduxCart = useSelector((state: RootState) => state.cart.items);
+
+  const cartItem = sessionToken
+    ? cart?.cart?.find((item: any) => item.product_id === product?.id)
+    : reduxCart.find((item: any) => item.id === product?.id);
 
   const quantity = cartItem?.quantity || 0;
 
@@ -65,7 +67,7 @@ export default function ProductDetails() {
           price: product.price,
           image: product.images?.[0]?.image_url,
           discount: product.discount,
-          finalPrice:product.finalPrice
+          finalPrice: product.finalPrice,
         }),
       );
     } else {
@@ -221,12 +223,6 @@ export default function ProductDetails() {
           />
         </div>
       </div>
-
-      {isLoading && (
-        <div className="absolute inset-0 flex justify-center items-center bg-white/70">
-          Loading...
-        </div>
-      )}
 
       <Footer />
     </>

@@ -38,10 +38,10 @@ export default function PaymentSuccessModal({ isOpen, onClose }: Props) {
           </button>
 
           <button
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/")}
             className="border py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition"
           >
-            Back to Profile
+            Back to Home
           </button>
         </div>
       </motion.div>

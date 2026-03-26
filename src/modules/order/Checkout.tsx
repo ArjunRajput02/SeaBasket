@@ -32,17 +32,17 @@ export default function CheckoutPage() {
 
   const { mutate: checkout, isPending } = useCheckout();
 
-  // Map items safely from backend
+ 
   const items: CartItemProps[] = isSingle
     ? productData
       ? [
           {
             id: productData.id,
             name: productData.name,
-            price: Number(productData.price) || 0, // original price from string
+            price: Number(productData.price) || 0, 
             finalPrice:
-              productData.finalPrice || Number(productData.price) || 0, // backend number
-            discount: Number(productData.discount) || 0, // from backend
+              productData.finalPrice || Number(productData.price) || 0, 
+            discount: Number(productData.discount) || 0, 
             quantity: 1,
             image: productData.images?.[0]?.image_url,
           },
