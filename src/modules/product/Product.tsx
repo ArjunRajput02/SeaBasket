@@ -39,15 +39,15 @@ export default function ProductCard({ product }: { product: Product }) {
       mutateAdd(product.id);
     } else {
       dispatch(
-  addToCart({
-    id: product.id,
-    name: product.name,
-    price: Number(product.price),          
-    image: product.images?.[0]?.image_url,
-    discount: Number(product.discount),    
-    finalPrice: Number(product.finalPrice), 
-  }),
-);
+        addToCart({
+          id: product.id,
+          name: product.name,
+          price: Number(product.price),
+          image: product.images?.[0]?.image_url,
+          discount: Number(product.discount),
+          finalPrice: Number(product.finalPrice),
+        }),
+      );
     }
   };
 
@@ -101,7 +101,7 @@ export default function ProductCard({ product }: { product: Product }) {
           {!cartItem ? (
             <Button
               size="sm"
-              className="bg-white text-pink-600 border border-pink-500 cursor-pointer"
+              className="bg-white text-pink-600 border border-pink-500 cursor-pointer hover:bg-pink-100"
               onClick={handleAdd}
             >
               ADD

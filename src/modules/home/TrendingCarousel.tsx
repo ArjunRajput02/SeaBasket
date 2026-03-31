@@ -11,41 +11,48 @@ import type { Product } from "../product/productType";
 
 export default function TrendingCarousel() {
   const [api, setApi] = React.useState<CarouselApi | null>(null);
+  const [isHovered, setIsHovered] = React.useState(false);
   const { data } = useTrendingProducts();
 
   React.useEffect(() => {
-    if (!api) return;
+    if (!api || isHovered) 
+      return;
 
     const autoplay = setInterval(() => {
       api.scrollNext();
     }, 3000);
 
     return () => clearInterval(autoplay);
-  }, [api]);
+  }, [api, isHovered]);
 
   return (
     <section className="py-10">
       <h2 className="text-2xl font-bold mb-6 font-sans">Trending Products</h2>
 
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full"
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <CarouselContent>
-          {data?.products?.map((product: Product) => (
-            <CarouselItem
-              key={product.id}
-              className="basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]"
-            >
-              <ProductCard product={product} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {data?.products?.map((product: Product) => (
+              <CarouselItem
+                key={product.id}
+                className="basis-[70%] sm:basis-[40%] md:basis-[25%] lg:basis-[20%]"
+              >
+                <ProductCard product={product} />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
     </section>
   );
 }
