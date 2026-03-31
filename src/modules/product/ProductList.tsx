@@ -7,15 +7,16 @@ import { useProducts } from "./getProducts";
 import Filters from "./Filters";
 import SortBar from "./SortBar";
 import ProductCard from "./Product";
-import type { Product } from "./productType";
+import type{ FiltersType, Product } from "./productType";
 import { PackageX } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function ProductList() {
-  const [filters, setFilters] = useState({
-    minPrice: 0,
-    maxPrice: Infinity,
-    rating: 0,
-    discount: 0,
+  const [filters, setFilters] = useState<FiltersType>({
+    minPrice: undefined,
+    maxPrice: undefined,
+    rating: undefined,
+    discount: undefined,
   });
 
   const [params] = useSearchParams();
@@ -24,25 +25,37 @@ export default function ProductList() {
 
   const [sort, setSort] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const debouncedFilters = useDebounce(filters, 1000);
+  const debouncedSort = useDebounce(sort, 1000);
 
-  const { data } = useProducts({ categoryId, name });
+  const { data } = useProducts({
+    categoryId,
+    name,
+    minPrice: debouncedFilters.minPrice,
+    maxPrice: debouncedFilters.maxPrice,
+    minRating: debouncedFilters.rating,
+    minDiscount: debouncedFilters.discount,
+    sortBy:
+      debouncedSort === "low" || debouncedSort === "high"
+        ? "price"
+        : debouncedSort === "name-asc"
+          ? "rating"
+          : debouncedSort === "name-dsc"
+            ? "discount"
+            : undefined,
+    order:
+      debouncedSort === "low"
+        ? "ASC"
+        : debouncedSort === "high"
+          ? "DESC"
+          :  debouncedSort=== "name-asc"
+            ? "ASC"
+            : debouncedSort === "name-dsc"
+              ? "DESC"
+              : undefined,
+  });
 
   const products = data?.products || [];
-
-  const filteredProducts = products
-    .filter(
-      (p: Product) =>
-        p.price >= filters.minPrice && p.price <= filters.maxPrice,
-    )
-    .filter((p: Product) => p.rating >= filters.rating)
-    .filter((p: Product) => p.discount >= filters.discount)
-    .sort((a: Product, b: Product) => {
-      if (sort === "low") return a.price - b.price;
-      if (sort === "high") return b.price - a.price;
-      if (sort === "name-asc") return b.rating - a.rating;
-      if (sort === "name-dsc") return b.discount - a.discount;
-      return 0;
-    });
 
   return (
     <>
@@ -77,9 +90,9 @@ export default function ProductList() {
               <SortBar setSort={setSort} />
             </div>
 
-            {filteredProducts.length > 0 ? (
+            {products.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredProducts.map((product: Product) => (
+                {products.map((product: Product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>

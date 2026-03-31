@@ -7,6 +7,7 @@ export default function ProductReviews({
   avgRating,
   productId,
   sessionToken,
+  refetch
 }: any) {
   return (
     <div>
@@ -29,7 +30,7 @@ export default function ProductReviews({
 
       <ReviewList reviews={reviews} />
 
-      <ReviewForm productId={productId} sessionToken={sessionToken} />
+      <ReviewForm productId={productId} sessionToken={sessionToken} refetch={refetch}/>
     </div>
   );
 }

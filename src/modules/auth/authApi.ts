@@ -24,7 +24,7 @@ export const verifyOtp = (data: OtpPayload) => {
   const { items } = store.getState().cart;
 
   return API.post(
-    "/users/verify-login-otp",
+    "/users/verify-otp",
     {
       ...data,
       cartItems: items,

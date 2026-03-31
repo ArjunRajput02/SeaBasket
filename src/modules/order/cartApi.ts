@@ -10,7 +10,7 @@ const api = axios.create({
 
 export const getCart = async () => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.get("/products/cart", {
+  const res = await api.get("/cart", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,7 +20,7 @@ export const getCart = async () => {
 
 export const decleteFromCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.delete(`/products/cart/${productId}`, {
+  const res = await api.delete(`/cart/${productId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -10,7 +10,6 @@ export default function OrdersDetails() {
   const orders = data?.orders ?? [];
   const { id } = useParams();
   
-
   return (
     <div className="min-h-screen flex flex-col ">
       <div className="w-full bg-white shadow-sm">

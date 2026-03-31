@@ -21,7 +21,7 @@ import { IndianRupee } from "lucide-react";
 
 export default function ProductDetails() {
   const { id } = useParams();
-  const { data: product } = useProductbyId(id!);
+  const { data: product,refetch } = useProductbyId(id!);
 
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -241,6 +241,7 @@ export default function ProductDetails() {
             avgRating={avgRating}
             productId={product?.id}
             sessionToken={sessionToken}
+            refetch={refetch}
           />
         </div>
       </div>

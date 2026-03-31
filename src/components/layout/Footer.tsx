@@ -24,16 +24,16 @@ export default function Footer() {
           <h3 className="text-white font-semibold mb-4">Follow Us</h3>
           <div className="flex gap-4">
             <div className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer">
-              <img src="/instagram.png" />
+              <img src="/instagram.png" alt="instagram"/>
             </div>
             <div className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer">
-              <img src="/facebook.png" />
+              <img src="/facebook.png" alt="facebook"/>
+            </div>
+            <div className="w-9 h-9 rounded-full bg-sneutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer">
+              <img src="/linkedin.png" alt="linkedin"/>
             </div>
             <div className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer">
-              <img src="/linkedin.png" />
-            </div>
-            <div className="w-9 h-9 rounded-full bg-neutral-800 hover:bg-neutral-700 flex items-center justify-center cursor-pointer">
-              <img src="/twitter.png" />
+              <img src="/twitter.png" alt="twitter"/>
             </div>
           </div>
         </div>

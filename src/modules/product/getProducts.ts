@@ -1,12 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getProducts, getProductById, buyNow, addReview } from "./productApi";
+import type { ProductParams } from "./productType";
 
-export const useProducts = (params?: {
-  categoryId?: string;
-  name?: string;
-}) => {
+export const useProducts = (params?: ProductParams) => {
   return useQuery({
-    queryKey: ["products", params?.categoryId, params?.name],
+    queryKey: ["products", params],
     queryFn: () => getProducts(params),
   });
 };
@@ -27,14 +25,8 @@ export const useBuyNow = () => {
 };
 
 export const useAddReview = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["addReview"],
     mutationFn: addReview,
-    onSuccess: (variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["product", variables.productId],
-      });
-    },
   });
 };

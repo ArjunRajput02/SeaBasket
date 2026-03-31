@@ -17,15 +17,16 @@ export type SortBarProps = {
 };
 
 export type FiltersType = {
-  minPrice: number;
-  maxPrice: number;
-  rating: number;
-  discount: number;
+  minPrice?: number;
+  maxPrice?: number;
+  rating?: number;
+  discount?: number;
 };
 export type FilterTypeProps = {
   filters: FiltersType;
-  setFilters: (val: FiltersType) => void;
+  setFilters: React.Dispatch<React.SetStateAction<FiltersType>>;
 };
+
 export type User = {
   first_name: string;
 };
@@ -35,4 +36,15 @@ export type Review = {
   rating: number;
   comment: string;
   user?: User;
+};
+
+export type ProductParams = {
+  categoryId?: string;
+  name?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+  minDiscount?: number;
+  sortBy?: string;
+  order?: "ASC" | "DESC";
 };

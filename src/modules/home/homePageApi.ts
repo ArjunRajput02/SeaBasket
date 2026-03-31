@@ -33,16 +33,17 @@ export const getProfile = async () => {
 
 export const updateProfile = async (payload: ProfileForm) => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.put("/users/update", payload, {
+  const res = await api.put("/users/user", payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
+
 export const addProductToCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
 
   const res = await api.post(
-    `/products/cart/${productId}`,
+    `/cart/${productId}`,
     {},
     {
       headers: {

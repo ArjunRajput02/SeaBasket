@@ -21,6 +21,7 @@ export default function ReviewForm({
   sessionToken,
   reviews,
   userId,
+  refetch,
 }: any) {
   const navigate = useNavigate();
   const addReviewMutation = useAddReview();
@@ -65,8 +66,9 @@ export default function ReviewForm({
         comment: data.comment,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("Review submitted ");
+          await refetch();
           reset();
         },
         onError: () => toast.error("Failed to submit review"),
