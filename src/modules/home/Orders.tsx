@@ -1,4 +1,4 @@
-import { Package, ChevronRight, IndianRupee } from "lucide-react";
+import { PackageX, ChevronRight, IndianRupee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Order } from "./homeType";
 
@@ -20,7 +20,7 @@ export default function Orders({
   return (
     <div className="w-full max-w-3xl bg-white rounded-xl shadow-sm border p-8">
       <div className="flex items-center gap-2 mb-6">
-        <Package className="text-orange-400" size={20} />
+        <PackageX className="text-orange-400" size={20} />
         <h2 className="text-xl font-semibold">My Orders</h2>
       </div>
 
@@ -35,7 +35,7 @@ export default function Orders({
         </div>
       ) : orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-          <Package size={48} className="mb-3 opacity-30" />
+          <PackageX size={48} className="mb-3 opacity-30" />
           <p className="text-sm">No orders placed yet.</p>
         </div>
       ) : (

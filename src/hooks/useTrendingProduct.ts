@@ -9,6 +9,11 @@ import { toast } from "sonner";
 import type { CategoriesResponse } from "@/modules/home/homeType";
 import { getMyOrders, getOrderById } from "@/modules/order/cartApi";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  addAddress,
+  deleteAddress,
+  updateAddress,
+} from "../modules/home/homePageApi";
 
 export const useTrendingProducts = () => {
   return useQuery({
@@ -28,20 +33,14 @@ export const useProfile = () => {
   return useQuery({
     queryKey: ["profile"],
     queryFn: () => getProfile(),
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 30,
-    refetchOnWindowFocus: false,
   });
 };
 
 export const useUpdateProfile = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: updateProfile,
-    onSuccess: (updatedData) => {
+    onSuccess: () => {
       toast.success("Profile updated successfully");
-      queryClient.setQueryData(["profile"], updatedData);
     },
     onError: (error: any) => {
       toast.error(`Update failed: ${error.message}`);
@@ -61,5 +60,52 @@ export const useOrderById = (orderId: string) => {
     queryKey: ["my-order", orderId],
     queryFn: () => getOrderById(orderId),
     enabled: !!orderId,
+  });
+};
+
+export const useAddAddress = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addAddress,
+    onSuccess: () => {
+      toast.success("Address added successfully ");
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to add address: ${error.message}`);
+    },
+  });
+};
+
+export const useDeleteAddress = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteAddress,
+    onSuccess: () => {
+      toast.success("Address deleted ");
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (error: any) => {
+      const message = error?.response?.data?.message;
+      toast.error(`Delete failed: ${message}`);
+    },
+  });
+};
+
+export const useUpdateAddress = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateAddress,
+    onSuccess: () => {
+      toast.success("Address updated ");
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (error: any) => {
+      const message = error?.response?.data?.message;
+      toast.error(`Update failed: ${message}`);
+    },
   });
 };

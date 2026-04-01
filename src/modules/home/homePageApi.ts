@@ -65,3 +65,45 @@ export const getOrders = async () => {
 
   return response.data;
 };
+
+export const addAddress = async (payload: any) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.post("/users/address", payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
+export const deleteAddress = async (addressId: number) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.delete(`/users/address/${addressId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
+export const updateAddress = async ({
+  id,
+  payload,
+}: {
+  id: number;
+  payload: any;
+}) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.put(`/users/address/${id}`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
