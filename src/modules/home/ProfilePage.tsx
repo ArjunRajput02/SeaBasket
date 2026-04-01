@@ -31,7 +31,7 @@ import Orders from "./Orders";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useState } from "react";
-import { useDeleteAddress } from "../../hooks/useTrendingProduct";
+import { useDeleteAddress } from "@/hooks/useTrendingProduct";
 import { useAddressActions } from "@/hooks/useAddressAction";
 
 const profileSchema = z.object({
@@ -56,6 +56,7 @@ export default function Profile() {
   const { mutate, isPending } = useUpdateProfile();
   const { data: ordersData, isLoading: ordersLoading } = useMyOrders();
   const orders: Order[] = ordersData?.orders ?? [];
+  const { mutate: deleteAddress } = useDeleteAddress();
 
   const { handleAdd, handleUpdate } = useAddressActions();
 
@@ -93,6 +94,10 @@ export default function Profile() {
   const handleLogout = () => {
     dispatch(clearToken());
     navigate("/");
+  };
+
+  const handleDelete = (id: number) => {
+    deleteAddress(id);
   };
 
   const addresses = data?.data?.addresses ?? [];
@@ -232,7 +237,7 @@ export default function Profile() {
             <p className="text-sm text-gray-500">No addresses added yet.</p>
           ) : (
             <div className="flex flex-col gap-4">
-              {addresses.map((addr:any) => (
+              {addresses.map((addr: any) => (
                 <div
                   key={addr.id}
                   className="border rounded-lg p-4 flex justify-between items-start"
@@ -263,7 +268,7 @@ export default function Profile() {
                     </button>
 
                     <button
-                      onClick={() => handleDeleteAddress(addr.id)}
+                      onClick={() => handleDelete(addr.id)}
                       className="text-red-500 hover:text-red-600 transition"
                     >
                       <Trash2 className="h-4 w-4" />

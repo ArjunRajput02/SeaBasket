@@ -105,7 +105,7 @@ export default function AddressModal({
               <div>
                 <Label>City</Label>
                 <Input
-                  placeholder="Ahmedabad"
+                  placeholder="City"
                   className="border-orange-200 focus-visible:ring-orange-400 h-11 mt-2"
                   {...register("city")}
                 />
@@ -117,7 +117,7 @@ export default function AddressModal({
               <div>
                 <Label>State</Label>
                 <Input
-                  placeholder="Gujarat"
+                  placeholder="State"
                   className="border-orange-200 focus-visible:ring-orange-400 h-11 mt-2"
                   {...register("state")}
                 />
