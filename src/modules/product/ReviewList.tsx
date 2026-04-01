@@ -1,7 +1,19 @@
-import { Star } from "lucide-react";
+import { Star, Trash2, Edit2 } from "lucide-react";
 import type { Review } from "./productType";
 
-export default function ReviewList({ reviews }: { reviews: Review[] }) {
+type ReviewListProps = {
+  reviews: Review[];
+  currentUserId?: number;
+  onEdit: (review: Review) => void;
+  onDelete: (reviewId: number) => void;
+}
+
+export default function ReviewList({
+  reviews,
+  currentUserId,
+  onEdit,
+  onDelete,
+}: ReviewListProps) {
   if (!reviews || reviews.length === 0) {
     return (
       <div className="border border-dashed border-gray-300 rounded-xl p-10 text-center">
@@ -15,16 +27,16 @@ export default function ReviewList({ reviews }: { reviews: Review[] }) {
 
   return (
     <div className="grid md:grid-cols-2 gap-5">
-      {reviews.map((review, index) => (
+      {reviews.map((review) => (
         <div
-          key={index}
+          key={review.id}
           className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm"
         >
           <div className="flex items-start justify-between mb-4">
             <p className="font-semibold text-gray-900 text-sm">
               {review.user?.first_name || "Anonymous"}
             </p>
-            <div className="flex">
+            <div className="flex items-center space-x-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
@@ -35,6 +47,23 @@ export default function ReviewList({ reviews }: { reviews: Review[] }) {
                   }`}
                 />
               ))}
+
+              {review.user?.id === currentUserId && (
+                <div className="flex space-x-1 ml-2">
+                  <button
+                    onClick={() => onEdit(review)}
+                    className="text-blue-500"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => onDelete(review.id)}
+                    className="text-red-500"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

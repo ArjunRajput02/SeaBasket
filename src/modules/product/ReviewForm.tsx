@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
+import { useUpdateReview } from "./getProducts";
 
 const reviewSchema = z.object({
   rating: z.number().min(1, "Please select a rating "),
@@ -22,9 +24,12 @@ export default function ReviewForm({
   reviews,
   userId,
   refetch,
+  editingReview,
+  setEditingReview,
 }: any) {
   const navigate = useNavigate();
   const addReviewMutation = useAddReview();
+  const updateReviewMutation = useUpdateReview();
 
   const {
     register,
@@ -41,12 +46,41 @@ export default function ReviewForm({
     },
   });
 
+  useEffect(() => {
+    if (editingReview) {
+      reset({
+        rating: editingReview.rating,
+        comment: editingReview.comment,
+      });
+    }
+  }, [editingReview, reset]);
+
   const rating = watch("rating");
 
   const onSubmit = (data: ReviewFormType) => {
     if (!sessionToken) {
       navigate("/login");
       toast.error("You have to login for Review");
+      return;
+    }
+
+    if (editingReview) {
+      updateReviewMutation.mutate(
+        {
+          productId: productId,
+          rating: data.rating,
+          comment: data.comment,
+        },
+        {
+          onSuccess: async () => {
+            toast.success("Review updated ");
+            await refetch();
+            reset();
+            setEditingReview(null);
+          },
+          onError: () => toast.error("Failed to update review"),
+        },
+      );
       return;
     }
 
@@ -75,7 +109,6 @@ export default function ReviewForm({
       },
     );
   };
-
   return (
     <div className="bg-white rounded-2xl border p-8 mt-10">
       <h3 className="text-lg font-semibold mb-6">Write a Review</h3>

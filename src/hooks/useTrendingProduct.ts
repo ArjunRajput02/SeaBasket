@@ -6,8 +6,9 @@ import {
   updateProfile,
 } from "../modules/home/homePageApi";
 import { toast } from "sonner";
-import type { CategoriesResponse} from "@/modules/home/homeType";
-import { getMyOrders,getOrderById } from "@/modules/order/cartApi";
+import type { CategoriesResponse } from "@/modules/home/homeType";
+import { getMyOrders, getOrderById } from "@/modules/order/cartApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useTrendingProducts = () => {
   return useQuery({
@@ -27,16 +28,22 @@ export const useProfile = () => {
   return useQuery({
     queryKey: ["profile"],
     queryFn: () => getProfile(),
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
   });
 };
 
 export const useUpdateProfile = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: updateProfile,
-    onSuccess: () => {
+    onSuccess: (updatedData) => {
       toast.success("Profile updated successfully");
+      queryClient.setQueryData(["profile"], updatedData);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Update failed: ${error.message}`);
     },
   });
@@ -48,7 +55,7 @@ export const useMyOrders = () => {
     queryFn: getMyOrders,
   });
 };
- 
+
 export const useOrderById = (orderId: string) => {
   return useQuery({
     queryKey: ["my-order", orderId],
@@ -56,4 +63,3 @@ export const useOrderById = (orderId: string) => {
     enabled: !!orderId,
   });
 };
-

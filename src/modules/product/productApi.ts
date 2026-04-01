@@ -70,3 +70,39 @@ export const addReview = async ({
   );
   return res.data;
 };
+
+export const updateReview = async ({
+  productId,
+  rating,
+  comment,
+}: {
+  productId: number;
+  rating: number;
+  comment: string;
+}) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.put(
+    `/products/review/${productId}`, // 👈 productId instead
+    { rating, comment },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return res.data;
+};
+
+export const deleteReview = async (productId: number) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.delete(`/products/review/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};

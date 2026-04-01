@@ -66,18 +66,17 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    if (data) {
-      reset({
-        first_name: data.data.first_name,
-        last_name: data.data.last_name,
-        email: data.data.email,
-        phone: data.data.phone,
-        address: data.data.address,
-        city: data.data.city,
-        state: data.data.state,
-        pincode: data.data.pincode,
-      });
-    }
+    if (!data?.data) return;
+    reset({
+      first_name: data.data.first_name,
+      last_name: data.data.last_name,
+      email: data.data.email,
+      phone: data.data.phone,
+      address: data.data.address,
+      city: data.data.city,
+      state: data.data.state,
+      pincode: data.data.pincode,
+    });
   }, [data, reset]);
 
   const onSubmit = (formData: ProfileForm) => mutate(formData);
