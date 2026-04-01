@@ -52,6 +52,11 @@ export default function ReviewForm({
         rating: editingReview.rating,
         comment: editingReview.comment,
       });
+    } else {
+      reset({
+        rating: 0,
+        comment: "",
+      });
     }
   }, [editingReview, reset]);
 
