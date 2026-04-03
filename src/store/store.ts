@@ -8,6 +8,7 @@ import cartReducer from "./slice/cartSlice";
 const persistConfig = {
   key: "root",
   storage,
+  
 };
 
 const rootReducer = combineReducers({

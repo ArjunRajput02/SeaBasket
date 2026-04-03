@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   PaymentElement,
   useStripe,
@@ -9,35 +10,37 @@ import { motion } from "framer-motion";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void; 
+  onSuccess: () => void;
 };
 
-export default function StripeModal({
-  isOpen,
-  onClose,
-  onSuccess,
-}: Props) {
+export default function StripeModal({ isOpen, onClose, onSuccess }: Props) {
   const stripe = useStripe();
   const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isOpen) return null;
 
   const handlePay = async () => {
-    if (!stripe || !elements) return;
+    if (!stripe || !elements || isProcessing) return;
+
+    setIsProcessing(true);
 
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
-      redirect: "if_required", 
+      redirect: "if_required",
     });
 
     if (error) {
       toast.error(error.message || "Payment Failed. Try again.");
+      setIsProcessing(false);
       return;
     }
 
     if (paymentIntent?.status === "succeeded") {
-      onSuccess(); 
+      onSuccess();
     }
+
+    setIsProcessing(false);
   };
 
   return (
@@ -73,14 +76,20 @@ export default function StripeModal({
         <div className="p-5 border-t flex flex-col gap-3">
           <button
             onClick={handlePay}
-            className="w-full bg-emerald-600 text-white py-3 rounded-xl font-medium hover:bg-emerald-700 transition"
+            disabled={isProcessing}
+            className={`w-full py-3 rounded-xl font-medium transition ${
+              isProcessing
+                ? "bg-emerald-400 cursor-not-allowed"
+                : "bg-emerald-600 hover:bg-emerald-700 text-white"
+            }`}
           >
-            Pay Now
+            {isProcessing ? "Processing..." : "Pay Now"}
           </button>
 
           <button
             onClick={onClose}
-            className="w-full border py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition"
+            disabled={isProcessing}
+            className="w-full border py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition disabled:opacity-50"
           >
             Cancel
           </button>

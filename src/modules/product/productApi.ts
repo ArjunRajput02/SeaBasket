@@ -1,5 +1,6 @@
 import axios from "axios";
 import { store } from "@/store/store";
+import type { ProductParams } from "./productType";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -8,12 +9,9 @@ const api = axios.create({
   },
 });
 
-export const getProducts = async (params?: { categoryId?: string; name?: string }) => {
+export const getProducts = async (params?: ProductParams) => {
   const res = await api.get("/products", {
-    params: {
-      ...(params?.categoryId && { categoryId: params.categoryId }),
-      ...(params?.name && { name: params.name }),
-    },
+    params,
   });
   return res.data;
 };
@@ -21,7 +19,7 @@ export const getProducts = async (params?: { categoryId?: string; name?: string 
 export const decreaseFromCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
   const res = await api.put(
-    `/products/cart/${productId}`,
+    `/cart/${productId}`,
     {},
     {
       headers: {
@@ -62,7 +60,7 @@ export const addReview = async ({
 }) => {
   const token = store.getState().auth.sessionToken;
   const res = await api.post(
-    `/users/review/${productId}`,
+    `/products/review/${productId}`,
     { rating, comment },
     {
       headers: {
@@ -70,5 +68,41 @@ export const addReview = async ({
       },
     },
   );
+  return res.data;
+};
+
+export const updateReview = async ({
+  productId,
+  rating,
+  comment,
+}: {
+  productId: number;
+  rating: number;
+  comment: string;
+}) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.put(
+    `/products/review/${productId}`, // 👈 productId instead
+    { rating, comment },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+
+  return res.data;
+};
+
+export const deleteReview = async (productId: number) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.delete(`/products/review/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
   return res.data;
 };

@@ -1,3 +1,5 @@
+import type { AddressForm } from "../../components/layout/AddressModal";
+
 export type CarouselApi = {
   scrollNext: () => void;
 };
@@ -11,16 +13,7 @@ export type CategoriesResponse = {
   categories: Category[];
 };
 
-export type ProfileForm = {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-};
+
 
 export type OrderItem = {
   id: number;
@@ -37,4 +30,19 @@ export type Order = {
   status: "PAID" | "PENDING" | "CANCELLED";
   created_at: string;
   items: OrderItem[];
+};
+
+export type AddressModalProps = {
+  open: boolean;
+  onClose: () => void;
+  onAdd: (data: AddressForm) => void;
+  onUpdate?: (id: number, data: AddressForm) => void;
+  initialData?: any;
+};
+
+export type AddressListProps = {
+  addresses: any[];
+  user: any;
+  onEdit: (addr: any) => void;
+  onDelete: (id: number) => void;
 };

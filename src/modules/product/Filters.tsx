@@ -64,7 +64,7 @@ export default function Filters({ filters, setFilters }: FilterTypeProps) {
               }`}
               onClick={() => setFilters({ ...filters, discount: d })}
             >
-              {d}%
+              {d}+
             </button>
           ))}
           <button

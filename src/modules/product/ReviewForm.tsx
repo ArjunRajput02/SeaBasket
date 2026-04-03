@@ -1,10 +1,13 @@
 import { Star } from "lucide-react";
-import { useAddReview } from "./getProducts";
+import { useAddReview } from "../../hooks/useProduct";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useEffect } from "react";
+import { useUpdateReview } from "../../hooks/useProduct";
+import type { Review, ReviewFormProps } from "./productType";
 
 const reviewSchema = z.object({
   rating: z.number().min(1, "Please select a rating "),
@@ -21,9 +24,13 @@ export default function ReviewForm({
   sessionToken,
   reviews,
   userId,
-}: any) {
+  refetch,
+  editingReview,
+  setEditingReview,
+}: ReviewFormProps) {
   const navigate = useNavigate();
   const addReviewMutation = useAddReview();
+  const updateReviewMutation = useUpdateReview();
 
   const {
     register,
@@ -40,6 +47,20 @@ export default function ReviewForm({
     },
   });
 
+  useEffect(() => {
+    if (editingReview) {
+      reset({
+        rating: editingReview.rating,
+        comment: editingReview.comment,
+      });
+    } else {
+      reset({
+        rating: 0,
+        comment: "",
+      });
+    }
+  }, [editingReview, reset]);
+
   const rating = watch("rating");
 
   const onSubmit = (data: ReviewFormType) => {
@@ -49,8 +70,28 @@ export default function ReviewForm({
       return;
     }
 
+    if (editingReview) {
+      updateReviewMutation.mutate(
+        {
+          productId: productId,
+          rating: data.rating,
+          comment: data.comment,
+        },
+        {
+          onSuccess: async () => {
+            toast.success("Review updated ");
+            await refetch();
+            reset();
+            setEditingReview(null);
+          },
+          onError: () => toast.error("Failed to update review"),
+        },
+      );
+      return;
+    }
+
     const alreadyReviewed = reviews?.some(
-      (review: any) => review.user?.id === userId,
+      (review: Review) => review.user?.id === userId,
     );
 
     if (alreadyReviewed) {
@@ -65,15 +106,15 @@ export default function ReviewForm({
         comment: data.comment,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success("Review submitted ");
+          await refetch();
           reset();
         },
         onError: () => toast.error("Failed to submit review"),
       },
     );
   };
-
   return (
     <div className="bg-white rounded-2xl border p-8 mt-10">
       <h3 className="text-lg font-semibold mb-6">Write a Review</h3>

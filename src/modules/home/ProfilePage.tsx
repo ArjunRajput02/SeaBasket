@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import AddressModal from "../../components/layout/AddressModal";
 import { useEffect } from "react";
 import {
   useProfile,
@@ -9,6 +10,7 @@ import {
   useMyOrders,
 } from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
+import AddressList from "./AddressList";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -28,6 +30,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Orders from "./Orders";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { useState } from "react";
+import { useDeleteAddress } from "@/hooks/useTrendingProduct";
+import { useAddressActions } from "@/hooks/useAddressAction";
 
 const profileSchema = z.object({
   first_name: z
@@ -40,13 +45,9 @@ const profileSchema = z.object({
     .regex(/^[A-Za-z\s]+$/, "Last name must contain letters only"),
   email: z.string().email("Invalid email"),
   phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
-  address: z.string().min(5, "Address is required"),
-  city: z.string().min(2, "City is required"),
-  state: z.string().min(2, "State is required"),
-  pincode: z.string().regex(/^[0-9]{6}$/, "Pincode must be 6 digits"),
 });
 
-type ProfileForm = z.infer<typeof profileSchema>;
+export type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -55,6 +56,11 @@ export default function Profile() {
   const { mutate, isPending } = useUpdateProfile();
   const { data: ordersData, isLoading: ordersLoading } = useMyOrders();
   const orders: Order[] = ordersData?.orders ?? [];
+  const { mutate: deleteAddress } = useDeleteAddress();
+
+  const { handleAdd, handleUpdate } = useAddressActions();
+
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
 
   const {
     register,
@@ -66,26 +72,37 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    if (data) {
-      reset({
-        first_name: data.data.first_name,
-        last_name: data.data.last_name,
-        email: data.data.email,
-        phone: data.data.phone,
-        address: data.data.address,
-        city: data.data.city,
-        state: data.data.state,
-        pincode: data.data.pincode,
-      });
-    }
+    if (!data?.data) return;
+
+    reset({
+      first_name: data.data.first_name,
+      last_name: data.data.last_name,
+      email: data.data.email,
+      phone: data.data.phone,
+    });
   }, [data, reset]);
 
-  const onSubmit = (formData: ProfileForm) => mutate(formData);
+  const onSubmit = (formData: ProfileForm) => {
+    mutate(formData);
+  };
+
+  const handleEditClick = (addr: any) => {
+    setSelectedAddress(addr);
+    setOpen(true);
+  };
 
   const handleLogout = () => {
     dispatch(clearToken());
     navigate("/");
   };
+
+  const handleDelete = (id: number) => {
+    deleteAddress(id);
+  };
+
+  const addresses = data?.data?.addresses ?? [];
+
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -135,7 +152,8 @@ export default function Profile() {
                 <Input
                   type="email"
                   placeholder="Email"
-                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
+                  disabled
+                  className="border-orange-200 focus-visible:ring-orange-400 h-11 cursor-not-allowed"
                   {...register("email")}
                 />
                 {errors.email && (
@@ -155,56 +173,6 @@ export default function Profile() {
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5 mb-4">
-              <Label>Shipping Address</Label>
-              <Input
-                placeholder="Address"
-                className="border-orange-200 focus-visible:ring-orange-400 h-11"
-                {...register("address")}
-              />
-              {errors.address && (
-                <p className="text-red-500 text-xs">{errors.address.message}</p>
-              )}
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              <div className="flex flex-col gap-1.5">
-                <Label>City</Label>
-                <Input
-                  placeholder="City"
-                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
-                  {...register("city")}
-                />
-                {errors.city && (
-                  <p className="text-red-500 text-xs">{errors.city.message}</p>
-                )}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>State</Label>
-                <Input
-                  placeholder="State"
-                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
-                  {...register("state")}
-                />
-                {errors.state && (
-                  <p className="text-red-500 text-xs">{errors.state.message}</p>
-                )}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Pincode</Label>
-                <Input
-                  placeholder="Pincode"
-                  className="border-orange-200 focus-visible:ring-orange-400 h-11"
-                  {...register("pincode")}
-                />
-                {errors.pincode && (
-                  <p className="text-red-500 text-xs">
-                    {errors.pincode.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
             <hr className="border-orange-100 mb-6" />
 
             <div className="flex gap-3">
@@ -213,7 +181,7 @@ export default function Profile() {
                   <Button
                     type="button"
                     variant="outline"
-                    className="flex-1 bg-orange-400 hover:bg-orange-600 text-white h-11 font-semibold"
+                    className="flex-1 bg-orange-400 hover:bg-orange-600 text-white hover:text-white h-11 font-semibold"
                   >
                     Logout
                   </Button>
@@ -227,11 +195,13 @@ export default function Profile() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>No</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleLogout}
-                      className="bg-orange-400 hover:bg-orange-600"
-                    >
-                      Yes, Logout
+                    <AlertDialogAction asChild>
+                      <Button
+                        onClick={handleLogout}
+                        className="bg-orange-400 hover:bg-orange-600 text-white"
+                      >
+                        Yes, Logout
+                      </Button>
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -247,9 +217,41 @@ export default function Profile() {
             </div>
           </form>
         </div>
+
+        <div className="w-full max-w-3xl bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-semibold text-lg">My Addresses</h2>
+
+            <Button
+              onClick={() => {
+                setSelectedAddress(null);
+                setOpen(true);
+              }}
+              className="bg-orange-400 hover:bg-orange-600 text-white"
+            >
+              + Add Address
+            </Button>
+          </div>
+
+          <AddressList
+            addresses={addresses}
+            user={data?.data}
+            onEdit={handleEditClick}
+            onDelete={handleDelete}
+          />
+        </div>
+
         <Orders orders={orders} ordersLoading={ordersLoading} />
       </main>
       <Footer />
+
+      <AddressModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onAdd={(data) => handleAdd(data, () => setOpen(false))}
+        onUpdate={(id, data) => handleUpdate(id, data, () => setOpen(false))}
+        initialData={selectedAddress}
+      />
     </div>
   );
 }

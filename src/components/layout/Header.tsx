@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { RootState } from "@/store/store";
 import { useCart } from "@/hooks/useAddtoCart";
+import { useDebounce } from "@/hooks/useDebounce";
+import type { CartItem } from "@/utils/types";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ export default function Header() {
 
   const apiCartCount =
     data?.cart?.reduce(
-      (total: number, item: any) => total + item.quantity,
+      (total: number, item: CartItem) => total + item.quantity,
       0,
     ) || 0;
 
@@ -29,24 +31,20 @@ export default function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchQuery.trim()) {
-      navigate(`/products?name=${encodeURIComponent(searchQuery.trim())}`);
-      setShowSearch(false);
-    }
-  };
+  const debouncedQuery = useDebounce(searchQuery, 400);
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
 
-  const handleSearchClick = () => {
-    if (searchQuery.trim()) {
-      navigate(`/products?name=${encodeURIComponent(searchQuery.trim())}`);
-      setShowSearch(false);
+    if (!trimmed) {
+      return;
     }
-  };
+
+    navigate(`/products?name=${encodeURIComponent(trimmed)}`);
+  }, [debouncedQuery, navigate]);
 
   return (
     <header className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3 md:px-8">
-  
         <div
           className="flex items-center cursor-pointer flex-shrink-0"
           onClick={() => navigate("/")}
@@ -67,13 +65,9 @@ export default function Header() {
             placeholder="Search Items"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleSearch}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 pr-10"
           />
-          <Search
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-orange-500 transition"
-            onClick={handleSearchClick}
-          />
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-orange-500 transition" />
         </div>
 
         <button
@@ -115,7 +109,6 @@ export default function Header() {
         </div>
       </div>
 
-      
       {showSearch && (
         <div className="md:hidden px-4 pb-3">
           <div className="relative">
@@ -124,19 +117,13 @@ export default function Header() {
               placeholder="Search Items"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearch}
               autoFocus
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 pr-10"
             />
-            <Search
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-orange-500 transition"
-              onClick={handleSearchClick}
-            />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-orange-500 transition" />
           </div>
         </div>
       )}
     </header>
   );
 }
-
-  

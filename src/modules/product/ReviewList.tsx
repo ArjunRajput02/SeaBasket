@@ -1,7 +1,23 @@
-import { Star } from "lucide-react";
-import type { Review } from "./productType";
+import { Star, Trash2, Edit2 } from "lucide-react";
+import type { ReviewListProps } from "./productType";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-export default function ReviewList({ reviews }: { reviews: Review[] }) {
+export default function ReviewList({
+  reviews,
+  currentUserId,
+  onEdit,
+  onDelete,
+}: ReviewListProps) {
   if (!reviews || reviews.length === 0) {
     return (
       <div className="border border-dashed border-gray-300 rounded-xl p-10 text-center">
@@ -15,16 +31,16 @@ export default function ReviewList({ reviews }: { reviews: Review[] }) {
 
   return (
     <div className="grid md:grid-cols-2 gap-5">
-      {reviews.map((review, index) => (
+      {reviews.map((review) => (
         <div
-          key={index}
+          key={review.id}
           className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm"
         >
           <div className="flex items-start justify-between mb-4">
             <p className="font-semibold text-gray-900 text-sm">
               {review.user?.first_name || "Anonymous"}
             </p>
-            <div className="flex">
+            <div className="flex items-center space-x-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
@@ -35,6 +51,44 @@ export default function ReviewList({ reviews }: { reviews: Review[] }) {
                   }`}
                 />
               ))}
+
+              {review.user?.id === currentUserId && (
+                <div className="flex space-x-1 ml-2">
+                  <button
+                    onClick={() => onEdit(review)}
+                    className="text-blue-500"
+                  >
+                    <Edit2 className="h-4 w-4" />
+                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="text-red-500">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Review?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone, This will permanently
+                          delete your review.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDelete(review.id)}
+                          className="bg-red-500 hover:bg-red-600 text-white"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
             </div>
           </div>
 

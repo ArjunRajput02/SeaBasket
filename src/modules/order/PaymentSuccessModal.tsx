@@ -6,14 +6,14 @@ type Props = {
   onClose: () => void;
 };
 
-export default function PaymentSuccessModal({ isOpen, onClose }: Props) {
+export default function PaymentSuccessModal({ isOpen }: Props) {
   const navigate = useNavigate();
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="absolute inset-0" onClick={onClose} />
+      <div className="absolute inset-0" />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 40 }}
@@ -38,10 +38,10 @@ export default function PaymentSuccessModal({ isOpen, onClose }: Props) {
           </button>
 
           <button
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/")}
             className="border py-3 rounded-xl text-gray-600 hover:bg-gray-100 transition"
           >
-            Back to Profile
+            Back to Home
           </button>
         </div>
       </motion.div>

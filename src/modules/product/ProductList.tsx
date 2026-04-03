@@ -3,18 +3,20 @@ import Footer from "@/components/layout/Footer";
 import Categories from "../home/Categories";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useProducts } from "./getProducts";
+import { useProducts } from "../../hooks/useProduct";
 import Filters from "./Filters";
 import SortBar from "./SortBar";
 import ProductCard from "./Product";
-import type { Product } from "./productType";
+import type{ FiltersType, Product } from "./productType";
+import { PackageX } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function ProductList() {
-  const [filters, setFilters] = useState({
-    minPrice: 0,
-    maxPrice: Infinity,
-    rating: 0,
-    discount: 0,
+  const [filters, setFilters] = useState<FiltersType>({
+    minPrice: undefined,
+    maxPrice: undefined,
+    rating: undefined,
+    discount: undefined,
   });
 
   const [params] = useSearchParams();
@@ -23,38 +25,38 @@ export default function ProductList() {
 
   const [sort, setSort] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const debouncedFilters = useDebounce(filters, 1000);
+  const debouncedSort = useDebounce(sort, 1000);
 
-  const { data } = useProducts({ categoryId, name });
+  const { data } = useProducts({
+    categoryId,
+    name,
+    minPrice: debouncedFilters.minPrice,
+    maxPrice: debouncedFilters.maxPrice,
+    minRating: debouncedFilters.rating,
+    minDiscount: debouncedFilters.discount,
+    sortBy:
+      debouncedSort === "low" || debouncedSort === "high"
+        ? "price"
+        : debouncedSort === "name-asc"
+          ? "rating"
+          : debouncedSort === "name-dsc"
+            ? "discount"
+            : undefined,
+    order:
+      debouncedSort === "low"
+        ? "ASC"
+        : debouncedSort === "high"
+          ? "DESC"
+          :  debouncedSort=== "name-asc"
+            ? "ASC"
+            : debouncedSort === "name-dsc"
+              ? "DESC"
+              : undefined,
+  });
 
   const products = data?.products || [];
 
-  const filteredProducts = products
-    .filter((p: Product) =>
-      filters.minPrice ? p.finalPrice >= filters.minPrice : true,
-    )
-    .filter((p: Product) =>
-      filters.maxPrice && filters.maxPrice !== Infinity
-        ? p.finalPrice <= filters.maxPrice
-        : true,
-    )
-    .filter((p: Product) =>
-      filters.rating ? p.rating >= filters.rating : true,
-    )
-    .filter((p: Product) =>
-      filters.discount ? p.discount >= filters.discount : true,
-    );
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const priceA = Number(a.finalPrice);
-    const priceB = Number(b.finalPrice);
-
-    if (sort === "low") return priceA - priceB;
-    if (sort === "high") return priceB - priceA;
-    if (sort === "name-asc") return a.name.localeCompare(b.name);
-    if (sort === "name-desc") return b.name.localeCompare(a.name);
-
-    return 0;
-  });
   return (
     <>
       <Header />
@@ -88,11 +90,18 @@ export default function ProductList() {
               <SortBar setSort={setSort} />
             </div>
 
-            <div className="grid grid-cols-2 xs:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-              {sortedProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            {products.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {products.map((product: Product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="col-span-full flex flex-col items-center justify-center py-16 text-center">
+                <PackageX size={48} className="text-gray-400 mb-4" />
+                <h2 className="text-lg font-semibold">No products found</h2>
+              </div>
+            )}
           </div>
         </div>
       </div>

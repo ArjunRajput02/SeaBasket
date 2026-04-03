@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "@/store/store";
-import type { ProfileForm } from "./homeType";
+import type { ProfileForm } from "./ProfilePage";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -33,16 +33,17 @@ export const getProfile = async () => {
 
 export const updateProfile = async (payload: ProfileForm) => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.put("/users/update", payload, {
+  const res = await api.put("/users/user", payload, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
+
 export const addProductToCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
 
   const res = await api.post(
-    `/products/cart/${productId}`,
+    `/cart/${productId}`,
     {},
     {
       headers: {
@@ -63,4 +64,46 @@ export const getOrders = async () => {
   });
 
   return response.data;
+};
+
+export const addAddress = async (payload: any) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.post("/users/address", payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
+export const deleteAddress = async (addressId: number) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.delete(`/users/address/${addressId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
+export const updateAddress = async ({
+  id,
+  payload,
+}: {
+  id: number;
+  payload: any;
+}) => {
+  const token = store.getState().auth.sessionToken;
+
+  const res = await api.put(`/users/address/${id}`, payload, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
 };

@@ -15,14 +15,12 @@ import { forgotPassword, resetPassword } from "../modules/auth/authApi";
 
 export const useLoginMutation = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
       const login_token = data.data.token;
       dispatch(setToken(login_token));
       toast.success("Login successful");
-      navigate("/verification");
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Invalid credentials");
@@ -40,7 +38,7 @@ export const useRegisterMutation = () => {
       const token = data?.data?.data?.token;
       toast.success("User Registered ");
       dispatch(setToken(token));
-      navigate("/verification");
+      // navigate("/verification");
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Something went wrong");

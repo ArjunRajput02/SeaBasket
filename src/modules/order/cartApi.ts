@@ -1,5 +1,6 @@
 import axios from "axios";
 import { store } from "@/store/store";
+import type { CheckoutPayload, CheckoutResponse } from "./cartType";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -10,7 +11,7 @@ const api = axios.create({
 
 export const getCart = async () => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.get("/products/cart", {
+  const res = await api.get("/cart", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,7 +21,7 @@ export const getCart = async () => {
 
 export const decleteFromCart = async (productId: number) => {
   const token = store.getState().auth.sessionToken;
-  const res = await api.delete(`/products/cart/${productId}`, {
+  const res = await api.delete(`/cart/${productId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -28,7 +29,9 @@ export const decleteFromCart = async (productId: number) => {
   return res.data;
 };
 
-export const postCheckout = async (payload: any) => {
+export const postCheckout = async (
+  payload: CheckoutPayload,
+): Promise<CheckoutResponse> => {
   const token = store.getState().auth.sessionToken;
   const res = await api.post("/orders/checkout", payload, {
     headers: {

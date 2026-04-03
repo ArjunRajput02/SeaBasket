@@ -12,6 +12,7 @@ import {
 } from "@/hooks/useAddtoCart";
 
 import { addToCart, decreaseFromCart } from "@/store/slice/cartSlice";
+import type { CartItem } from "@/utils/types";
 export default function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const cartItems = sessionToken ? cartData?.cart || [] : localCart;
 
   const cartItem = cartItems.find(
-    (item: any) => item.product_id === product.id || item.id === product.id,
+    (item: CartItem) => item.product_id === product.id || item.id === product.id,
   );
 
   const handleAdd = (e?: React.MouseEvent) => {
@@ -39,15 +40,15 @@ export default function ProductCard({ product }: { product: Product }) {
       mutateAdd(product.id);
     } else {
       dispatch(
-  addToCart({
-    id: product.id,
-    name: product.name,
-    price: Number(product.price),          
-    image: product.images?.[0]?.image_url,
-    discount: Number(product.discount),    
-    finalPrice: Number(product.finalPrice), 
-  }),
-);
+        addToCart({
+          id: product.id,
+          name: product.name,
+          price: Number(product.price),
+          image: product.images?.[0]?.image_url,
+          discount: Number(product.discount),
+          finalPrice: Number(product.finalPrice),
+        }),
+      );
     }
   };
 
@@ -67,7 +68,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <Card
-      className="rounded-xl overflow-hidden hover:shadow-lg transition cursor-pointer"
+      className="rounded-xl overflow-hidden hover:shadow-lg transition "
       onClick={() => navigate(`/products/${product.id}`)}
     >
       <CardContent className="p-3">
@@ -101,7 +102,7 @@ export default function ProductCard({ product }: { product: Product }) {
           {!cartItem ? (
             <Button
               size="sm"
-              className="bg-white text-pink-600 border border-pink-500"
+              className="bg-white text-pink-600 border border-pink-500 cursor-pointer hover:bg-pink-100"
               onClick={handleAdd}
             >
               ADD
@@ -111,13 +112,13 @@ export default function ProductCard({ product }: { product: Product }) {
               className="flex items-center gap-2 border px-2 py-1 rounded"
               onClick={(e) => e.stopPropagation()}
             >
-              <button onClick={handleDecrease}>
+              <button onClick={handleDecrease} className="cursor-pointer">
                 <Minus size={14} />
               </button>
 
               <span>{cartItem.quantity}</span>
 
-              <button onClick={handleAdd}>
+              <button onClick={handleAdd} className="cursor-pointer">
                 <Plus size={14} />
               </button>
             </div>

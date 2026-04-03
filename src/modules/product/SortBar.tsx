@@ -9,8 +9,6 @@ export default function SortBar({ setSort }: SortBarProps) {
       <option value="">Sort</option>
       <option value="low">Price Low → High</option>
       <option value="high">Price High → Low</option>
-      <option value="name-asc">Name A → Z</option>
-      <option value="name-desc">Name Z → A</option>
     </select>
   );
 }
