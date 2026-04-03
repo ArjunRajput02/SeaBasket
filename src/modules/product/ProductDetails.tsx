@@ -93,7 +93,9 @@ export default function ProductDetails() {
 
     if (!sessionToken) {
       toast.success("Please Login to Buy Product");
-      navigate("/login");
+      navigate("/login", {
+        state: { from: location.pathname },
+      });
       return;
     }
 

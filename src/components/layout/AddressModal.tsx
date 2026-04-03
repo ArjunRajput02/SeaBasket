@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
-import type { AddressModalProps } from "./homeType";
+import type { AddressModalProps } from "../../modules/home/homeType";
 
 const addressSchema = z.object({
   address: z.string().min(5, "Address must be at least 5 characters"),

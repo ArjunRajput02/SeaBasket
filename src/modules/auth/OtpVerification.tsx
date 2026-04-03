@@ -17,6 +17,7 @@ import { useVerifyOtpMutation } from "../../hooks/authMutation";
 import { useResendOtpMutation } from "../../hooks/authMutation";
 import { z } from "zod";
 import { useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const otpSchema = z
   .string()
@@ -26,6 +27,11 @@ const otpSchema = z
 export default function OtpVerification() {
   const [code, setCode] = useState("");
   const [timer, setTimer] = useState(0);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const from = location.state?.from || "/";
 
   const { mutate: verify, isPending } = useVerifyOtpMutation();
   const { mutate: resendOtp, isPending: resendPending } =
@@ -42,7 +48,14 @@ export default function OtpVerification() {
   }, [timer]);
 
   const handleVerify = () => {
-    verify({ otp: code });
+    verify(
+      { otp: code },
+      {
+        onSuccess: () => {
+          navigate(from, { replace: true });
+        },
+      },
+    );
   };
   const handleResend = () => {
     setTimer(60);

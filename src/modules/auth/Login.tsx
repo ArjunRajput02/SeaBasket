@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, type FormEvent, type ChangeEvent } from "react";
 import PasswordInput from "@/components/layout/PasswordInput";
 import {
@@ -41,6 +41,8 @@ export type LoginSchemaType = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
 
   const { mutate: login, isPending } = useLoginMutation();
   const [formData, setFormData] = useState<LoginSchemaType>({
@@ -82,7 +84,13 @@ export default function Login() {
       return;
     }
 
-    login(formData);
+    login(formData, {
+      onSuccess: () => {
+        navigate("/verification", {
+          state: { from },
+        });
+      },
+    });
   };
 
   return (

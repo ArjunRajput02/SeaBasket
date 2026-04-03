@@ -10,7 +10,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeModal from "./StripeModal";
 import PaymentSuccessModal from "./PaymentSuccessModal";
-import AddressModal from "@/modules/home/AddressModal";
+import AddressModal from "@/components/layout/AddressModal";
 import { toast } from "sonner";
 import type { CartItemProps } from "./cartTypes";
 import type { PaymentState } from "./cartType";

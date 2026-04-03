@@ -1,4 +1,4 @@
-import type { AddressForm } from "./AddressModal";
+import type { AddressForm } from "../../components/layout/AddressModal";
 
 export type CarouselApi = {
   scrollNext: () => void;

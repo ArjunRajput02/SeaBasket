@@ -36,7 +36,6 @@ export default function Header() {
     const trimmed = debouncedQuery.trim();
 
     if (!trimmed) {
-      navigate;
       return;
     }
 

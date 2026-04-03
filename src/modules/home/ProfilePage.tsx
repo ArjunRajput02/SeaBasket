@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import AddressModal from "./AddressModal";
+import AddressModal from "../../components/layout/AddressModal";
 import { useEffect } from "react";
 import {
   useProfile,
