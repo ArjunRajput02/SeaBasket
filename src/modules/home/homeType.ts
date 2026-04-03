@@ -39,3 +39,10 @@ export type AddressModalProps = {
   onUpdate?: (id: number, data: AddressForm) => void;
   initialData?: any;
 };
+
+export type AddressListProps = {
+  addresses: any[];
+  user: any;
+  onEdit: (addr: any) => void;
+  onDelete: (id: number) => void;
+};

@@ -10,7 +10,7 @@ import {
   useMyOrders,
 } from "../../hooks/useTrendingProduct";
 import { Label } from "@/components/ui/label";
-import { Pencil, Trash2 } from "lucide-react";
+import AddressList from "./AddressList";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -233,73 +233,12 @@ export default function Profile() {
             </Button>
           </div>
 
-          {addresses.length === 0 ? (
-            <p className="text-sm text-gray-500">No addresses added yet.</p>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {addresses.map((addr: any) => (
-                <div
-                  key={addr.id}
-                  className="border rounded-lg p-4 flex justify-between items-start"
-                >
-                  <div>
-                    <p className="font-semibold">
-                      {data?.data?.first_name} {data?.data?.last_name}
-                    </p>
-
-                    <p className="text-sm text-gray-600">{addr.address}</p>
-                    <p className="text-sm text-gray-600">
-                      {addr.city}, {addr.state} - {addr.pincode}
-                    </p>
-                    <p className="text-sm text-gray-600">{data?.data?.phone}</p>
-
-                    {addr.isDefault && (
-                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded mt-1 inline-block">
-                        Default
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => handleEditClick(addr)}
-                      className="text-blue-500 hover:text-blue-600 transition"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </button>
-
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <button className="text-red-500 hover:text-red-600 transition">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </AlertDialogTrigger>
-
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Address?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            remove your address.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-
-                          <AlertDialogAction
-                            onClick={() => handleDelete(addr.id)}
-                            className="bg-red-500 hover:bg-red-600 text-white"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <AddressList
+            addresses={addresses}
+            user={data?.data}
+            onEdit={handleEditClick}
+            onDelete={handleDelete}
+          />
         </div>
 
         <Orders orders={orders} ordersLoading={ordersLoading} />
