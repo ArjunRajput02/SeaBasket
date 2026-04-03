@@ -12,6 +12,7 @@ import {
 } from "@/hooks/useAddtoCart";
 
 import { addToCart, decreaseFromCart } from "@/store/slice/cartSlice";
+import type { CartItem } from "@/utils/types";
 export default function ProductCard({ product }: { product: Product }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,7 +30,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const cartItems = sessionToken ? cartData?.cart || [] : localCart;
 
   const cartItem = cartItems.find(
-    (item: any) => item.product_id === product.id || item.id === product.id,
+    (item: CartItem) => item.product_id === product.id || item.id === product.id,
   );
 
   const handleAdd = (e?: React.MouseEvent) => {

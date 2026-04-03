@@ -3,7 +3,7 @@ import Footer from "@/components/layout/Footer";
 import Categories from "../home/Categories";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useProducts } from "./getProducts";
+import { useProducts } from "../../hooks/useProduct";
 import Filters from "./Filters";
 import SortBar from "./SortBar";
 import ProductCard from "./Product";

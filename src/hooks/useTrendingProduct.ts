@@ -14,6 +14,11 @@ import {
   deleteAddress,
   updateAddress,
 } from "../modules/home/homePageApi";
+import type { AxiosError } from "axios";
+
+type ApiError = {
+  message: string;
+};
 
 export const useTrendingProducts = () => {
   return useQuery({
@@ -42,7 +47,7 @@ export const useUpdateProfile = () => {
     onSuccess: () => {
       toast.success("Profile updated successfully");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       toast.error(`Update failed: ${error.message}`);
     },
   });
@@ -72,7 +77,7 @@ export const useAddAddress = () => {
       toast.success("Address added successfully ");
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       toast.error(`Failed to add address: ${error.message}`);
     },
   });
@@ -87,7 +92,7 @@ export const useDeleteAddress = () => {
       toast.success("Address deleted ");
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       const message = error?.response?.data?.message;
       toast.error(`Delete failed: ${message}`);
     },
@@ -103,7 +108,7 @@ export const useUpdateAddress = () => {
       toast.success("Address updated ");
       queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<ApiError>) => {
       const message = error?.response?.data?.message;
       toast.error(`Update failed: ${message}`);
     },

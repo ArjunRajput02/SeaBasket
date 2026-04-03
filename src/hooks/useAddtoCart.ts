@@ -4,6 +4,9 @@ import { decreaseFromCart } from "@/modules/product/productApi";
 import { decleteFromCart, getCart } from "@/modules/order/cartApi";
 import { toast } from "sonner";
 import { postCheckout } from "@/modules/order/cartApi";
+import type{ CheckoutPayload, CheckoutResponse } from "@/modules/order/cartType";
+import type { AxiosError } from "axios";
+import type { ApiError } from "@/utils/types";
 
 
 export const useCart = () => {
@@ -47,7 +50,7 @@ export const useDeleteFromCart = () => {
 };
 
 export const useCheckout = () => {
-  return useMutation({
+  return useMutation<CheckoutResponse,AxiosError<ApiError>,CheckoutPayload>({
     mutationFn: postCheckout,
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Checkout failed.");

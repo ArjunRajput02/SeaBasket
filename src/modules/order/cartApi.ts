@@ -1,5 +1,6 @@
 import axios from "axios";
 import { store } from "@/store/store";
+import type { CheckoutPayload, CheckoutResponse } from "./cartType";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -28,7 +29,9 @@ export const decleteFromCart = async (productId: number) => {
   return res.data;
 };
 
-export const postCheckout = async (payload: any) => {
+export const postCheckout = async (
+  payload: CheckoutPayload,
+): Promise<CheckoutResponse> => {
   const token = store.getState().auth.sessionToken;
   const res = await api.post("/orders/checkout", payload, {
     headers: {

@@ -47,7 +47,7 @@ const profileSchema = z.object({
   phone: z.string().regex(/^[0-9]{10}$/, "Mobile must be 10 digits"),
 });
 
-type ProfileForm = z.infer<typeof profileSchema>;
+export type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -267,12 +267,34 @@ export default function Profile() {
                       <Pencil className="h-4 w-4" />
                     </button>
 
-                    <button
-                      onClick={() => handleDelete(addr.id)}
-                      className="text-red-500 hover:text-red-600 transition"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="text-red-500 hover:text-red-600 transition">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </AlertDialogTrigger>
+
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Address?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            remove your address.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+
+                          <AlertDialogAction
+                            onClick={() => handleDelete(addr.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               ))}

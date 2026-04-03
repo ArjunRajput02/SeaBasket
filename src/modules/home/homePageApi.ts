@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "@/store/store";
-import type { ProfileForm } from "./homeType";
+import type { ProfileForm } from "./ProfilePage";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,

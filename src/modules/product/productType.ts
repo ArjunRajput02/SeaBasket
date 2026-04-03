@@ -28,6 +28,7 @@ export type FilterTypeProps = {
 };
 
 export type User = {
+  id:number;
   first_name: string;
 };
 
@@ -47,4 +48,29 @@ export type ProductParams = {
   minDiscount?: number;
   sortBy?: string;
   order?: "ASC" | "DESC";
+};
+
+export type ProductReviewsProps = {
+  reviews: Review[];
+  avgRating: number;
+  productId: number;
+  sessionToken: string | null;
+  refetch: () => void;
+};
+
+export type ReviewListProps = {
+  reviews: Review[];
+  currentUserId?: number;
+  onEdit: (review: Review) => void;
+  onDelete: (reviewId: number) => void;
+}
+
+export type ReviewFormProps = {
+  productId: number;
+  sessionToken: string | null;
+  reviews: Review[];
+  userId?: number;
+  refetch: () => void;
+  editingReview: Review | null;
+  setEditingReview: React.Dispatch<React.SetStateAction<Review | null>>;
 };

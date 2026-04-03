@@ -1,12 +1,13 @@
 import { Star } from "lucide-react";
-import { useAddReview } from "./getProducts";
+import { useAddReview } from "../../hooks/useProduct";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect } from "react";
-import { useUpdateReview } from "./getProducts";
+import { useUpdateReview } from "../../hooks/useProduct";
+import type { Review, ReviewFormProps } from "./productType";
 
 const reviewSchema = z.object({
   rating: z.number().min(1, "Please select a rating "),
@@ -26,7 +27,7 @@ export default function ReviewForm({
   refetch,
   editingReview,
   setEditingReview,
-}: any) {
+}: ReviewFormProps) {
   const navigate = useNavigate();
   const addReviewMutation = useAddReview();
   const updateReviewMutation = useUpdateReview();
@@ -90,7 +91,7 @@ export default function ReviewForm({
     }
 
     const alreadyReviewed = reviews?.some(
-      (review: any) => review.user?.id === userId,
+      (review: Review) => review.user?.id === userId,
     );
 
     if (alreadyReviewed) {

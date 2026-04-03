@@ -2,16 +2,9 @@ import { Star } from "lucide-react";
 import ReviewList from "./ReviewList";
 import ReviewForm from "./ReviewForm";
 import { jwtDecode } from "jwt-decode";
-import { useDeleteReview } from "./getProducts";
+import { useDeleteReview } from "../../hooks/useProduct";
 import { useState } from "react";
-
-type ProductReviewsProps = {
-  reviews: any[];
-  avgRating: number;
-  productId: number;
-  sessionToken: string;
-  refetch: () => void;
-};
+import type{ ProductReviewsProps, Review } from "./productType";
 
 export default function ProductReviews({
   reviews,
@@ -27,7 +20,7 @@ export default function ProductReviews({
 
   const currentUserId = decoded?.id;
   const { mutate: deleteReviewMutate } = useDeleteReview();
-  const [editingReview, setEditingReview] = useState<any>(null);
+  const [editingReview, setEditingReview] = useState<Review | null>(null);
 
   return (
     <div>

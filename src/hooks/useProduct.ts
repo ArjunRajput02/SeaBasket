@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getProducts, getProductById, buyNow, addReview } from "./productApi";
-import type { ProductParams } from "./productType";
-import { updateReview, deleteReview } from "./productApi";
+import { getProducts, getProductById, buyNow, addReview } from "../modules/product/productApi";
+import type { ProductParams } from "../modules/product/productType";
+import { updateReview, deleteReview } from "../modules/product/productApi";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const useProducts = (params?: ProductParams) => {

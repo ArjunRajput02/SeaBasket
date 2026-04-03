@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect } from "react";
+import type { AddressModalProps } from "./homeType";
 
 const addressSchema = z.object({
   address: z.string().min(5, "Address must be at least 5 characters"),
@@ -14,15 +15,8 @@ const addressSchema = z.object({
   pincode: z.string().regex(/^[0-9]{6}$/, "Pincode must be 6 digits"),
 });
 
-type AddressForm = z.infer<typeof addressSchema>;
+export type AddressForm = z.infer<typeof addressSchema>;
 
-type AddressModalProps = {
-  open: boolean;
-  onClose: () => void;
-  onAdd: (data: AddressForm) => void;
-  onUpdate?: (id: number, data: AddressForm) => void;
-  initialData?: any;
-};
 
 export default function AddressModal({
   open,

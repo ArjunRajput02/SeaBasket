@@ -1,12 +1,16 @@
 import { Star, Trash2, Edit2 } from "lucide-react";
-import type { Review } from "./productType";
-
-type ReviewListProps = {
-  reviews: Review[];
-  currentUserId?: number;
-  onEdit: (review: Review) => void;
-  onDelete: (reviewId: number) => void;
-}
+import type { ReviewListProps } from "./productType";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function ReviewList({
   reviews,
@@ -56,12 +60,33 @@ export default function ReviewList({
                   >
                     <Edit2 className="h-4 w-4" />
                   </button>
-                  <button
-                    onClick={() => onDelete(review.id)}
-                    className="text-red-500"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <button className="text-red-500">
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Review?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone, This will permanently
+                          delete your review.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDelete(review.id)}
+                          className="bg-red-500 hover:bg-red-600 text-white"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               )}
             </div>

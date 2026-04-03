@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import type { RootState } from "@/store/store";
 import { useCart } from "@/hooks/useAddtoCart";
 import { useDebounce } from "@/hooks/useDebounce";
+import type { CartItem } from "@/utils/types";
 
 export default function Header() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function Header() {
 
   const apiCartCount =
     data?.cart?.reduce(
-      (total: number, item: any) => total + item.quantity,
+      (total: number, item: CartItem) => total + item.quantity,
       0,
     ) || 0;
 

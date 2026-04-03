@@ -37,3 +37,15 @@ export type CartResponse = {
 export type PaymentState = {
   clientSecret: string;
 } | null;
+
+export type CheckoutPayload = {
+  addressId: number;
+  isSingle: boolean;
+  productId?: number;
+  paymentMode: string;
+};
+
+export type CheckoutResponse = {
+  client_secret?: string;
+  message?: string;
+};

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useProductbyId } from "./getProducts";
+import { useProductbyId } from "../../hooks/useProduct";
 import { Star, ShoppingCart, Zap, Package, Plus, Minus } from "lucide-react";
 import { useState } from "react";
 import Header from "@/components/layout/Header";
@@ -18,6 +18,8 @@ import {
 import ProductReviews from "./ProductReview";
 import { toast } from "sonner";
 import { IndianRupee } from "lucide-react";
+import type { ProductImage, Review } from "./productType";
+import type { CartItem } from "@/utils/types";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -38,7 +40,7 @@ export default function ProductDetails() {
 
   const avgRating = product?.reviews?.length
     ? product.reviews.reduce(
-        (acc: number, rating: any) => acc + rating.rating,
+        (acc: number, rating: Review) => acc + rating.rating,
         0,
       ) / product.reviews.length
     : parseFloat(product?.rating || "0");
@@ -52,8 +54,8 @@ export default function ProductDetails() {
   const reduxCart = useSelector((state: RootState) => state.cart.items);
 
   const cartItem = sessionToken
-    ? cart?.cart?.find((item: any) => item.product_id === product?.id)
-    : reduxCart.find((item: any) => item.id === product?.id);
+    ? cart?.cart?.find((item: CartItem) => item.product_id === product?.id)
+    : reduxCart.find((item: CartItem) => item.product_id === product?.id);
 
   const quantity = cartItem?.quantity || 0;
 
@@ -120,7 +122,7 @@ export default function ProductDetails() {
           <div className="grid lg:grid-cols-2 gap-16 mb-20">
             <div className="flex gap-4">
               <div className="flex flex-col gap-3">
-                {images.map((img: any, index: any) => (
+                {images.map((img: ProductImage, index: number) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
