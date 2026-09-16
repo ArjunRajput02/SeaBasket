@@ -29,7 +29,6 @@ export const useLoginMutation = () => {
 };
 
 export const useRegisterMutation = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   return useMutation({

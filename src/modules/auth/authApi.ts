@@ -16,7 +16,7 @@ const API = axios.create({
 });
 
 export const registerUser = (data: RegisterPayload) => {
-  return API.post("/users/sign-up", data);
+  return API.post("/guest/sign-up", data);
 };
 
 export const verifyOtp = (data: OtpPayload) => {
@@ -38,7 +38,7 @@ export const verifyOtp = (data: OtpPayload) => {
 };
 
 export const loginUser = (data: LoginPayload) => {
-  return API.post("/users/sign-in", data);
+  return API.post("/guest/sign-in", data);
 };
 
 export const resendOtp = () => {
